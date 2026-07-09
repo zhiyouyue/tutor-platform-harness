@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test / Coverage
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# Worktrees
+.worktrees/
+
+# Generated
+docs/generated/
+
+# Temp
+tmp/
+*.tmp
+
+/core
+/docs
+/.cursor
+/knowledge
+/rules
+/scripts
+/skills
+
