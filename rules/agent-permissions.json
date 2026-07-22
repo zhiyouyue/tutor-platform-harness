@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "description": "Agent 权限边界 — 结构性隔离，不靠人工点批准",
+  "agents": {
+    "orchestrator": {
+      "write": [],
+      "read": ["**/*"],
+      "run_tests": true,
+      "run_build": true,
+      "approve_merge": false
+    },
+    "requirement_agent": {
+      "write": ["docs/product-specs/**", "docs/kanban/**"],
+      "read": ["**/*"],
+      "run_tests": false
+    },
+    "architect_agent": {
+      "write": ["docs/design-docs/**", "docs/product-specs/**"],
+      "read": ["**/*"],
+      "run_tests": false
+    },
+    "planner_agent": {
+      "write": ["docs/product-specs/**", "docs/exec-plans/**", "docs/kanban/**"],
+      "read": ["**/*"],
+      "run_tests": false
+    },
+    "backend_agent": {
+      "write": ["backend/**"],
+      "blocked": ["backend/migrations/**"],
+      "read": ["**/*"],
+      "run_tests": ["backend/**"],
+      "preflight": ["knowledge/backend_mistakes.json", "knowledge/security_rules.json"]
+    },
+    "frontend_agent": {
+      "write": ["frontend/**"],
+      "read": ["**/*"],
+      "run_tests": ["frontend/**"],
+      "preflight": ["knowledge/frontend_mistakes.json"]
+    },
+    "db_agent": {
+      "write": ["backend/migrations/**", "backend/src/models/**", "backend/seeders/**"],
+      "read": ["**/*"],
+      "human_approval_required": true
+    },
+    "test_agent": {
+      "write": ["**/tests/**", "frontend/e2e/**"],
+      "read": ["**/*"],
+      "run_tests": true
+    },
+    "browser_test_agent": {
+      "write": ["frontend/e2e/**", "test-results/**"],
+      "read": ["frontend/**", "docs/product-specs/**"],
+      "run_tests": ["frontend/e2e/**"]
+    },
+    "review_agent": {
+      "write": ["knowledge/mistakes/**"],
+      "read": ["**/*"],
+      "run_tests": false
+    },
+    "security_agent": {
+      "write": [],
+      "read": ["**/*"],
+      "run_tests": false,
+      "can_block_merge": true
+    },
+    "knowledge_curator": {
+      "write": ["knowledge/**"],
+      "read": ["**/*"],
+      "run_tests": false
+    }
+  },
+  "human_approval_required": [
+    "architecture_changes",
+    "database_migrations",
+    "security_policy_changes",
+    "production_deployment",
+    "breaking_api_changes"
+  ],
+  "change_limits": {
+    "max_lines_per_pr": 500,
+    "max_review_rounds": 5,
+    "max_test_fix_rounds": 5
+  }
+}

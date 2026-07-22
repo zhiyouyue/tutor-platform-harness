@@ -10,10 +10,11 @@
   "scripts": {
     "agent": "npm run agent -w core",
     "eval": "npm run eval -w core",
+    "structure-test": "npm run structure-test -w core",
     "dev:frontend": "npm run dev -w frontend",
     "dev:backend": "npm run dev -w backend",
     "dev": "npm run dev:backend & npm run dev:frontend",
     "build": "npm run build -w backend && npm run build -w frontend",
     "test": "npm run test -w backend && npm run test -w frontend"
-  },
+  }
 }

@@ -1,0 +1,38 @@
+name: CI Quality Gates
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      - name: Structure tests
+        run: npm run structure-test -w core
+
+      - name: Secret scan (basic)
+        run: |
+          if grep -rE '(api[_-]?key|secret|password)\s*=\s*["'\''][^"'\'']+["'\'']' --include='*.ts' --include='*.tsx' --exclude-dir=node_modules .; then
+            echo "::error::Potential hardcoded secret detected"
+            exit 1
+          fi
+          echo "No obvious hardcoded secrets"

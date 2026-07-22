@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "mistakes": [
+    {
+      "rule_id": "FE-001",
+      "severity": "MEDIUM",
+      "category": "Maintainability",
+      "problem": "Business logic in React component",
+      "recommendation": "Extract to hooks/ or services/",
+      "enforcement": "manual-review",
+      "times_detected": 0,
+      "mistake_doc": null
+    },
+    {
+      "rule_id": "FE-002",
+      "severity": "MEDIUM",
+      "category": "Maintainability",
+      "problem": "Component exceeds 200 lines",
+      "recommendation": "Split into smaller components",
+      "enforcement": "manual-review",
+      "times_detected": 0,
+      "mistake_doc": null
+    }
+  ]
+}

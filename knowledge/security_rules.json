@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "rule_id": "SEC-001",
+      "severity": "CRITICAL",
+      "category": "Security",
+      "problem": "Raw password stored or logged",
+      "recommendation": "Use bcrypt.hash before persist; never log credentials",
+      "enforcement": "manual-review",
+      "times_detected": 0
+    },
+    {
+      "rule_id": "SEC-002",
+      "severity": "HIGH",
+      "category": "Security",
+      "problem": "req.body passed directly to ORM create/update",
+      "recommendation": "Validate and map to DTO in service layer",
+      "enforcement": "manual-review",
+      "times_detected": 0
+    },
+    {
+      "rule_id": "SEC-003",
+      "severity": "HIGH",
+      "category": "Security",
+      "problem": "Secrets committed to repository",
+      "recommendation": "Use .env; run secret scan in CI",
+      "enforcement": "ci-secret-scan",
+      "times_detected": 0
+    }
+  ]
+}

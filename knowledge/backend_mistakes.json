@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "mistakes": [
+    {
+      "rule_id": "BE-001",
+      "severity": "HIGH",
+      "category": "Architecture",
+      "problem": "Database access outside service layer",
+      "recommendation": "Routes → services → models only",
+      "enforcement": "structure-test-no-db-in-routes",
+      "times_detected": 0,
+      "mistake_doc": "knowledge/mistakes/M001-db-in-controller.md"
+    }
+  ]
+}

@@ -43,11 +43,7 @@ docs/generated/
 tmp/
 *.tmp
 
-/core
-/docs
-/.cursor
-/knowledge
-/rules
-/scripts
-/skills
+# Local agent runtime (not committed)
+.worktrees/
+core/dist/
 
