@@ -1,0 +1,115 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "harness-handoff-v1",
+  "title": "Harness Handoff Artifact",
+  "type": "object",
+  "required": [
+    "version",
+    "workUnitId",
+    "featureId",
+    "phase",
+    "sessionId",
+    "createdAt",
+    "reason",
+    "git",
+    "progress",
+    "nextSteps",
+    "artifacts",
+    "contextBudget",
+    "resumeBundle"
+  ],
+  "properties": {
+    "version": { "const": 1 },
+    "workUnitId": { "type": "string", "minLength": 1 },
+    "featureId": { "type": "string", "minLength": 1 },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "DECOMPOSE",
+        "PLAN",
+        "CONTRACT",
+        "IMPLEMENT",
+        "VALIDATE",
+        "REVIEW",
+        "LEARN",
+        "COMMIT"
+      ]
+    },
+    "sessionId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "reason": {
+      "type": "string",
+      "enum": ["context_reset", "session_timeout", "phase_boundary", "human_pause", "escalation"]
+    },
+    "git": {
+      "type": "object",
+      "required": ["branch"],
+      "properties": {
+        "branch": { "type": "string" },
+        "commit": { "type": "string" },
+        "worktreePath": { "type": "string" }
+      }
+    },
+    "progress": {
+      "type": "object",
+      "required": ["completedTaskIds", "activeTaskId", "blocked"],
+      "properties": {
+        "completedTaskIds": { "type": "array", "items": { "type": "string" } },
+        "activeTaskId": { "type": "string" },
+        "blocked": { "type": "array", "items": { "type": "string" } },
+        "percentEstimate": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "sprintContract": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string" },
+        "status": { "type": "string", "enum": ["DRAFT", "IN_REVIEW", "APPROVED", "REJECTED"] },
+        "activeCriteriaIds": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "knownIssues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "severity", "summary"],
+        "properties": {
+          "id": { "type": "string" },
+          "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+          "summary": { "type": "string" },
+          "file": { "type": "string" },
+          "line": { "type": "number" }
+        }
+      }
+    },
+    "nextSteps": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "artifacts": {
+      "type": "object",
+      "required": ["requirements", "tasks", "tests"],
+      "properties": {
+        "requirements": { "type": "string" },
+        "design": { "type": "string" },
+        "tasks": { "type": "string" },
+        "tests": { "type": "string" },
+        "sprintContract": { "type": "string" },
+        "execPlan": { "type": ["string", "null"] }
+      }
+    },
+    "contextBudget": {
+      "type": "object",
+      "required": ["resetRecommended"],
+      "properties": {
+        "estimatedTokensUsed": { "type": "number" },
+        "maxTokensBeforeReset": { "type": "number" },
+        "stepCount": { "type": "number" },
+        "maxStepsBeforeReset": { "type": "number" },
+        "resetRecommended": { "type": "boolean" }
+      }
+    },
+    "resumeBundle": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    }
+  }
+}

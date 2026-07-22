@@ -2,6 +2,7 @@
 export type WorkUnitPhase =
   | "DECOMPOSE"
   | "PLAN"
+  | "CONTRACT"
   | "IMPLEMENT"
   | "VALIDATE"
   | "REVIEW"
@@ -19,12 +20,14 @@ export interface WorkUnit {
   worktreePath?: string;
   reviewRounds: number;
   testRounds: number;
+  contractRounds: number;
 }
 
 /** PEV 状态机 — 有界工作流，非自由对话 */
 export const TRANSITIONS: Record<WorkUnitPhase, WorkUnitPhase | "DONE"> = {
   DECOMPOSE: "PLAN",
-  PLAN: "IMPLEMENT",
+  PLAN: "CONTRACT",
+  CONTRACT: "IMPLEMENT",
   IMPLEMENT: "VALIDATE",
   VALIDATE: "REVIEW",
   REVIEW: "COMMIT",
@@ -33,8 +36,11 @@ export const TRANSITIONS: Record<WorkUnitPhase, WorkUnitPhase | "DONE"> = {
 };
 
 export const MAX_REVIEW_ROUNDS = Number(process.env.HARNESS_MAX_REVIEW_ROUNDS ?? 5);
+export const MAX_CONTRACT_ROUNDS = Number(process.env.HARNESS_MAX_CONTRACT_ROUNDS ?? 3);
 
 export function nextPhase(current: WorkUnitPhase, gate: GateResult): WorkUnitPhase | "DONE" {
+  if (current === "CONTRACT" && gate === "FAIL") return "CONTRACT";
+  if (current === "CONTRACT" && gate === "PASS") return "IMPLEMENT";
   if (current === "VALIDATE" && gate === "FAIL") return "IMPLEMENT";
   if (current === "REVIEW" && gate === "FAIL") return "LEARN";
   if (current === "LEARN") return "IMPLEMENT";
@@ -43,6 +49,21 @@ export function nextPhase(current: WorkUnitPhase, gate: GateResult): WorkUnitPha
   return TRANSITIONS[current];
 }
 
-export function shouldEscalateToHuman(unit: WorkUnit): boolean {
-  return unit.reviewRounds >= MAX_REVIEW_ROUNDS || unit.testRounds >= MAX_REVIEW_ROUNDS;
+/** CONTRACT 多轮协商失败后回到 PLAN 重写 tasks.md */
+export function shouldReturnToPlanFromContract(unit: WorkUnit): boolean {
+  return unit.phase === "CONTRACT" && unit.contractRounds >= MAX_CONTRACT_ROUNDS;
 }
+
+export function shouldEscalateToHuman(unit: WorkUnit): boolean {
+  return (
+    unit.reviewRounds >= MAX_REVIEW_ROUNDS ||
+    unit.testRounds >= MAX_REVIEW_ROUNDS ||
+    unit.contractRounds >= MAX_CONTRACT_ROUNDS
+  );
+}
+
+/** 进入 IMPLEMENT 前必须通过的 phase 门禁 */
+export const PHASE_ENTRY_REQUIREMENTS: Partial<Record<WorkUnitPhase, string[]>> = {
+  CONTRACT: ["requirements.md", "design.md", "tasks.md", "tests.md"],
+  IMPLEMENT: ["sprint-contract.md"],
+};

@@ -20,6 +20,16 @@ export const AGENT_ROLES = {
     responsibility: "tasks.md 原子拆分",
     output: "tasks.md (< 500 lines/task)",
   },
+  contract_proposer: {
+    layer: "execution",
+    responsibility: "CONTRACT 阶段：Coding Agent 起草 sprint-contract.md",
+    output: "docs/product-specs/features/*/sprint-contract.md",
+  },
+  contract_reviewer: {
+    layer: "verification",
+    responsibility: "CONTRACT 阶段：Test/Review Agent 审 SC 可测性，批准前禁止 IMPLEMENT",
+    trustSelfReport: false,
+  },
   backend_agent: { layer: "execution", scope: "backend/" },
   frontend_agent: { layer: "execution", scope: "frontend/" },
   db_agent: { layer: "execution", scope: "migrations/", humanApproval: true },

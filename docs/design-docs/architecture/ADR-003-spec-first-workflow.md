@@ -17,13 +17,21 @@ docs/product-specs/features/<feature-id>/
 ├── requirements.md   # 需求与验收标准
 ├── design.md         # 技术设计
 ├── tasks.md          # 原子任务拆分
-└── tests.md          # 测试计划（Test Agent 先写）
+├── tests.md          # 测试计划（Test Agent 先写）
+└── sprint-contract.md # 当前 sprint 双边契约（CONTRACT 阶段，见 ADR-004）
+```
+
+长 feature / 多 session 另需：
+
+```
+docs/product-specs/features/<feature-id>/handoff.json  # context reset 状态（ADR-004）
 ```
 
 工作流：
 
 ```
-Requirement → Architecture → Technical Design → Implementation Plan → Code → Tests
+Requirement → Architecture → Technical Design → Implementation Plan
+  → Sprint Contract → Code → Tests → Review
 ```
 
 ## 理由
@@ -37,4 +45,5 @@ Requirement → Architecture → Technical Design → Implementation Plan → Co
 - Requirement Agent：产出 requirements.md，不写代码
 - Architect Agent：产出 design.md + 必要时新 ADR
 - Planner Agent：产出 tasks.md，每任务 < 500 行、< 1 天
-- Coding Agent：**无四件套不得开工**
+- Coding Agent：**无四件套不得开工**；**无 APPROVED sprint-contract 不得 IMPLEMENT**（ADR-004）
+- Test Agent：CONTRACT 阶段批准 sprint-contract 中的 SC-* 可测性

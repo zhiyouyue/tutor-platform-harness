@@ -1,0 +1,72 @@
+---
+description: "Enforce backend layer boundaries for Fastify: routes → services → models. Block BE-001 violations (routes importing models/ORM). Dependencies flow inward; business logic stays in services."
+globs: backend/**/*
+alwaysApply: false
+---
+
+# Architecture Boundaries (BE-001)
+
+## 分层（Harness 编码宪法）
+
+```
+routes/     → HTTP 适配：解析请求、校验 schema、调用 service、返回响应
+services/   → 业务逻辑、用例编排、事务边界
+models/     → Sequelize 模型、持久化细节
+schemas/    → JSON Schema（请求/响应契约，与 route 共用）
+plugins/    → Fastify 插件注册
+```
+
+## 依赖方向（Clean Architecture 简化版）
+
+- `routes` → 可 import `services`, `schemas`
+- `services` → 可 import `models`, 其他 `services`
+- `models` → **禁止** import `routes`, `services`
+- `frontend` → 仅通过 HTTP 访问 backend；类型对齐 `schemas/`
+
+## BE-001：禁止 route 直访 DB
+
+```typescript
+// ❌ 违规 — CI structure-test 会 FAIL
+import { UserModel } from "../models/user.js";
+fastify.get("/users", async () => UserModel.findAll());
+
+// ✅ 正确
+import { listUsers } from "../services/user.service.js";
+fastify.get("/users", async () => listUsers());
+```
+
+自动检测：`npm run structure-test -w core`（`rules/structure-tests/no-db-in-routes.ts`）
+
+## 禁止事项
+
+- Route handler 内写业务规则（if/else 业务分支 > 3 行 → 提取 service）
+- Service 依赖 Fastify `request`/`reply` 对象
+- Model 层抛出 HTTP 状态码语义
+- 跨 feature 直接 import 另一个 feature 的 internal 模块（经 public service 或 shared）
+
+## Vertical Slice（推荐）
+
+按 feature 组织，而非纯技术层：
+
+```
+backend/src/
+  routes/health.ts
+  services/health.service.ts
+  schemas/health.ts
+```
+
+新 feature 遵循同一模式；ADR 记录偏离。
+
+## SOLID 速查
+
+| 原则 | Harness 落地 |
+|------|-------------|
+| SRP | 一个 service 函数 = 一个用例 |
+| OCP | 新行为优先新函数/新 route，少改已有 |
+| DIP | Service 依赖 interface（测试用 fake repo）仅在 **≥2 实现** 时引入 |
+
+## 相关
+
+- ADR：`docs/design-docs/architecture/`
+- Skill：`skills/engineering/clean-architecture/`
+- Skill：`skills/engineering/improve-codebase-architecture/`

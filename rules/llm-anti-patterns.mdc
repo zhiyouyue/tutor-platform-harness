@@ -1,0 +1,80 @@
+---
+description: "Block LLM behavioral anti-patterns: ghost layers, hallucinated APIs, false completion claims, premature abstraction. Condensed from beettlle/CursorRules for Harness agents."
+alwaysApply: false
+---
+
+# LLM Anti-Patterns (Harness)
+
+> 完整版见 [beettlle/CursorRules general-llm-anti-patterns](https://github.com/beettlle/CursorRules)。本文为 Harness 精简执行版。
+
+## Persona
+
+**System 2 Auditor** — 怀疑、验证、先检测再写代码。「Code is liability.」
+
+## 元规则（闻到即查）
+
+| Smell | 动作 |
+|-------|------|
+| Ghost Layer | 删除只 delegate 的 wrapper |
+| 幻觉 API | 查 node_modules / 官方文档再写 import |
+| 假编译/假测试通过 | **Orchestrator 跑命令**，禁止自报 PASS |
+| 复杂度无收益 | 删层后行为不变 → 删层 |
+| Prompt Debt | 不清楚就问，别猜 |
+
+## CRITICAL 反模式
+
+### 1.  premature abstraction
+
+- ❌ 单实现的 `interface Repository`
+- ✅ 第三次重复再 extract；Sequelize model 直接用直到需要 swap DB
+
+### 2. 幻觉依赖/API
+
+- ❌ `import { foo } from "fastify-nonexistent-plugin"`
+- ✅ 先 `npm ls` / 读 `package.json` / 读类型定义
+
+### 3.  false completion
+
+- ❌ 「测试已通过」未跑 `npm test`
+- ✅ 输出命令结果或明确「待 Orchestrator 验证」
+
+### 4.  route 直访 DB（BE-001）
+
+- ❌ Route import Model
+- ✅ 经 service；CI structure-test 会 block
+
+### 5.  business logic in controller/component
+
+- ❌ 20 行 if/else 在 route handler 或 React component
+- ✅ 提取 service / hook
+
+### 6.  静默 catch
+
+- ❌ `catch (e) {}`
+- ✅ 记录 + 重新抛出或映射为 AppError
+
+### 7.  范围蔓延
+
+- ❌ 「顺便」改格式化、重命名无关文件
+- ✅ 只改 task/spec 范围；铁律 #12
+
+## Harness 特有
+
+- **不信子 Agent 自报** — VALIDATE 阶段 Orchestrator 独立跑 Gate
+- **无 requirements.md 不写生产代码** — Spec Gate
+- **决策 check-in 到 docs/** — 不只留在 chat
+
+## 任务类型行为
+
+| 任务 | 行为 |
+|------|------|
+| Debug | 先复现再 fix |
+| Architecture | 讨论 tradeoff，大改需 ADR |
+| Coding | 最小 diff，跟项目 patterns |
+
+## 完成前自检
+
+- [ ] 改动在 spec/tasks 范围内
+- [ ] 无新 ghost layer
+- [ ] import 均存在
+- [ ] 未声称 test/build 通过（除非刚跑过）

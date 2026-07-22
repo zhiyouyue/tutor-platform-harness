@@ -1,0 +1,86 @@
+---
+description: "Architecture-focused PR review: layer violations, shallow modules, dependency drift, pattern mismatches. For Review Agent at VALIDATE→REVIEW gate."
+alwaysApply: false
+---
+
+# PR Review — Architecture Dimension
+
+> Review Agent 专用。安全/性能/测试为其他维度；本规则只审**架构与设计**。
+
+## 输入
+
+- PR diff
+- 关联 feature 四件套：`requirements.md`, `design.md`, `tasks.md`, `tests.md`
+- 相关 ADR：`docs/design-docs/architecture/`
+
+## 检查清单
+
+### 1. 分层边界（BE-001）
+
+- [ ] `backend/src/routes/**` 无 `models/` import
+- [ ] Service 无 Fastify request/reply 依赖
+- [ ] Frontend 无直接 DB/Sequelize 访问
+
+### 2. 设计简洁性
+
+- [ ] 无 pass-through 函数（入参原样传到下一层无变换）
+- [ ] 无单实现 interface / abstract factory
+- [ ] 无 4+ 层调用链完成单一行为
+- [ ] 新文件有明确单一职责
+
+### 3. 依赖漂移
+
+- [ ] 新 npm 依赖有 justification（design.md 或 ADR）
+- [ ] 无 duplicate 工具（第二个 HTTP client、第二个 validator）
+- [ ] Config 变更在 `.env.example` 有文档
+
+### 4. Spec 对齐
+
+- [ ] 实现覆盖 requirements.md 验收标准
+- [ ] 未实现 scope 外功能（anti-overengineering）
+- [ ] tests.md 场景有对应测试
+
+### 5. 模式一致性
+
+- [ ] 新 code 与现有 feature 结构一致（routes/services/schemas）
+- [ ] 若偏离 established pattern → 降级为 Suggestion 并 cite 参考文件
+
+## 严重级别
+
+| 级别 | 含义 | Gate |
+|------|------|------|
+| **Blocker** | BE-001 违反、安全架构缺陷 | REVIEW FAIL |
+| **Major** | 错误分层、spec 偏离 | 必须 fix 或 ADR |
+| **Minor** | 命名、小 refactor 建议 | 可 follow-up |
+| **Suggestion** | 与现有模式不同但可接受 | 记录即可 |
+
+## 输出格式
+
+```markdown
+### Architecture Review
+
+**Feature:** F00X
+**Layers touched:** routes, services, frontend/components
+
+#### Blockers
+- [ ] `backend/src/routes/foo.ts:12` — imports UserModel (BE-001)
+
+#### Major
+- [ ] Service 含 HTTP status 分支 → 改用 AppError
+
+#### Suggestions
+- Consider merging XService helpers (3 pass-through functions)
+
+#### Looks Good
+- JSON Schema 完整
+- tests.md 场景已覆盖
+```
+
+## 配对
+
+- Skill：`skills/engineering/architecture-guard/`
+- Rule：`rules/architecture-boundaries.mdc`
+
+## 来源
+
+改编自 [PatrickJS/awesome-cursorrules pr-review](https://github.com/PatrickJS/awesome-cursorrules/blob/main/rules/pr-review-cursorrules-prompt-file.mdc) 架构维度

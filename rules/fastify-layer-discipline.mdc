@@ -1,0 +1,70 @@
+---
+description: "Fastify production patterns: thin routes, fat services, JSON Schema on every route, typed provider adapters, idempotent handlers where needed. Adapted from fastapi-production-architecture for Node/Fastify."
+globs: backend/**/*
+alwaysApply: false
+---
+
+# Fastify Layer Discipline
+
+## Route 职责（Thin Controller）
+
+Route 文件只做：
+
+1. 注册 JSON Schema（`schema` 选项）
+2. 解析/校验输入（Fastify 自动完成）
+3. 调用单一 service 函数
+4. 映射结果 → HTTP 响应
+5. 捕获 service 抛出的 domain error → 标准 error response
+
+**目标：每个 handler ≤ 15 行。**
+
+## Service 职责
+
+- 包含全部业务规则与编排
+- 接收 plain object / DTO，不接收 `FastifyRequest`
+- 抛出 typed domain errors（`AppError` 子类），不返回 HTTP status
+- 数据库访问仅在此层（通过 Sequelize models）
+
+## JSON Schema 强制
+
+每个 route 必须声明 `schema`：
+
+```typescript
+fastify.get("/health", {
+  schema: {
+    response: { 200: healthResponseSchema },
+  },
+  handler: async () => getHealthStatus(),
+});
+```
+
+Schema 文件放 `backend/src/schemas/`，frontend 类型手动对齐或后续 codegen。
+
+## 错误映射（route 层统一）
+
+```typescript
+// route 层 catch AppError → reply.code(err.statusCode).send({ error: err.code, message: err.message })
+// 未知错误 → 500，不泄漏 stack 到 client
+```
+
+详见 `rules/error-handling.mdc`。
+
+## 反模式（LLM 常犯）
+
+| 反模式 | 修复 |
+|--------|------|
+| Route 内 `sequelize.transaction` | 移到 service |
+| 多个无关 endpoint 堆在一个 route 文件 | 按 resource 拆分 |
+| Schema 与 handler 返回值不一致 | Schema 为 source of truth |
+| `any` 绕过 schema | 用 TypeScript + JSON Schema 双重约束 |
+
+## Bulkhead（可选，高负载 feature）
+
+- 外部 API 调用隔离到 `services/adapters/`
+- 超时 + 熔断在 adapter 层，不在 route
+
+## 测试接缝
+
+- **Route**：integration test（supertest / inject），测 HTTP 契约
+- **Service**：unit test，mock models
+- 不在 route test 里 mock Sequelize

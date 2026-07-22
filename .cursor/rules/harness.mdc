@@ -1,12 +1,13 @@
 # Harness 工程规则（Cursor）
 
-本目录规则补充 `AGENTS.md`。Agent 须遵守：
+本目录为 Cursor 入口；规范源在 `rules/` 与 `skills/engineering/`。
 
-1. **无规格不写生产代码** — 见 ADR-003
+1. **无规格不写生产代码** — feature 四件套
 2. **单一职责** — 不做 Super Agent
-3. **每个变更须 Review** — Creator-Verifier
-4. **测试先于实现** — Test Agent 的 tests.md
-5. **main 永远绿** — Gate 不过不 merge
+3. **每个变更须 Review** — Creator-Verifier + architecture-guard
+4. **测试先于实现** — tests.md + tdd skill
+5. **main 永远绿** — Orchestrator Gate
 6. **小步提交** — < 500 行 / PR
 
-详细权限见 `rules/agent-permissions.json`。
+详细路由见 @harness-rules-index.mdc 与 `rules/rule-index.mdc`。
+权限见 `rules/agent-permissions.json`。

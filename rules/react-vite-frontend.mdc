@@ -1,0 +1,65 @@
+---
+description: "React + Vite frontend rules: components <200 lines, logic in hooks/services, types aligned with backend JSON Schema, no business logic in JSX."
+globs: frontend/**/*
+alwaysApply: false
+---
+
+# React + Vite Frontend
+
+## 分层
+
+```
+components/   → 纯展示 + 组合（< 200 行）
+hooks/        → 状态、副作用、业务编排
+services/     → API 调用（api.ts 封装 fetch）
+types/        → 与 backend schemas 对齐的 TS 类型
+```
+
+## 组件规则
+
+- 单文件 < **200 行**（AGENTS.md 铁律）
+- 业务逻辑不在 JSX 内：提取 `useXxx` hook 或 `services/`
+- Props 用 explicit interface，禁止 `any`
+- 无 prop drilling > 2 层 → Context 或 composition
+
+## API 调用
+
+- 统一经 `frontend/src/services/api.ts`
+- 不在 component 内裸 `fetch`
+- 错误处理：service 层 throw/return Result，hook 层转 UI state
+
+```typescript
+// services/api.ts — 集中 base URL、headers、error parse
+export async function getHealth(): Promise<HealthResponse> { ... }
+```
+
+## 类型对齐
+
+- `frontend/src/types/` 字段名与 `backend/src/schemas/` 一致
+- Schema 变更时同步更新 types（PR 必须同时改 backend schema + frontend types）
+
+## 状态管理
+
+- 本地 UI 状态：`useState` / `useReducer`
+- 服务端状态：优先简单 fetch + hook；复杂时再引入 TanStack Query（须 ADR）
+- 禁止为简单页面引入全局 store
+
+## 测试
+
+- 组件：Vitest + Testing Library，测用户可见行为
+- Hook：单独测 hook（`renderHook`）
+- 不 mock 实现细节，mock `services/api`
+
+## 反模式
+
+| 反模式 | 修复 |
+|--------|------|
+| 500 行 God Component | 拆子组件 + hook |
+| `useEffect` _fetch 无 cleanup | abort controller |
+| 重复 API 类型定义 | 抽到 `types/` |
+| CSS-in-JS 过度嵌套 | 用 `index.css` 或 CSS modules 保持一致 |
+
+## 构建
+
+- `vite.config.ts` 代理 dev API 到 backend（若配置）
+- 环境变量：`import.meta.env.VITE_*`，secrets 不进 frontend bundle

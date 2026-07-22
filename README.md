@@ -13,7 +13,8 @@
 │   ├── design-docs/          # 架构、ADR
 │   ├── product-specs/        # Feature 四件套
 │   ├── exec-plans/           # 执行计划
-│   ├── templates/feature/    # requirements/design/tasks/tests 模板
+│   ├── templates/feature/    # requirements/design/tasks/tests/sprint-contract 模板
+│   ├── templates/handoff.json
 │   ├── SECURITY.md
 │   └── QUALITY.md
 ├── knowledge/
@@ -59,10 +60,12 @@ node scripts/worktree/create.mjs TICKET-001
 ## Feature 工作流
 
 ```
-Requirement → Design → Tasks → Tests → Code → Review → Merge
+Requirement → Design → Tasks → Tests → Sprint Contract → Code → Review → Merge
 ```
 
-每个 feature 在 `docs/product-specs/features/<id>/` 创建四件套（复制 `docs/templates/feature/`）。
+每个 feature 在 `docs/product-specs/features/<id>/` 创建四件套 + 当前 sprint 的 `sprint-contract.md`（复制 `docs/templates/feature/`）。
+
+长 session 跨天续跑：Orchestrator 写 `handoff.json`（模板 `docs/templates/handoff.json`），新 session 只加载 `resumeBundle`。
 
 ## 核心原则
 

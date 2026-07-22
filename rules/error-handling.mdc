@@ -1,0 +1,83 @@
+---
+description: "Production error handling: typed domain errors, fail-fast validation, structured logging, no silent catches. Use in backend services and routes."
+globs: backend/src/**
+alwaysApply: false
+---
+
+# Error Handling
+
+## 错误分层
+
+```
+DomainError (services 抛出)
+    ↓
+ErrorMapper (route/plugin 捕获 → HTTP)
+    ↓
+Client JSON response
+```
+
+## Domain Error 模式
+
+```typescript
+export class AppError extends Error {
+  constructor(
+    public readonly code: string,
+    message: string,
+    public readonly statusCode: number = 500,
+  ) {
+    super(message);
+  }
+}
+
+export class NotFoundError extends AppError {
+  constructor(resource: string) {
+    super("NOT_FOUND", `${resource} not found`, 404);
+  }
+}
+```
+
+- Service **throw**，不 return `{ ok: false }`
+- 可预期错误用 typed error；不可预期让 Fastify error handler 处理
+
+## Fail Fast
+
+- 入口校验交给 JSON Schema + service 前置 guard
+- 禁止 empty `catch {}` 吞掉错误
+- 禁止 `catch (e) { return null }` 掩盖失败
+
+## 日志
+
+- 4xx：warn 级别，不 log stack（除非 debug）
+- 5xx：error 级别，log requestId + stack
+- 禁止 log 密码、token、PII
+
+## Route Handler 模板
+
+```typescript
+handler: async (request, reply) => {
+  try {
+    const result = await doSomething(request.body);
+    return reply.code(200).send(result);
+  } catch (err) {
+    if (err instanceof AppError) {
+      return reply.code(err.statusCode).send({ error: err.code, message: err.message });
+    }
+    request.log.error(err);
+    return reply.code(500).send({ error: "INTERNAL_ERROR", message: "Internal server error" });
+  }
+};
+```
+
+## Sequelize 错误映射
+
+| Sequelize | Domain |
+|-----------|--------|
+| UniqueConstraintError | `CONFLICT` 409 |
+| ValidationError | `VALIDATION_ERROR` 400 |
+| 其他 | 500 + log |
+
+## 禁止
+
+- 向 client 返回 stack trace
+- 用 HTTP status 作为业务分支（`if (status === 404)` 在 service 内）
+- 字符串拼接错误消息含用户输入（XSS 风险在 HTML 场景）

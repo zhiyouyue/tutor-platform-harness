@@ -1,0 +1,53 @@
+---
+description: "Keep changes scoped to the user's request. Block speculative features, premature abstraction, and scope creep. YAGNI aligned with Harness iron law #12 (<500 lines/PR)."
+alwaysApply: false
+---
+
+# Anti-Over-Engineering
+
+## 核心原则
+
+**只做用户/spec 要求的事。** 代码是负债，不是资产。
+
+## 必须遵守
+
+1. **YAGNI** — 不为「以后可能需要」写代码
+2. **小步变更** — PR < 500 行（铁律 #12）
+3. **第三用法再抽象** — 2 个相似 ≠ 立即 extract base class
+4. **删除优于添加** — 能删 wrapper 就删
+5. ** boring tech** — 用项目已有栈（Fastify, Sequelize, React, Vitest）
+
+## 触发升级（需 ADR / 人类批准）
+
+- 新依赖（npm package）
+- 新架构层或新 top-level 目录
+- 引入 ORM 以外的 query builder
+- 全局状态管理库
+- Microservice 拆分
+
+## LLM 常见过度工程
+
+|  smell | 动作 |
+|--------|------|
+| `AbstractXFactory` 仅 1 实现 | 删掉，用具体类 |
+| Generic `<T>` 无第二类型参数用途 | 具体类型 |
+| Config 对象 20 字段用 3 个 | 删未用字段 |
+| 「顺便重构」无关文件 | Revert，单独 PR |
+| Middleware 链 > 5 层无度量 | 简化 |
+
+## 与 PEV 的关系
+
+| 阶段 | 约束 |
+|------|------|
+| PLAN | tasks.md 原子任务，每 task 可独立验证 |
+| IMPLEMENT | 只改 tasks.md 列出的文件 |
+| REVIEW | Review Agent 标记 scope creep |
+
+## 配对 Skill
+
+- 设计澄清：`skills/engineering/grill-me/`（决策树走完后才写代码）
+- 架构：`skills/engineering/codebase-design/`（deep module，非更多文件）
+
+## 来源
+
+改编自 [PatrickJS/awesome-cursorrules anti-overengineering](https://github.com/PatrickJS/awesome-cursorrules/blob/main/rules/anti-overengineering.mdc)

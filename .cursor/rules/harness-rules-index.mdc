@@ -1,0 +1,26 @@
+---
+description: "Harness rules index — routes agents to rules/ directory. Load rule-index for full routing table."
+alwaysApply: true
+---
+
+# Harness Rules（Cursor）
+
+宪法：`AGENTS.md`（Always Apply）
+
+持久约束源目录：`rules/*.mdc`。完整索引见：
+
+- @rules/rule-index.mdc
+- @rules/README.md
+
+## 快速路由
+
+| 编辑区域 | 加载 |
+|----------|------|
+| `backend/**` | architecture-boundaries, fastify-layer-discipline, api-design, error-handling |
+| `frontend/**` | react-vite-frontend |
+| `**/*.test.ts` | testing-tdd |
+| PR Review | pr-review-architecture, llm-anti-patterns |
+
+Skills 工作流：`skills/engineering/README.md`
+
+Pre-Flight：feature 四件套 + ADR + `rules/agent-permissions.json`

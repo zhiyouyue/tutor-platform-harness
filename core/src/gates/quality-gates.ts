@@ -1,7 +1,8 @@
 import { execSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { GateResult } from "../orchestrator/state-machine.js";
+import { verifyHandoffExists } from "../orchestrator/handoff.js";
 
 export interface GateCheck {
   name: string;
@@ -37,6 +38,35 @@ export function verifySpecExists(featureId: string): GateResult {
   const missing = required.filter((f) => !existsSync(join(base, f)));
   if (missing.length > 0) {
     console.error(`Spec gate failed for ${featureId}: missing ${missing.join(", ")}`);
+    return "FAIL";
+  }
+  return "PASS";
+}
+
+const SPRINT_CONTRACT_APPROVED = /Status:\s*APPROVED/i;
+
+/** CONTRACT 阶段 Gate — sprint-contract.md 须存在且 Status: APPROVED */
+export function verifySprintContractApproved(featureId: string): GateResult {
+  const path = join(ROOT, "docs/product-specs/features", featureId, "sprint-contract.md");
+  if (!existsSync(path)) {
+    console.error(`Contract gate failed for ${featureId}: missing sprint-contract.md`);
+    return "FAIL";
+  }
+  const content = readFileSync(path, "utf-8");
+  if (!SPRINT_CONTRACT_APPROVED.test(content)) {
+    console.error(
+      `Contract gate failed for ${featureId}: sprint-contract.md must contain "Status: APPROVED"`,
+    );
+    return "FAIL";
+  }
+  return "PASS";
+}
+
+/** Context reset 后续 session — handoff.json 须存在且可解析 */
+export function verifyHandoffArtifact(featureId: string): GateResult {
+  const result = verifyHandoffExists(featureId);
+  if (!result.ok) {
+    console.error(`Handoff gate failed for ${featureId}: ${result.error}`);
     return "FAIL";
   }
   return "PASS";

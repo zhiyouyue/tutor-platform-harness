@@ -1,0 +1,71 @@
+---
+description: "TDD rules aligned with Harness PEV: red-green loop, vertical slices, tests.md as source of truth, test at pre-agreed seams only. Use when writing or reviewing tests."
+globs: "**/*.test.ts,**/*.spec.ts,**/tests/**"
+alwaysApply: false
+---
+
+# Testing & TDD (Harness PEV)
+
+## 铁律 #4：测试是 Source of Truth
+
+- `docs/product-specs/features/<id>/tests.md` **先于**生产代码
+- Test Agent 写 tests.md；Coding Agent 实现使测试通过
+- Orchestrator 跑 `npm test`，**不信 Agent 自报**
+
+## 红-绿-重构循环
+
+1. **Red** — 写一个失败测试（行为描述，非实现）
+2. **Green** — 最小代码使测试通过
+3. **Refactor** — 在 REVIEW 阶段做，不在实现循环内过度重构
+
+## 垂直切片（禁止水平切片）
+
+```
+❌ 写完全部测试 → 再写全部实现
+✅ 一个 seam → 一个测试 → 一个实现 → 重复
+```
+
+## 测试接缝（Seams）
+
+测试只打在**预确认的 public 边界**：
+
+| 层 | 测什么 | 工具 |
+|----|--------|------|
+| Route | HTTP 契约、status、body shape | Fastify inject / supertest |
+| Service | 业务规则 | Vitest + mock models |
+| Component | 用户可见行为 | Vitest + Testing Library |
+| E2E | 关键用户路径 | Playwright（Browser Test 分层 P002） |
+
+写测试前声明 seams，与 spec/tests.md 一致。
+
+## 好测试 vs 坏测试
+
+**好**：`it("returns 404 when tutor not found")` — 读像规格
+
+**坏**：
+- 测 private 函数
+- `expect(add(a,b)).toBe(a+b)` 同义反复
+- Mock 内部 collaborator 导致 refactor 就碎
+
+## 项目命令
+
+```bash
+npm test                    # 全量
+npm test -w backend         # backend only
+npm test -w frontend        # frontend only
+npm run structure-test -w core  # BE-001 结构门禁
+```
+
+## tests.md 模板要点
+
+每个 feature 的 tests.md 应含：
+
+- 验收场景（Given/When/Then 或表格）
+- 单元 / 集成 / E2E 分层
+- 不测什么（Out of Scope）
+- 与 tasks.md 的 traceability
+
+## Skill 配对
+
+- 实现阶段：`skills/engineering/tdd/`
+- Review：`skills/engineering/architecture-guard/`（架构维度）

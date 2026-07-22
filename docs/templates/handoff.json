@@ -1,0 +1,60 @@
+{
+  "$schema": "../../core/src/orchestrator/handoff.schema.json",
+  "version": 1,
+  "workUnitId": "WU-XXX",
+  "featureId": "FEAT-XXX",
+  "phase": "IMPLEMENT",
+  "sessionId": "session-001",
+  "createdAt": "2026-07-22T00:00:00.000Z",
+  "reason": "context_reset",
+  "git": {
+    "branch": "feat/FEAT-XXX",
+    "commit": "abc1234",
+    "worktreePath": ".worktrees/WU-XXX"
+  },
+  "progress": {
+    "completedTaskIds": ["T-0"],
+    "activeTaskId": "T-1",
+    "blocked": [],
+    "percentEstimate": 35
+  },
+  "sprintContract": {
+    "path": "docs/product-specs/features/FEAT-XXX/sprint-contract.md",
+    "status": "APPROVED",
+    "activeCriteriaIds": ["SC-1", "SC-2"]
+  },
+  "knownIssues": [
+    {
+      "id": "KI-1",
+      "severity": "medium",
+      "summary": "Level editor delete key handler incomplete",
+      "file": "frontend/src/...",
+      "line": 892
+    }
+  ],
+  "nextSteps": [
+    "Complete SC-2 integration test",
+    "Run VALIDATE gate"
+  ],
+  "artifacts": {
+    "requirements": "docs/product-specs/features/FEAT-XXX/requirements.md",
+    "design": "docs/product-specs/features/FEAT-XXX/design.md",
+    "tasks": "docs/product-specs/features/FEAT-XXX/tasks.md",
+    "tests": "docs/product-specs/features/FEAT-XXX/tests.md",
+    "sprintContract": "docs/product-specs/features/FEAT-XXX/sprint-contract.md",
+    "execPlan": null
+  },
+  "contextBudget": {
+    "estimatedTokensUsed": 120000,
+    "maxTokensBeforeReset": 150000,
+    "stepCount": 42,
+    "maxStepsBeforeReset": 80,
+    "resetRecommended": true
+  },
+  "resumeBundle": [
+    "AGENTS.md",
+    "docs/product-specs/features/FEAT-XXX/handoff.json",
+    "docs/product-specs/features/FEAT-XXX/sprint-contract.md",
+    "docs/product-specs/features/FEAT-XXX/tasks.md"
+  ]
+}

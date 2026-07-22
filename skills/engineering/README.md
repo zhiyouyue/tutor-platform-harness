@@ -1,21 +1,35 @@
-# Agent Skills
+# Engineering Skills — Harness PEV 工作流
 
-Engineering skills for the Harness workflow. Download from [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/engineering):
+> Skills 写「工作流」：用户或 Agent 按 PEV 阶段按需加载。
+> 规则（法律）见 `rules/`；宪法见 `AGENTS.md`。
 
-| Skill | 用途 | 阶段 |
-|-------|------|------|
-| `grill-me` | 设计澄清 | PLAN |
-| `write-a-prd` | 写 PRD → requirements.md | PLAN |
-| `improve-codebase-architecture` | 大阶段重构 | Phase 4 |
+## PEV 阶段映射
 
-## 安装
+| PEV 阶段 | Skill | 路径 |
+|----------|-------|------|
+| DECOMPOSE / 设计澄清 | grill-me | [grill-me/](./grill-me/SKILL.md) |
+| PLAN / 写规格 | to-spec | [to-spec/](./to-spec/SKILL.md) |
+| PLAN / 领域语言 | domain-modeling | [domain-modeling/](./domain-modeling/SKILL.md) |
+| IMPLEMENT | tdd | [tdd/](./tdd/SKILL.md) |
+| IMPLEMENT / REVIEW | clean-architecture | [clean-architecture/](./clean-architecture/SKILL.md) |
+| REVIEW / 持续改进 | improve-codebase-architecture | [improve-codebase-architecture/](./improve-codebase-architecture/SKILL.md) |
+| REVIEW | architecture-guard | [architecture-guard/](./architecture-guard/SKILL.md) |
+| 设计 vocabulary | codebase-design | [codebase-design/](./codebase-design/SKILL.md) |
+
+## 安装上游（可选）
 
 ```bash
-# 示例：克隆到 skills/engineering/
-git clone --depth 1 --filter=blob:none --sparse \
-  https://github.com/mattpocock/skills.git /tmp/mattpocock-skills
-cd /tmp/mattpocock-skills && git sparse-checkout set skills/engineering
-cp -r skills/engineering/* skills/engineering/
+# 与本地 skill 对照/更新时使用
+npx skills add mattpocock/skills
+npx skills add wondelai/skills/clean-architecture
 ```
 
-或手动复制 `grill-me`、`write-a-prd`、`improve-codebase-architecture` 到本目录。
+本地 `skills/engineering/` 为 Harness 适配版，优先于上游 generic 版本。
+
+## 来源
+
+| Skill | 上游 |
+|-------|------|
+| improve-codebase-architecture, codebase-design, domain-modeling, grill-me, to-spec, tdd | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| clean-architecture | [wondelai/skills](https://github.com/wondelai/skills) |
+| architecture-guard | [HoangNguyen0403/agent-skills-standard](https://github.com/HoangNguyen0403/agent-skills-standard) |

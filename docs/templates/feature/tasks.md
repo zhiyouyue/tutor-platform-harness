@@ -4,6 +4,8 @@
 - **Planner**: Planner Agent
 
 > 每个任务：< 500 行 · < 1 天 · 单一职责 · 独立可验证
+>
+> **CONTRACT 阶段**：每个进行中的任务须对应一份 `sprint-contract.md`（`Status: APPROVED` 后再 IMPLEMENT）。见 ADR-004。
 
 ## 任务列表
 

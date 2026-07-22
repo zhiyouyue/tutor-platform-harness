@@ -1,0 +1,72 @@
+---
+description: "REST API design for Fastify: JSON Schema contracts, consistent status codes, pagination patterns, no sensitive field leakage. Use when adding or changing API endpoints."
+globs: backend/src/routes/**,backend/src/schemas/**
+alwaysApply: false
+---
+
+# API Design (Fastify + JSON Schema)
+
+## REST 约定
+
+| 操作 | Method | 成功码 | 路径 |
+|------|--------|--------|------|
+| 列表 | GET | 200 | `/resources` |
+| 单条 | GET | 200 | `/resources/:id` |
+| 创建 | POST | 201 | `/resources` |
+| 全量更新 | PUT | 200 | `/resources/:id` |
+| 部分更新 | PATCH | 200 | `/resources/:id` |
+| 删除 | DELETE | 204 | `/resources/:id` |
+
+## 标准错误响应
+
+```json
+{
+  "error": "VALIDATION_ERROR",
+  "message": "Human-readable message",
+  "details": []
+}
+```
+
+| 场景 | Status | error code |
+|------|--------|------------|
+| 校验失败 | 400 | `VALIDATION_ERROR` |
+| 未认证 | 401 | `UNAUTHORIZED` |
+| 无权限 | 403 | `FORBIDDEN` |
+| 不存在 | 404 | `NOT_FOUND` |
+| 冲突 | 409 | `CONFLICT` |
+| 服务端 | 500 | `INTERNAL_ERROR` |
+
+## Schema 规则
+
+- 每个 endpoint 必须有 `body` / `params` / `querystring` / `response` 中适用的部分
+- Response schema 禁止包含 `password`, `token`, `secret` 等敏感字段
+- 使用 `$id` 便于 `$ref` 复用（如 `ErrorResponse`）
+- 变更 breaking API → 更新 ADR + feature 四件套
+
+## 分页（列表 endpoint）
+
+```json
+{
+  "data": [],
+  "meta": { "page": 1, "pageSize": 20, "total": 100 }
+}
+```
+
+Query: `?page=1&pageSize=20`，schema 中 `minimum: 1`，`maximum: 100`。
+
+## 版本化
+
+- 当前：`/api/v1/...` 前缀（在 `app.ts` 统一注册）
+- Breaking change → 新 major 或新 route prefix，旧版 deprecation period 写 ADR
+
+## Frontend 对齐
+
+- `frontend/src/services/api.ts` 调用路径与 backend 一致
+- `frontend/src/types/` 与 `backend/src/schemas/` 字段名一致（camelCase）
+
+## Review 检查清单
+
+- [ ] 新 endpoint 有 JSON Schema
+- [ ] 错误码与全局约定一致
+- [ ] 无 N+1（service 层用 include/join 或 batch）
+- [ ] 写操作有 idempotency key（支付/创建类，若 spec 要求）

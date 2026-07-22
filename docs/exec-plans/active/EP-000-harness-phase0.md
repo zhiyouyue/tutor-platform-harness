@@ -15,7 +15,9 @@
 - [x] core/ Orchestrator 骨架
 - [x] rules/ 权限边界
 - [x] CI 门禁
-- [ ] 第一个 feature 四件套示例
+- [x] Sprint Contract 模板 + CONTRACT 阶段（ADR-004）
+- [x] Handoff artifact + context reset 策略（ADR-004）
+- [ ] 第一个 feature 四件套 + sprint-contract 示例
 - [ ] mattpocock skills 下载
 
 ## 验证

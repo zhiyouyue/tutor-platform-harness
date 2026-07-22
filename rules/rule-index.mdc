@@ -1,0 +1,41 @@
+---
+description: "Load the correct Harness rule when working on architecture, API, frontend, tests, PR review, or LLM anti-patterns. ACTION: match task → TRIGGER: load one rule file → OUTCOME: scoped constraints without token waste."
+alwaysApply: false
+---
+
+# Harness Rules Index
+
+按需加载 `rules/` 下的规则文件。不要一次加载全部。
+
+## 路由表
+
+| 用户在做什么 | 加载规则 |
+|-------------|----------|
+| 改 backend 分层、import 方向、BE-001 | `rules/architecture-boundaries.mdc` + `rules/fastify-layer-discipline.mdc` |
+| 新增/改 Fastify route 或 JSON Schema | `rules/api-design.mdc` |
+| 改 backend 错误处理、异常映射 | `rules/error-handling.mdc` |
+| 改 React 组件、hooks、前端 API 调用 | `rules/react-vite-frontend.mdc` |
+| 写/改测试 | `rules/testing-tdd.mdc` |
+| 范围蔓延、抽象过早、功能膨胀 | `rules/anti-overengineering.mdc` |
+| 幻觉 API、Ghost Layer、假编译通过 | `rules/llm-anti-patterns.mdc` |
+| PR / VALIDATE→REVIEW 架构审查 | `rules/pr-review-architecture.mdc` |
+
+## PEV 阶段默认规则
+
+| 阶段 | 建议加载 |
+|------|----------|
+| DECOMPOSE / PLAN | `anti-overengineering.mdc` |
+| IMPLEMENT (backend) | `architecture-boundaries.mdc`, `fastify-layer-discipline.mdc`, `api-design.mdc` |
+| IMPLEMENT (frontend) | `react-vite-frontend.mdc` |
+| VALIDATE | `testing-tdd.mdc` |
+| REVIEW | `pr-review-architecture.mdc`, `llm-anti-patterns.mdc` |
+
+## Skills 配对
+
+| 工作流 Skill | 常配合 Rules |
+|-------------|-------------|
+| `skills/engineering/grill-me/` | — |
+| `skills/engineering/to-spec/` | `api-design.mdc` |
+| `skills/engineering/tdd/` | `testing-tdd.mdc` |
+| `skills/engineering/improve-codebase-architecture/` | `architecture-boundaries.mdc` |
+| `skills/engineering/architecture-guard/` | `pr-review-architecture.mdc` |
