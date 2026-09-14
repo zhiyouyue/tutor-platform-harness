@@ -3,8 +3,16 @@ import {
   approveCertification,
   fetchPendingCertifications,
   rejectCertification,
-  type PendingCertification,
 } from "../../services/api";
+
+type PendingCertification = {
+  id: number;
+  realName: string | null;
+  account: string | null;
+  currentTitle: string | null;
+  city: string | null;
+  submittedAt: string;
+};
 
 export default function Certifications() {
   const [items, setItems] = useState<PendingCertification[]>([]);
@@ -17,7 +25,7 @@ export default function Certifications() {
     setError("");
     const res = await fetchPendingCertifications();
     if (res.success) {
-      setItems(res.data.items);
+      setItems(res.data.items as PendingCertification[]);
     } else {
       setError(res.message || "加载失败");
     }

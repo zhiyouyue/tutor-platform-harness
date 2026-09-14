@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { login, registerExpert, type AuthUser } from "../../services/api";
+import { login, registerExpert, verifyMagicLink, type AuthUser } from "../../services/api";
 import { useAuth, type AppRole } from "../../contexts/AuthContext";
 
 const ROLE_LABEL: Record<AppRole, string> = {
@@ -22,6 +22,7 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
   const [password, setPassword] = useState("");
   const [realName, setRealName] = useState("");
   const [phone, setPhone] = useState("");
+  const [magicToken, setMagicToken] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -140,7 +141,35 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
           </button>
         </form>
 
-        {role !== "expert" && (
+        {role === "student" && (
+          <div className="mt-6 pt-6 border-t border-[#E2E8F0]">
+            <p className="text-sm font-medium text-[#334155] mb-2">Magic Link 登录</p>
+            <input
+              className="w-full border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm mb-2"
+              placeholder="粘贴运营生成的 token"
+              value={magicToken}
+              onChange={(e) => setMagicToken(e.target.value)}
+            />
+            <button
+              type="button"
+              disabled={loading || !magicToken}
+              className="w-full py-2 rounded-lg border border-[#0891B2] text-[#0891B2] text-sm"
+              onClick={async () => {
+                setLoading(true);
+                setError("");
+                const res = await verifyMagicLink(magicToken.trim());
+                if (!res.success) { setError(res.message); setLoading(false); return; }
+                saveAuth(res.data.token, res.data.user);
+                onSuccess();
+                setLoading(false);
+              }}
+            >
+              使用链接登录
+            </button>
+          </div>
+        )}
+
+        {role !== "expert" && role !== "student" && (
           <p className="mt-4 text-xs text-[#94A3B8]">
             开发账号：admin/admin123 · ops1/ops123456
           </p>

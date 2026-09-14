@@ -35,7 +35,7 @@ export default function MentorApp({ onBack }: Props) {
           onOpenDelivery={() => setPage("delivery")}
         />
       )}
-      {page === "delivery" && <DeliverySpace />}
+      {page === "delivery" && <DeliverySpace projectId={selectedProjectId} />}
       {page === "capabilities" && <Capabilities />}
       {page === "schedule" && <Schedule />}
       {page === "income" && <Income />}

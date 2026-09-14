@@ -53,4 +53,5 @@ feat(scope): 简短标题
 
 - [x] Step 0 — `a90aeb2` schema 已落库
 - [x] Step 1 — `655aeac` Auth + 专家档案 + admin 认证联调
-- [ ] Step 2–8
+- [x] Step 2–7 — 字典/能力/学员/项目/交付/收入/学员 magic link（后端+前端联调）
+- [ ] Step 8 — mentor/supervisor 目录重命名为 expert/ops（可选）
