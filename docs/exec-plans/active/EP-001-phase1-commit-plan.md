@@ -51,6 +51,6 @@ feat(scope): 简短标题
 
 ## 当前进度
 
-- [x] Step 0 — schema 已落库
-- [ ] Step 1 — 进行中
+- [x] Step 0 — `a90aeb2` schema 已落库
+- [x] Step 1 — `655aeac` Auth + 专家档案 + admin 认证联调
 - [ ] Step 2–8
