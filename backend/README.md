@@ -1,47 +1,35 @@
-# Backend — Fastify + Sequelize 应用
+# 导师平台 Backend
 
-由 **Backend Agent** 与 **DB Agent** 维护。
+Fastify 5 + MySQL + 阿里云 RTC（dingrtc AppServer Token）。
 
-## 目录结构
-
-```
-backend/
-├── src/
-│   ├── plugins/            # Fastify 插件（鉴权、DB、CORS 等）
-│   ├── routes/             # 路由 + JSON Schema 定义
-│   ├── schemas/            # 共享 JSON Schema（可生成 OpenAPI）
-│   ├── services/           # 业务逻辑
-│   ├── models/             # Sequelize 模型
-│   ├── hooks/              # 生命周期 hooks
-│   ├── app.ts              # Fastify 实例组装
-│   └── server.ts           # 启动入口
-├── migrations/             # DB Agent 管理
-├── seeders/
-├── tests/
-│   ├── unit/
-│   └── integration/        # API Test Agent
-├── package.json
-└── tsconfig.json
-```
-
-## Agent 约束
-
-- 仅修改自己 worktree 下的 `backend/`
-- 每个路由必须定义 **JSON Schema**（请求 + 响应）
-- Schema 变更必须附带 `migrations/`
-- 任务前加载 `knowledge/backend_mistakes.json` + `knowledge/security_rules.json`
-- 禁止将 `req.body` 直接传入 ORM create
-
-## 开发
+## 快速开始
 
 ```bash
-cd backend
+cp .env.example .env   # 配置 MySQL / RTC
 npm install
-npm run dev      # http://localhost:3000
-npm run build
-npm run test
+npm run db:rtc         # 创建 rtc_sessions 表（库名 tutoring_platform，需已有 users 表）
+npm run dev
 ```
 
-## OpenAPI
+## 环境变量
 
-Schema 可导出至 `docs/generated/openapi.json`（待 CI 脚本接入）。
+见 `.env.example`。MySQL 支持 `MYSQL_*` 或 `db_*` 两种命名。
+
+## API
+
+| 前缀 | 说明 |
+|------|------|
+| `GET /api/v1/health` | 健康检查（含 DB） |
+| `POST /api/rtc/sessions` | 创建 1v1 RTC 会话（JWT） |
+| `POST /api/rtc/sessions/:channelId/join` | 获取入会 Token |
+| `WS /api/ws?token=` | 来电/挂断 WebSocket 推送 |
+
+视频模块源码来自 [tutor_platform](https://github.com/zhiyouyue/tutor_platform)，已 TypeScript 化并迁入本目录。
+
+## 架构
+
+```
+routes → services → repositories → mysql2 pool
+```
+
+RTC Token 由 `@dingrtc/token-generator` 在服务端签发，AppKey 不可暴露给前端。

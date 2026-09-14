@@ -3,6 +3,12 @@ export const healthResponseSchema = {
   required: ["status", "timestamp"],
   properties: {
     status: { type: "string" },
-    timestamp: { type: "string", format: "date-time" },
+    timestamp: { type: "string" },
+    services: {
+      type: "object",
+      properties: {
+        database: { type: "string" },
+      },
+    },
   },
 } as const;

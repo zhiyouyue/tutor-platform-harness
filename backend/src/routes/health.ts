@@ -1,21 +1,23 @@
-import type { FastifyPluginAsync } from "fastify";
+import type { FastifyInstance } from "fastify";
+import { testConnection } from "../db/pool.js";
 import { healthResponseSchema } from "../schemas/health.js";
 
-const healthRoutes: FastifyPluginAsync = async (app) => {
-  app.get(
-    "/api/health",
-    {
-      schema: {
-        response: {
-          200: healthResponseSchema,
-        },
-      },
-    },
-    async () => ({
-      status: "ok",
-      timestamp: new Date().toISOString(),
-    })
-  );
-};
+export default async function healthRoutes(fastify: FastifyInstance) {
+  fastify.get("/health", {
+    schema: { response: { 200: healthResponseSchema } },
+  }, async () => {
+    let db = "unknown";
+    try {
+      await testConnection();
+      db = "ok";
+    } catch {
+      db = "error";
+    }
 
-export default healthRoutes;
+    return {
+      status: db === "ok" ? "ok" : "degraded",
+      timestamp: new Date().toISOString(),
+      services: { database: db },
+    };
+  });
+}

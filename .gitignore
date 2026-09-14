@@ -41,6 +41,7 @@ docs/generated/
 
 # Temp
 tmp/
+.tmp/
 *.tmp
 
 # Local agent runtime (not committed)
