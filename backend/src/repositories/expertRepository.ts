@@ -70,6 +70,7 @@ export async function updateProfile(
     bio?: string | null;
     educationJson?: unknown;
     workExperienceJson?: unknown;
+    acceptingProjects?: boolean;
   },
 ): Promise<ExpertProfileRow | null> {
   const sets: string[] = [];
@@ -102,6 +103,10 @@ export async function updateProfile(
   if (fields.workExperienceJson !== undefined) {
     sets.push("work_experience_json = ?");
     values.push(fields.workExperienceJson ? JSON.stringify(fields.workExperienceJson) : null);
+  }
+  if (fields.acceptingProjects !== undefined) {
+    sets.push("accepting_projects = ?");
+    values.push(fields.acceptingProjects ? 1 : 0);
   }
 
   if (sets.length === 0) return findByUserId(userId);

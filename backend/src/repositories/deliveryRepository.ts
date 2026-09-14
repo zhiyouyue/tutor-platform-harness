@@ -105,9 +105,11 @@ export async function createFile(params: {
   mimeType?: string;
   sizeBytes?: number;
   category: string;
+  ossBucket?: string;
+  ossKey?: string;
 }): Promise<FileRow> {
-  const bucket = process.env.OSS_BUCKET || "local-dev";
-  const key = `projects/${params.projectId}/${Date.now()}-${params.fileName}`;
+  const bucket = params.ossBucket ?? process.env.OSS_BUCKET ?? "local-dev";
+  const key = params.ossKey ?? `projects/${params.projectId}/${Date.now()}-${params.fileName}`;
   const [result] = await pool.query<ResultSetHeader>(
     `INSERT INTO project_files
      (project_id, uploader_user_id, file_name, mime_type, size_bytes, oss_bucket, oss_key, category)

@@ -39,6 +39,7 @@ export default async function expertRoutes(fastify: FastifyInstance) {
           bio: { type: "string" },
           education: {},
           workExperience: {},
+          acceptingProjects: { type: "boolean" },
         },
       },
     },
@@ -112,7 +113,19 @@ export default async function expertRoutes(fastify: FastifyInstance) {
         scheduleRepo.listSlots(ep.id),
         scheduleRepo.listBlackouts(ep.id),
       ]);
-      return success(reply, { slots, blackouts });
+      return success(reply, {
+        slots: slots.map((s) => ({
+          weekday: s.weekday,
+          startTime: String(s.start_time).slice(0, 5),
+          endTime: String(s.end_time).slice(0, 5),
+        })),
+        blackouts: blackouts.map((b) => ({
+          id: b.id,
+          startAt: b.start_at,
+          endAt: b.end_at,
+          reason: b.reason,
+        })),
+      });
     } catch (err) {
       return handleError(reply, err);
     }
@@ -127,6 +140,50 @@ export default async function expertRoutes(fastify: FastifyInstance) {
       const body = request.body as { slots: Array<{ weekday: number; startTime: string; endTime: string }> };
       await scheduleRepo.replaceSlots(ep.id, body.slots || []);
       return success(reply, null, "档期已更新");
+    } catch (err) {
+      return handleError(reply, err);
+    }
+  });
+
+  fastify.post("/experts/me/schedule/blackouts", {
+    preHandler: [fastify.requireRole("expert")],
+  }, async (request, reply) => {
+    try {
+      const ep = await expertRepo.findByUserId(request.user.userId);
+      if (!ep) throw new AppError("专家档案不存在", 404);
+      const body = request.body as { startAt: string; endAt: string; reason?: string };
+      if (!body.startAt || !body.endAt) throw new AppError("请填写开始与结束时间", 400);
+      const row = await scheduleRepo.addBlackout({
+        expertId: ep.id,
+        startAt: body.startAt,
+        endAt: body.endAt,
+        reason: body.reason,
+      });
+      return success(reply, row, "临时不可用已添加", 201);
+    } catch (err) {
+      return handleError(reply, err);
+    }
+  });
+
+  fastify.get("/experts/me/appointments", {
+    preHandler: [fastify.requireRole("expert")],
+  }, async (request, reply) => {
+    try {
+      const ep = await expertRepo.findByUserId(request.user.userId);
+      if (!ep) throw new AppError("专家档案不存在", 404);
+      const items = await scheduleRepo.listUpcomingForExpert(ep.id, 20);
+      return success(reply, {
+        items: items.map((a) => ({
+          id: a.id,
+          projectId: a.project_id,
+          projectTitle: a.project_title,
+          studentName: a.student_name,
+          startAt: a.start_at,
+          endAt: a.end_at,
+          topic: a.topic,
+          status: a.status,
+        })),
+      });
     } catch (err) {
       return handleError(reply, err);
     }

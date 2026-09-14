@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { AppError } from "../errors/AppError.js";
 import * as projectRepo from "../repositories/projectRepository.js";
+import * as scheduleRepo from "../repositories/scheduleRepository.js";
 import * as studentService from "../services/studentService.js";
 import { requireProjectAccess } from "../services/projectAccessService.js";
 import { success } from "../utils/response.js";
@@ -100,6 +101,27 @@ export default async function opsRoutes(fastify: FastifyInstance) {
       await projectRepo.publishProject(projectId);
       const project = await projectRepo.findProjectById(projectId);
       return success(reply, project ? formatProject(project) : null, "已发布给专家");
+    } catch (e) {
+      return handleRouteError(reply, e);
+    }
+  });
+
+  fastify.get("/ops/appointments", async (_req, reply) => {
+    try {
+      const items = await scheduleRepo.listAllAppointments(100);
+      return success(reply, {
+        items: items.map((a) => ({
+          id: a.id,
+          projectId: a.project_id,
+          projectTitle: a.project_title,
+          studentName: a.student_name,
+          expertName: a.expert_name,
+          startAt: a.start_at,
+          endAt: a.end_at,
+          topic: a.topic,
+          status: a.status,
+        })),
+      });
     } catch (e) {
       return handleRouteError(reply, e);
     }

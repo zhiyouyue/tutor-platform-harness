@@ -29,6 +29,19 @@ export interface AppointmentRow extends RowDataPacket {
   created_at: Date;
 }
 
+export interface AppointmentDetailRow extends AppointmentRow {
+  project_title?: string;
+  student_name?: string;
+  expert_name?: string;
+}
+
+export interface ExpertAvailabilitySummaryRow extends RowDataPacket {
+  expert_id: number;
+  real_name: string | null;
+  slot_count: number;
+  accepting_projects: number;
+}
+
 export async function listSlots(expertId: number): Promise<SlotRow[]> {
   const [rows] = await pool.query<SlotRow[]>(
     `SELECT * FROM expert_availability_slots WHERE expert_id = ? ORDER BY weekday, start_time`,
@@ -130,4 +143,60 @@ export async function updateAppointmentStatus(
     `UPDATE project_appointments SET status = ? WHERE id = ? AND project_id = ?`,
     [status, appointmentId, projectId],
   );
+}
+
+const APPOINTMENT_DETAIL_SQL = `
+  SELECT pa.*, p.title AS project_title,
+         sp.real_name AS student_name, ep.real_name AS expert_name
+  FROM project_appointments pa
+  JOIN projects p ON p.id = pa.project_id
+  LEFT JOIN student_profiles sp ON sp.id = p.student_id
+  LEFT JOIN expert_profiles ep ON ep.id = p.expert_id
+`;
+
+export async function listTodayAppointmentsForExpert(expertId: number): Promise<AppointmentDetailRow[]> {
+  const [rows] = await pool.query<AppointmentDetailRow[]>(
+    `${APPOINTMENT_DETAIL_SQL}
+     WHERE p.expert_id = ? AND DATE(pa.start_at) = CURDATE()
+     ORDER BY pa.start_at`,
+    [expertId],
+  );
+  return rows;
+}
+
+export async function listUpcomingForExpert(
+  expertId: number,
+  limit = 10,
+): Promise<AppointmentDetailRow[]> {
+  const [rows] = await pool.query<AppointmentDetailRow[]>(
+    `${APPOINTMENT_DETAIL_SQL}
+     WHERE p.expert_id = ? AND pa.start_at >= NOW()
+     ORDER BY pa.start_at
+     LIMIT ?`,
+    [expertId, limit],
+  );
+  return rows;
+}
+
+export async function listAllAppointments(limit = 50): Promise<AppointmentDetailRow[]> {
+  const [rows] = await pool.query<AppointmentDetailRow[]>(
+    `${APPOINTMENT_DETAIL_SQL}
+     ORDER BY pa.start_at DESC
+     LIMIT ?`,
+    [limit],
+  );
+  return rows;
+}
+
+export async function listExpertAvailabilitySummary(): Promise<ExpertAvailabilitySummaryRow[]> {
+  const [rows] = await pool.query<ExpertAvailabilitySummaryRow[]>(
+    `SELECT ep.id AS expert_id, ep.real_name, ep.accepting_projects,
+            COUNT(s.id) AS slot_count
+     FROM expert_profiles ep
+     LEFT JOIN expert_availability_slots s ON s.expert_id = ep.id
+     WHERE ep.profile_status = 'active'
+     GROUP BY ep.id, ep.real_name, ep.accepting_projects
+     ORDER BY ep.real_name`,
+  );
+  return rows;
 }

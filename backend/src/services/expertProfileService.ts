@@ -49,6 +49,7 @@ export async function updateMyProfile(
     bio?: string;
     education?: unknown;
     workExperience?: unknown;
+    acceptingProjects?: boolean;
   },
 ) {
   await requireExpertProfile(userId);
@@ -60,6 +61,7 @@ export async function updateMyProfile(
     bio: body.bio,
     educationJson: body.education,
     workExperienceJson: body.workExperience,
+    acceptingProjects: body.acceptingProjects,
   });
   if (!updated) throw new AppError("更新失败", 500);
   const user = await userRepo.findById(userId);

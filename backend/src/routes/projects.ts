@@ -7,6 +7,7 @@ import {
   requireExpertProfile,
   requireProjectAccess,
 } from "../services/projectAccessService.js";
+import * as ossService from "../services/ossService.js";
 import * as studentRepo from "../repositories/studentRepository.js";
 import { success } from "../utils/response.js";
 import { formatProject, handleRouteError } from "../utils/routeHelpers.js";
@@ -165,19 +166,79 @@ export default async function projectRoutes(fastify: FastifyInstance) {
     }
   });
 
+  fastify.post("/projects/:id/files/upload-url", async (request, reply) => {
+    try {
+      const { id } = request.params as { id: string };
+      const projectId = parseInt(id, 10);
+      const body = request.body as { fileName: string; mimeType: string };
+      await requireProjectAccess(projectId, request.user.userId, request.user.role);
+      if (!body.fileName || !body.mimeType) {
+        throw new AppError("请提供 fileName 与 mimeType", 400);
+      }
+      const ossKey = ossService.buildObjectKey(projectId, body.fileName);
+      const upload = await ossService.createUploadUrl({ key: ossKey, mimeType: body.mimeType });
+      return success(reply, upload);
+    } catch (e) {
+      return handleRouteError(reply, e);
+    }
+  });
+
   fastify.post("/projects/:id/files", async (request, reply) => {
     try {
       const { id } = request.params as { id: string };
-      const body = request.body as { fileName: string; mimeType?: string; category?: string };
-      await requireProjectAccess(parseInt(id, 10), request.user.userId, request.user.role);
+      const projectId = parseInt(id, 10);
+      const body = request.body as {
+        fileName: string;
+        mimeType?: string;
+        sizeBytes?: number;
+        category?: string;
+        ossKey?: string;
+      };
+      await requireProjectAccess(projectId, request.user.userId, request.user.role);
       const file = await deliveryRepo.createFile({
-        projectId: parseInt(id, 10),
+        projectId,
         uploaderUserId: request.user.userId,
         fileName: body.fileName,
         mimeType: body.mimeType,
+        sizeBytes: body.sizeBytes,
         category: body.category || "other",
+        ossBucket: body.ossKey ? (process.env.OSS_BUCKET || "local-dev") : undefined,
+        ossKey: body.ossKey,
       });
       return success(reply, file, "文件已登记", 201);
+    } catch (e) {
+      return handleRouteError(reply, e);
+    }
+  });
+
+  fastify.post("/projects/:id/files/local", async (request, reply) => {
+    try {
+      const { id } = request.params as { id: string };
+      const projectId = parseInt(id, 10);
+      await requireProjectAccess(projectId, request.user.userId, request.user.role);
+      const data = await request.file();
+      if (!data) throw new AppError("未收到文件", 400);
+      const categoryField = data.fields.category;
+      const category =
+        categoryField && typeof categoryField === "object" && "value" in categoryField
+          ? String(categoryField.value)
+          : "other";
+      const saved = await ossService.saveLocalFile({
+        projectId,
+        fileName: data.filename,
+        stream: data.file,
+      });
+      const file = await deliveryRepo.createFile({
+        projectId,
+        uploaderUserId: request.user.userId,
+        fileName: data.filename,
+        mimeType: data.mimetype,
+        sizeBytes: saved.sizeBytes,
+        category,
+        ossBucket: saved.bucket,
+        ossKey: saved.key,
+      });
+      return success(reply, file, "文件已上传", 201);
     } catch (e) {
       return handleRouteError(reply, e);
     }
