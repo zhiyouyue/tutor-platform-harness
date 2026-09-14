@@ -2,18 +2,18 @@ import { createHash } from "node:crypto";
 import tokenGenerator from "@dingrtc/token-generator";
 import { config } from "../config/env.js";
 
-type ProduceFn = (params: {
-  appId: string;
-  appKey: string;
-  channelId: string;
-  userId: string;
-}) => string;
 import * as rtcRepo from "../repositories/rtcRepository.js";
 import type { RtcSessionRow } from "../repositories/rtcRepository.js";
 import { notifyUser } from "./realtimeHub.js";
 import type { CacheAdapter } from "../types/fastify.js";
 
-const produceAppToken = tokenGenerator.produce as unknown as ProduceFn;
+// 运行时 API 为四参数 positional；@types 声明为对象参数，需 cast
+const produceAppToken = tokenGenerator.produce as unknown as (
+  appId: string,
+  appKey: string,
+  channelId: string,
+  userId: string,
+) => string;
 
 const MAX_TTL_SECONDS = 24 * 60 * 60;
 
@@ -79,7 +79,7 @@ export interface FormattedSession {
   channelId: string;
   creatorId: number;
   calleeId: number;
-  orderId: number | null;
+  appointmentId: number | null;
   status: string;
   startedAt: Date | null;
   endedAt: Date | null;
@@ -95,7 +95,7 @@ function formatSession(row: RtcSessionRow | null): FormattedSession | null {
     channelId: row.channel_id,
     creatorId: row.creator_id,
     calleeId: row.callee_id,
-    orderId: row.order_id,
+    appointmentId: row.appointment_id,
     status: row.status,
     startedAt: row.started_at,
     endedAt: row.ended_at,
@@ -111,7 +111,7 @@ function isParticipant(session: RtcSessionRow, userId: number): boolean {
 
 export async function createSession(
   creatorId: number,
-  body: { calleeId: number; orderId?: number | null },
+  body: { calleeId: number; appointmentId?: number | null },
   opts: { cache?: CacheAdapter } = {},
 ): Promise<FormattedSession> {
   assertRtcEnabled();
@@ -128,7 +128,7 @@ export async function createSession(
   const session = await rtcRepo.createSession({
     creatorId,
     calleeId: body.calleeId,
-    orderId: body.orderId,
+    appointmentId: body.appointmentId,
   });
 
   const formatted = formatSession(session)!;

@@ -1,0 +1,6 @@
+-- DBA 在 MySQL root 下执行（按实际账号调整）
+CREATE DATABASE IF NOT EXISTS expert_platform
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+GRANT ALL PRIVILEGES ON expert_platform.* TO 'zhiyouyue_writer'@'localhost';
+FLUSH PRIVILEGES;

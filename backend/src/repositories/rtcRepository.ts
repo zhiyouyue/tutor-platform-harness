@@ -7,7 +7,7 @@ export interface RtcSessionRow extends RowDataPacket {
   channel_id: string;
   creator_id: number;
   callee_id: number;
-  order_id: number | null;
+  appointment_id: number | null;
   status: string;
   started_at: Date | null;
   ended_at: Date | null;
@@ -29,12 +29,12 @@ export interface UserRow extends RowDataPacket {
 export async function createSession(params: {
   creatorId: number;
   calleeId: number;
-  orderId?: number | null;
+  appointmentId?: number | null;
 }): Promise<RtcSessionRow | null> {
   const [insertResult] = await pool.query<ResultSetHeader>(
-    `INSERT INTO rtc_sessions (channel_id, creator_id, callee_id, order_id, status)
+    `INSERT INTO rtc_sessions (channel_id, creator_id, callee_id, appointment_id, status)
      VALUES ('', ?, ?, ?, 'pending')`,
-    [params.creatorId, params.calleeId, params.orderId ?? null],
+    [params.creatorId, params.calleeId, params.appointmentId ?? null],
   );
   const sessionId = insertResult.insertId;
   const channelId = `rtc-${sessionId}-${randomBytes(4).toString("hex")}`;

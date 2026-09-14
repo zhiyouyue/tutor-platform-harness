@@ -9,7 +9,9 @@
     "start": "node dist/server.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:rtc": "tsx scripts/run-sql.ts sql/04_ddl_rtc_sessions.sql"
+    "db:setup": "node scripts/setup-db.mjs",
+    "db:schema": "tsx scripts/run-sql.ts sql/01_phase1_schema.sql",
+    "db:seed": "tsx scripts/run-sql.ts sql/02_seed_dictionaries.sql"
   },
   "dependencies": {
     "@dingrtc/token-generator": "^1.0.4",

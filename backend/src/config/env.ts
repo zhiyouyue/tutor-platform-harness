@@ -30,7 +30,7 @@ export const config = {
     port: envInt("MYSQL_PORT", "db_port", 3306),
     user: envStr("MYSQL_USER", "db_user") || "root",
     password: envStr("MYSQL_PASSWORD", "db_password"),
-    database: envStr("MYSQL_DATABASE", "db_name") || "tutoring_platform",
+    database: envStr("MYSQL_DATABASE", "db_name") || "expert_platform",
     connectionLimit: envInt("MYSQL_POOL_SIZE", undefined, 10),
     waitForConnections: true,
     queueLimit: 0,

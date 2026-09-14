@@ -12,13 +12,13 @@ export default async function rtcRoutes(fastify: FastifyInstance) {
         required: ["calleeId"],
         properties: {
           calleeId: { type: "integer", minimum: 1 },
-          orderId: { type: "integer", minimum: 1 },
+          appointmentId: { type: "integer", minimum: 1 },
         },
       },
     },
   }, async (request, reply) => {
     try {
-      const body = request.body as { calleeId: number; orderId?: number };
+      const body = request.body as { calleeId: number; appointmentId?: number };
       const session = await rtcService.createSession(request.user.userId, body, {
         cache: fastify.cache,
       });

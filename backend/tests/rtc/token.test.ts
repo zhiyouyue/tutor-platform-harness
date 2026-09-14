@@ -17,7 +17,7 @@ describe("RTC token", () => {
   });
 
   it("dingrtc AppToken format", () => {
-    const produce = tokenGenerator.produce as (
+    const produce = tokenGenerator.produce as unknown as (
       appId: string,
       appKey: string,
       channelId: string,

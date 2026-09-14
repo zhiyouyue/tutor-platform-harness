@@ -1,9 +1,10 @@
 # 专家平台 Phase 1 主 PRD
 
-- **文档版本**: v1.0-rc
+- **文档版本**: v1.0
 - **日期**: 2025-09-14
 - **阶段**: Phase 1（专家端 + 运营端 + 管理员端 + 学员轻量端）
-- **状态**: Release Candidate — Blocking Q&A 已全部完成
+- **状态**: 已批准 — Blocking Q&A 已全部完成
+- **数据库**: `expert_platform`（MySQL，与主产品库隔离）
 - **Feature 前缀**: `FEAT-P1-*`
 - **关联 ExecPlan**: [EP-001-expert-platform-phase1](../../exec-plans/active/EP-001-expert-platform-phase1.md)
 
@@ -75,7 +76,7 @@
 **管理员端**
 - 专家认证审核队列（通过/拒绝）
 - 专家列表与状态管理（禁用等）
-- 平台字典/配置（待 Q-010）
+- ~~平台字典/配置~~（Phase 1 **固定 seed**，不可后台配置）
 - 收入账本状态维护（若 V1 需手工标记结算）
 
 ### 3.2 Out of Scope
@@ -235,3 +236,4 @@ OpsUser *──* Project (created_by)
 | 2025-09-14 | v0.1-draft | 初稿 |
 | 2025-09-14 | v0.2-draft | PO 答复 Q-001~006；三端 UI；运营/管理员分权 |
 | 2025-09-14 | v1.0-rc | Q-004-FU~006-FU；学员轻量端；阿里云 RTC；项目完成双确认入账 |
+| 2025-09-14 | v1.0 | 库名 `expert_platform`；DB/API 统一 `expert/ops`；无 orders；能力关联表；认证材料表；RTC 关联 appointment |

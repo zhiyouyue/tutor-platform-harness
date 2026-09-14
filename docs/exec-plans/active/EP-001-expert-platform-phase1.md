@@ -23,7 +23,8 @@
 ### M1 · 基础设施
 - [ ] 四端 frontend 脚手架（`apps/expert|ops|admin|student`）
 - [ ] RBAC Auth（expert / ops / admin）
-- [ ] DB schema + migrations
+- [x] DB schema + migrations（`expert_platform`，`backend/sql/01_phase1_schema.sql`）
+- [ ] DBA 授权 + `npm run db:setup` 本地落库
 - [ ] 文件上传（Q-007）
 - [ ] AliyunRtcMeetingProvider 适配器 + 短信 OTP 服务
 
