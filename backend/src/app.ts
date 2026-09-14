@@ -4,9 +4,14 @@ import authPlugin from "./plugins/auth.js";
 import redisPlugin from "./plugins/redis.js";
 import adminExpertRoutes from "./routes/adminExperts.js";
 import authRoutes from "./routes/auth.js";
+import dictionaryRoutes from "./routes/dictionaries.js";
 import expertRoutes from "./routes/experts.js";
 import healthRoutes from "./routes/health.js";
+import incomeRoutes from "./routes/income.js";
+import opsRoutes from "./routes/ops.js";
+import projectRoutes from "./routes/projects.js";
 import rtcRoutes from "./routes/rtc.js";
+import studentPortalRoutes from "./routes/studentPortal.js";
 import wsRoutes from "./routes/ws.js";
 
 export async function buildApp() {
@@ -18,8 +23,13 @@ export async function buildApp() {
 
   await app.register(healthRoutes, { prefix: "/api/v1" });
   await app.register(authRoutes, { prefix: "/api/v1" });
+  await app.register(dictionaryRoutes, { prefix: "/api/v1" });
   await app.register(expertRoutes, { prefix: "/api/v1" });
   await app.register(adminExpertRoutes, { prefix: "/api/v1" });
+  await app.register(opsRoutes, { prefix: "/api/v1" });
+  await app.register(projectRoutes, { prefix: "/api/v1" });
+  await app.register(incomeRoutes, { prefix: "/api/v1" });
+  await app.register(studentPortalRoutes, { prefix: "/api/v1" });
   await app.register(rtcRoutes, { prefix: "/api" });
   await app.register(wsRoutes, { prefix: "/api" });
 

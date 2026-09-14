@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { AppError } from "../errors/AppError.js";
 import * as authService from "../services/authService.js";
+import * as studentAuthService from "../services/studentAuthService.js";
 import { fail, success } from "../utils/response.js";
 
 function handleError(reply: Parameters<typeof fail>[0], err: unknown) {
@@ -57,6 +58,17 @@ export default async function authRoutes(fastify: FastifyInstance) {
     try {
       const body = request.body as { account: string; password: string };
       const result = await authService.login(fastify, body);
+      return success(reply, result, "登录成功");
+    } catch (err) {
+      return handleError(reply, err);
+    }
+  });
+
+  fastify.get("/auth/student/magic", async (request, reply) => {
+    try {
+      const { token } = request.query as { token?: string };
+      if (!token) return handleError(reply, new AppError("缺少 token", 400));
+      const result = await studentAuthService.verifyMagicLink(fastify, token);
       return success(reply, result, "登录成功");
     } catch (err) {
       return handleError(reply, err);

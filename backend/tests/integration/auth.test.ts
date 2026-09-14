@@ -3,7 +3,9 @@ import { describe, it, expect, beforeAll } from "vitest";
 import { buildApp } from "../../src/app.js";
 import pool from "../../src/db/pool.js";
 
-const testAccount = `test_expert_${Date.now()}`;
+const testSuffix = Date.now();
+const testAccount = `test_expert_${testSuffix}`;
+const testPhone = `139${String(testSuffix).slice(-8)}`;
 
 describe("Auth & Expert Profile", () => {
   let app: Awaited<ReturnType<typeof buildApp>>;
@@ -32,7 +34,7 @@ describe("Auth & Expert Profile", () => {
       payload: {
         account: testAccount,
         password: "test123456",
-        phone: "13900001111",
+        phone: testPhone,
         realName: "测试专家",
       },
     });

@@ -1,5 +1,8 @@
 import type { FastifyInstance } from "fastify";
 import { AppError } from "../errors/AppError.js";
+import * as capRepo from "../repositories/capabilityRepository.js";
+import * as scheduleRepo from "../repositories/scheduleRepository.js";
+import * as expertRepo from "../repositories/expertRepository.js";
 import * as expertProfileService from "../services/expertProfileService.js";
 import { fail, success } from "../utils/response.js";
 
@@ -68,6 +71,62 @@ export default async function expertRoutes(fastify: FastifyInstance) {
     try {
       const result = await expertProfileService.submitCertification(request.user.userId);
       return success(reply, result, "认证已提交，等待管理员审核");
+    } catch (err) {
+      return handleError(reply, err);
+    }
+  });
+
+  fastify.get("/experts/me/capabilities", {
+    preHandler: [fastify.requireRole("expert")],
+  }, async (request, reply) => {
+    try {
+      const ep = await expertRepo.findByUserId(request.user.userId);
+      if (!ep) throw new AppError("专家档案不存在", 404);
+      return success(reply, await capRepo.getCapabilities(ep.id));
+    } catch (err) {
+      return handleError(reply, err);
+    }
+  });
+
+  fastify.put("/experts/me/capabilities", {
+    preHandler: [fastify.requireRole("expert")],
+  }, async (request, reply) => {
+    try {
+      const ep = await expertRepo.findByUserId(request.user.userId);
+      if (!ep) throw new AppError("专家档案不存在", 404);
+      const body = request.body as capRepo.ExpertCapabilities;
+      await capRepo.setCapabilities(ep.id, body);
+      return success(reply, await capRepo.getCapabilities(ep.id), "能力已保存");
+    } catch (err) {
+      return handleError(reply, err);
+    }
+  });
+
+  fastify.get("/experts/me/schedule", {
+    preHandler: [fastify.requireRole("expert")],
+  }, async (request, reply) => {
+    try {
+      const ep = await expertRepo.findByUserId(request.user.userId);
+      if (!ep) throw new AppError("专家档案不存在", 404);
+      const [slots, blackouts] = await Promise.all([
+        scheduleRepo.listSlots(ep.id),
+        scheduleRepo.listBlackouts(ep.id),
+      ]);
+      return success(reply, { slots, blackouts });
+    } catch (err) {
+      return handleError(reply, err);
+    }
+  });
+
+  fastify.put("/experts/me/schedule", {
+    preHandler: [fastify.requireRole("expert")],
+  }, async (request, reply) => {
+    try {
+      const ep = await expertRepo.findByUserId(request.user.userId);
+      if (!ep) throw new AppError("专家档案不存在", 404);
+      const body = request.body as { slots: Array<{ weekday: number; startTime: string; endTime: string }> };
+      await scheduleRepo.replaceSlots(ep.id, body.slots || []);
+      return success(reply, null, "档期已更新");
     } catch (err) {
       return handleError(reply, err);
     }
