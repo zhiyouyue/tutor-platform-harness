@@ -1,18 +1,46 @@
-import { useEffect, useState } from "react";
-import { fetchAppointments, fetchMessages, sendMessage } from "../../services/api";
+import { useEffect, useRef, useState } from "react";
+import {
+  fetchAppointments,
+  fetchMessages,
+  fetchProjectFiles,
+  sendMessage,
+  uploadProjectFile,
+} from "../../services/api";
 
 export default function DeliverySpace({ projectId }: { projectId?: string | null }) {
   const [channel, setChannel] = useState<"expert_ops" | "expert_student">("expert_student");
   const [messages, setMessages] = useState<Array<Record<string, unknown>>>([]);
   const [appointments, setAppointments] = useState<Array<Record<string, unknown>>>([]);
   const [input, setInput] = useState("");
+  const [files, setFiles] = useState<Array<Record<string, unknown>>>([]);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const pid = projectId ? Number(projectId) : null;
+
+  function loadFiles() {
+    if (!pid) return;
+    fetchProjectFiles(pid).then((r) => { if (r.success) setFiles(r.data.items); });
+  }
 
   useEffect(() => {
     if (!pid) return;
     fetchMessages(pid, channel).then((r) => { if (r.success) setMessages(r.data.items); });
     fetchAppointments(pid).then((r) => { if (r.success) setAppointments(r.data.items); });
+    loadFiles();
   }, [pid, channel]);
+
+  async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!pid || !file) return;
+    setUploading(true);
+    try {
+      await uploadProjectFile(pid, file, "deliverable");
+      loadFiles();
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
 
   async function handleSend() {
     if (!pid || !input.trim()) return;
@@ -44,6 +72,22 @@ export default function DeliverySpace({ projectId }: { projectId?: string | null
       <div style={{ display: "flex", gap: 8 }}>
         <input className="ant-input" style={{ flex: 1 }} value={input} onChange={(e) => setInput(e.target.value)} placeholder="输入消息…" />
         <button className="ant-btn ant-btn-primary" onClick={handleSend}>发送</button>
+      </div>
+      <div style={{ background: "#fff", borderRadius: 12, border: "1px solid var(--c-border)", padding: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+          <div style={{ fontWeight: 600 }}>项目文件</div>
+          <button className="ant-btn ant-btn-default" disabled={uploading} onClick={() => fileInputRef.current?.click()}>
+            {uploading ? "上传中…" : "上传文件"}
+          </button>
+          <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileSelect} />
+        </div>
+        {files.length === 0 ? (
+          <div style={{ fontSize: 13, color: "var(--c-text-3)" }}>暂无文件</div>
+        ) : files.map((f) => (
+          <div key={f.id as number} style={{ fontSize: 13, padding: "4px 0" }}>
+            {f.file_name as string} · {f.category as string} · {new Date(f.created_at as string).toLocaleString()}
+          </div>
+        ))}
       </div>
       <div style={{ background: "#fff", borderRadius: 12, border: "1px solid var(--c-border)", padding: 16 }}>
         <div style={{ fontWeight: 600, marginBottom: 8 }}>预约</div>

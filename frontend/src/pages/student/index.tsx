@@ -5,7 +5,7 @@ import MyProject from "./MyProject";
 import StudentSchedule from "./Schedule";
 import StudentMessages from "./Messages";
 import StudentProfile from "./Profile";
-import DeliverySpace from "../mentor/DeliverySpace";
+import DeliverySpace from "../expert/DeliverySpace";
 
 interface Props {
   onBack: () => void;

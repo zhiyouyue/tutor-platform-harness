@@ -1,16 +1,16 @@
 import { useState } from "react";
-import MentorApp from "./pages/mentor";
-import SupervisorApp from "./pages/supervisor";
+import ExpertApp from "./pages/expert";
+import OpsApp from "./pages/ops";
 import StudentApp from "./pages/student";
 import AdminApp from "./pages/admin";
 import LoginPage from "./pages/auth/LoginPage";
 import { AuthProvider, useAuth, type AppRole } from "./contexts/AuthContext";
 
-type UiRole = "mentor" | "supervisor" | "student" | "admin" | null;
+type UiRole = "expert" | "ops" | "student" | "admin" | null;
 
 const UI_TO_AUTH: Record<Exclude<UiRole, null>, AppRole> = {
-  mentor: "expert",
-  supervisor: "ops",
+  expert: "expert",
+  ops: "ops",
   student: "student",
   admin: "admin",
 };
@@ -39,8 +39,8 @@ function AppInner() {
         />
       );
     }
-    if (selectedRole === "mentor") return <MentorApp onBack={handleBack} />;
-    if (selectedRole === "supervisor") return <SupervisorApp onBack={handleBack} />;
+    if (selectedRole === "expert") return <ExpertApp onBack={handleBack} />;
+    if (selectedRole === "ops") return <OpsApp onBack={handleBack} />;
     if (selectedRole === "student") return <StudentApp onBack={handleBack} />;
     if (selectedRole === "admin") return <AdminApp onBack={handleBack} />;
   }
@@ -70,7 +70,7 @@ function AppInner() {
           desc="注册登录、完善资料、提交认证、接受项目"
           color="#2563EB"
           bgColor="#EFF6FF"
-          onClick={() => setSelectedRole("mentor")}
+          onClick={() => setSelectedRole("expert")}
         />
         <RoleCard
           title="运营"
@@ -78,7 +78,7 @@ function AppInner() {
           desc="管理学员、分配项目、协调时间、跟进进度"
           color="#7C3AED"
           bgColor="#F5F3FF"
-          onClick={() => setSelectedRole("supervisor")}
+          onClick={() => setSelectedRole("ops")}
         />
         <RoleCard
           title="学员"

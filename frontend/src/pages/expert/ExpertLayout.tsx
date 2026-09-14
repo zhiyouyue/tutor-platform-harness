@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-export type MentorPage = "dashboard"|"projects"|"delivery"|"capabilities"|"schedule"|"income"|"profile";
+export type ExpertPage = "dashboard"|"projects"|"delivery"|"capabilities"|"schedule"|"income"|"profile";
 
-const nav: { id: MentorPage; label: string; path: string }[] = [
+const nav: { id: ExpertPage; label: string; path: string }[] = [
   { id:"dashboard",    label:"工作台",    path:"M2 2h6v6H2zm8 0h6v6h-6zM2 10h6v6H2zm8 3h2m2 0h2m-3-3v2m0 2v2" },
   { id:"projects",     label:"我的项目",  path:"M3 5a2 2 0 012-2h4l2 2h4a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" },
   { id:"delivery",     label:"交付空间",  path:"M2 13V5a2 2 0 012-2h10a2 2 0 012 2v8M2 13l3-3h8l3 3M6 7h6M6 10h3" },
@@ -13,13 +13,13 @@ const nav: { id: MentorPage; label: string; path: string }[] = [
 ];
 
 interface Props {
-  page: MentorPage;
-  onNavigate: (p: MentorPage) => void;
+  page: ExpertPage;
+  onNavigate: (p: ExpertPage) => void;
   onBack: () => void;
   children: React.ReactNode;
 }
 
-export default function MentorLayout({ page, onNavigate, onBack, children }: Props) {
+export default function ExpertLayout({ page, onNavigate, onBack, children }: Props) {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -45,7 +45,7 @@ export default function MentorLayout({ page, onNavigate, onBack, children }: Pro
           {!collapsed && (
             <div style={{ overflow: "hidden" }}>
               <div style={{ fontWeight: 700, fontSize: 14, color: "var(--c-text-1)", whiteSpace: "nowrap" }}>求职辅导</div>
-              <div style={{ fontSize: 11, color: "var(--c-text-3)", whiteSpace: "nowrap" }}>导师工作台</div>
+              <div style={{ fontSize: 11, color: "var(--c-text-3)", whiteSpace: "nowrap" }}>专家工作台</div>
             </div>
           )}
         </div>

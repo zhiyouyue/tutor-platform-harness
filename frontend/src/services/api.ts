@@ -113,6 +113,30 @@ export const saveMyCapabilities = (body: {
   jobRoles: string[];
 }) => apiFetch<unknown>("/api/v1/experts/me/capabilities", { method: "PUT", body: JSON.stringify(body) });
 
+export const fetchMySchedule = () =>
+  apiFetch<{
+    slots: Array<{ weekday: number; startTime: string; endTime: string }>;
+    blackouts: Array<{ id: number; startAt: string; endAt: string; reason: string | null }>;
+  }>("/api/v1/experts/me/schedule");
+
+export const saveMySchedule = (slots: Array<{ weekday: number; startTime: string; endTime: string }>) =>
+  apiFetch<unknown>("/api/v1/experts/me/schedule", { method: "PUT", body: JSON.stringify({ slots }) });
+
+export const addScheduleBlackout = (body: { startAt: string; endAt: string; reason?: string }) =>
+  apiFetch<unknown>("/api/v1/experts/me/schedule/blackouts", { method: "POST", body: JSON.stringify(body) });
+
+export const fetchExpertAppointments = () =>
+  apiFetch<{ items: Array<Record<string, unknown>> }>("/api/v1/experts/me/appointments");
+
+export const fetchExpertDashboard = () =>
+  apiFetch<{
+    profile: { realName: string | null; acceptingProjects: boolean; profileStatus: string };
+    stats: { pendingConfirm: number; inProgress: number; completed: number; uniqueStudents: number };
+    pendingProjects: Project[];
+    todayAppointments: Array<Record<string, unknown>>;
+    income: { total: number; pending: number; settled: number };
+  }>("/api/v1/dashboard");
+
 // Admin
 export const fetchPendingCertifications = () =>
   apiFetch<{ items: Array<Record<string, unknown>> }>("/api/v1/admin/experts/certifications");
@@ -141,6 +165,15 @@ export const publishProject = (projectId: number) =>
   apiFetch<Project>(`/api/v1/ops/projects/${projectId}/publish`, { method: "POST" });
 export const confirmProjectCompletion = (projectId: number) =>
   apiFetch<Project>(`/api/v1/ops/projects/${projectId}/completion/confirm`, { method: "POST" });
+export const fetchOpsDashboard = () =>
+  apiFetch<{
+    stats: { totalStudents: number; activeProjects: number; pendingCompletionReview: number; weekAppointments: number };
+    recentProjects: Project[];
+    appointments: Array<Record<string, unknown>>;
+    expertAvailability: Array<{ expertId: number; realName: string | null; slotCount: number; acceptingProjects: boolean }>;
+  }>("/api/v1/ops/dashboard");
+export const fetchOpsAppointments = () =>
+  apiFetch<{ items: Array<Record<string, unknown>> }>("/api/v1/ops/appointments");
 
 // Projects
 export const fetchProjects = () => apiFetch<{ items: Project[] }>("/api/v1/projects");
@@ -179,6 +212,47 @@ export const createAppointment = (projectId: number, body: Record<string, unknow
     method: "POST",
     body: JSON.stringify(body),
   });
+export const fetchProjectFiles = (projectId: number) =>
+  apiFetch<{ items: Array<Record<string, unknown>> }>(`/api/v1/projects/${projectId}/files`);
+export const requestFileUploadUrl = (projectId: number, fileName: string, mimeType: string) =>
+  apiFetch<{ uploadUrl: string; ossKey: string; bucket: string; mode: string }>(
+    `/api/v1/projects/${projectId}/files/upload-url`,
+    { method: "POST", body: JSON.stringify({ fileName, mimeType }) },
+  );
+export const registerProjectFile = (
+  projectId: number,
+  body: { fileName: string; mimeType?: string; sizeBytes?: number; category?: string; ossKey?: string },
+) =>
+  apiFetch<unknown>(`/api/v1/projects/${projectId}/files`, { method: "POST", body: JSON.stringify(body) });
+
+export async function uploadProjectFile(projectId: number, file: File, category = "other") {
+  const urlRes = await requestFileUploadUrl(projectId, file.name, file.type || "application/octet-stream");
+  if (urlRes.success && urlRes.data?.uploadUrl) {
+    const putRes = await fetch(urlRes.data.uploadUrl, {
+      method: "PUT",
+      body: file,
+      headers: { "Content-Type": file.type || "application/octet-stream" },
+    });
+    if (!putRes.ok) throw new Error("OSS 上传失败");
+    return registerProjectFile(projectId, {
+      fileName: file.name,
+      mimeType: file.type,
+      sizeBytes: file.size,
+      category,
+      ossKey: urlRes.data.ossKey,
+    });
+  }
+  const form = new FormData();
+  form.append("file", file);
+  form.append("category", category);
+  const token = localStorage.getItem("auth_token");
+  const res = await fetch(`${API_BASE}/api/v1/projects/${projectId}/files/local`, {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: form,
+  });
+  return res.json() as Promise<ApiResponse<unknown>>;
+}
 
 // Income
 export const fetchIncomeSummary = () =>

@@ -18,7 +18,7 @@
 | **5** | `feat(completion): 完成确认与收入` | completions + income_lines | Income + ops 确认 | 双确认入账 |
 | **6** | `feat(collab): 消息预约与 RTC` | messages + appointments + rtc | DeliverySpace + Schedule | 发消息、预约、入会 |
 | **7** | `feat(student): 学员登录与交付空间` | OTP/magic link | student 端 | 学员链接登录 |
-| **8** | `refactor(frontend): expert/ops 命名对齐` | — | mentor→expert 目录与路由 | 四端命名一致 |
+| **8** | `feat(phase1): dashboard + OSS + expert/ops 命名` | dashboard API + OSS 上传 + schedule blackouts | expert/ops 目录 + Dashboard/Schedule 联调 | 聚合数据 + 真实上传 + 命名一致 |
 
 ---
 
@@ -54,4 +54,4 @@ feat(scope): 简短标题
 - [x] Step 0 — `a90aeb2` schema 已落库
 - [x] Step 1 — `655aeac` Auth + 专家档案 + admin 认证联调
 - [x] Step 2–7 — 字典/能力/学员/项目/交付/收入/学员 magic link（后端+前端联调）
-- [ ] Step 8 — mentor/supervisor 目录重命名为 expert/ops（可选）
+- [x] Step 8 — expert/ops 目录重命名 + Dashboard API + OSS 上传 + Schedule 联调

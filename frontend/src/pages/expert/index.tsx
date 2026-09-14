@@ -1,5 +1,5 @@
 import { useState } from "react";
-import MentorLayout, { type MentorPage } from "./MentorLayout";
+import ExpertLayout, { type ExpertPage } from "./ExpertLayout";
 import Dashboard from "./Dashboard";
 import Projects from "./Projects";
 import ProjectDetail from "./ProjectDetail";
@@ -13,17 +13,17 @@ interface Props {
   onBack: () => void;
 }
 
-export default function MentorApp({ onBack }: Props) {
-  const [page, setPage] = useState<MentorPage>("dashboard");
+export default function ExpertApp({ onBack }: Props) {
+  const [page, setPage] = useState<ExpertPage>("dashboard");
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
   const navigate = (p: string) => {
-    setPage(p as MentorPage);
+    setPage(p as ExpertPage);
     if (p !== "projects") setSelectedProjectId(null);
   };
 
   return (
-    <MentorLayout page={page} onNavigate={navigate} onBack={onBack}>
+    <ExpertLayout page={page} onNavigate={navigate} onBack={onBack}>
       {page === "dashboard" && <Dashboard onNavigate={navigate} />}
       {page === "projects" && !selectedProjectId && (
         <Projects onSelectProject={(id) => setSelectedProjectId(id)} />
@@ -40,6 +40,6 @@ export default function MentorApp({ onBack }: Props) {
       {page === "schedule" && <Schedule />}
       {page === "income" && <Income />}
       {page === "profile" && <Profile />}
-    </MentorLayout>
+    </ExpertLayout>
   );
 }
