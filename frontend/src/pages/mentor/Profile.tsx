@@ -1,10 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  fetchMyExpertProfile,
+  submitExpertCertification,
+  type ExpertProfile,
+} from "../../services/api";
 
 type ProfileTab = "info"|"certification"|"payment"|"settings";
 
+const STATUS_LABEL: Record<string, string> = {
+  draft: "草稿",
+  pending_review: "待审核",
+  active: "已认证",
+  rejected: "已拒绝",
+  suspended: "已暂停",
+};
+
 export default function Profile() {
   const [tab, setTab] = useState<ProfileTab>("info");
+  const [profile, setProfile] = useState<ExpertProfile | null>(null);
+  const [certMsg, setCertMsg] = useState("");
   const [notifications, setNotifications] = useState({ newProject:true, projectReminder:true, studentMessage:true, meetingReminder:true, operationMessage:false });
+
+  useEffect(() => {
+    fetchMyExpertProfile().then((res) => {
+      if (res.success) setProfile(res.data);
+    });
+  }, []);
+
+  async function handleSubmitCert() {
+    setCertMsg("");
+    const res = await submitExpertCertification();
+    if (res.success) {
+      setCertMsg("已提交，等待管理员审核");
+      const refreshed = await fetchMyExpertProfile();
+      if (refreshed.success) setProfile(refreshed.data);
+    } else {
+      setCertMsg(res.message);
+    }
+  }
+
+  const displayName = profile?.realName || profile?.account || "专家";
+  const status = profile?.profileStatus ?? "draft";
 
   return (
     <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
@@ -17,14 +53,20 @@ export default function Profile() {
       <div style={{ background: "#0F1929", borderRadius: 16, overflow: "hidden" }}>
         <div style={{ height: 64, background: "linear-gradient(135deg, var(--c-mentor-accent) 0%, #FF8C5A 50%, #FFB347 100%)" }} />
         <div style={{ padding: "0 24px 20px", marginTop: -32, display: "flex", alignItems: "flex-end", gap: 16 }}>
-          <div style={{ width: 64, height: 64, borderRadius: 16, background: "var(--c-mentor-accent)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, fontWeight: 800, border: "3px solid #0F1929", flexShrink: 0 }}>王</div>
+          <div style={{ width: 64, height: 64, borderRadius: 16, background: "var(--c-mentor-accent)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, fontWeight: 800, border: "3px solid #0F1929", flexShrink: 0 }}>{displayName[0]}</div>
           <div style={{ flex: 1, paddingBottom: 4 }}>
-            <div style={{ color: "#fff", fontSize: 20, fontWeight: 700 }}>王明华</div>
-            <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 13, marginTop: 2 }}>高级产品经理 · 某互联网科技公司 · 8年经验</div>
+            <div style={{ color: "#fff", fontSize: 20, fontWeight: 700 }}>{displayName}</div>
+            <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 13, marginTop: 2 }}>
+              {[profile?.currentTitle, profile?.currentCompany, profile?.city].filter(Boolean).join(" · ") || "请完善个人资料"}
+            </div>
           </div>
           <div style={{ display: "flex", gap: 8, paddingBottom: 4 }}>
-            <span style={{ background: "#0D7A0D", color: "#73D13D", fontSize: 11, padding: "3px 10px", borderRadius: 20, fontWeight: 600, border: "1px solid #237804" }}>✓ 已认证</span>
-            <span style={{ background: "rgba(22,119,255,0.2)", color: "#69B1FF", fontSize: 11, padding: "3px 10px", borderRadius: 20, border: "1px solid rgba(22,119,255,0.3)" }}>可接受项目</span>
+            <span style={{ background: status === "active" ? "#0D7A0D" : "#374151", color: status === "active" ? "#73D13D" : "#D1D5DB", fontSize: 11, padding: "3px 10px", borderRadius: 20, fontWeight: 600, border: "1px solid #237804" }}>
+              {STATUS_LABEL[status] ?? status}
+            </span>
+            {profile?.acceptingProjects && (
+              <span style={{ background: "rgba(22,119,255,0.2)", color: "#69B1FF", fontSize: 11, padding: "3px 10px", borderRadius: 20, border: "1px solid rgba(22,119,255,0.3)" }}>可接受项目</span>
+            )}
           </div>
         </div>
       </div>
@@ -46,7 +88,7 @@ export default function Profile() {
           <div style={{ background: "#fff", borderRadius: 12, border: "1px solid var(--c-border)", padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
             <div style={{ fontWeight: 600, fontSize: 15 }}>基础信息</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px,1fr))", gap: 16 }}>
-              {[["姓名","王明华"],["手机号","138****8888"],["邮箱","wang@example.com"],["所在城市","上海"],["当前公司","某互联网科技公司"],["当前职位","高级产品经理"]].map(([l, v]) => (
+              {[["姓名", displayName],["手机号", profile?.phone ?? "—"],["账号", profile?.account ?? "—"],["所在城市", profile?.city ?? "—"],["当前公司", profile?.currentCompany ?? "—"],["当前职位", profile?.currentTitle ?? "—"]].map(([l, v]) => (
                 <div key={l}>
                   <div style={{ fontSize: 12, color: "var(--c-text-3)", marginBottom: 4 }}>{l}</div>
                   <div style={{ fontSize: 14, fontWeight: 500 }}>{v}</div>
@@ -78,31 +120,27 @@ export default function Profile() {
 
       {tab === "certification" && (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div style={{ background: "#F6FFED", border: "1px solid #B7EB8F", borderRadius: 12, padding: "16px 20px", display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--c-success)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9l3 3 9-7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </div>
-            <div>
-              <div style={{ fontWeight: 600, color: "#237804", fontSize: 15 }}>认证状态：已通过</div>
-              <div style={{ fontSize: 12, color: "#52C41A", marginTop: 2 }}>认证时间：2025-07-10 · 有效期至 2026-07-10 · 审核人：平台运营团队</div>
-            </div>
-          </div>
-
           <div style={{ background: "#fff", borderRadius: 12, border: "1px solid var(--c-border)", padding: 20 }}>
-            <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 14 }}>认证材料</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {[
-                { name:"身份证件（正面）", status:"已验证", icon:"🪪" },
-                { name:"工作证明或名片", status:"已验证", icon:"💼" },
-                { name:"学历证明", status:"已验证", icon:"🎓" },
-              ].map((item, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", background: "var(--c-surface-2)", borderRadius: 8, border: "1px solid var(--c-border)" }}>
-                  <span style={{ fontSize: 20 }}>{item.icon}</span>
-                  <span style={{ flex: 1, fontSize: 14 }}>{item.name}</span>
-                  <span className="ant-tag ant-tag-green">{item.status}</span>
-                </div>
-              ))}
-            </div>
+            <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 8 }}>认证状态：{STATUS_LABEL[status] ?? status}</div>
+            {profile?.rejectReason && (
+              <div style={{ fontSize: 13, color: "#B91C1C", marginBottom: 8 }}>拒绝原因：{profile.rejectReason}</div>
+            )}
+            {profile?.verifiedAt && (
+              <div style={{ fontSize: 12, color: "var(--c-text-3)", marginBottom: 12 }}>
+                认证时间：{new Date(profile.verifiedAt).toLocaleString()}
+              </div>
+            )}
+            {(status === "draft" || status === "rejected") && (
+              <button
+                type="button"
+                onClick={handleSubmitCert}
+                className="ant-btn ant-btn-primary"
+                style={{ marginTop: 8 }}
+              >
+                提交认证申请
+              </button>
+            )}
+            {certMsg && <div style={{ marginTop: 12, fontSize: 13, color: "var(--c-primary)" }}>{certMsg}</div>}
           </div>
         </div>
       )}
