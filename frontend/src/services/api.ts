@@ -64,9 +64,17 @@ export function getAuthHeaders(): HeadersInit {
 }
 
 export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<ApiResponse<T>> {
+  const method = (init.method ?? "GET").toUpperCase();
+  const needsJsonBody = ["POST", "PUT", "PATCH"].includes(method);
+  const body = init.body ?? (needsJsonBody ? "{}" : undefined);
   const res = await fetch(`${API_BASE}${path}`, {
     ...init,
-    headers: { "Content-Type": "application/json", ...getAuthHeaders(), ...init.headers },
+    body,
+    headers: {
+      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+      ...getAuthHeaders(),
+      ...init.headers,
+    },
   });
   return res.json() as Promise<ApiResponse<T>>;
 }
