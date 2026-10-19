@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import {
   confirmOpsAppointmentCompletion,
-  createOpsAppointment,
+  createOpsAppointmentFromSlot,
+  fetchExpertScheduleSlots,
   fetchOpsAppointments,
   fetchOpsDashboard,
   fetchOpsProjects,
@@ -29,7 +30,9 @@ export default function ScheduleManagement() {
   const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState<Project[]>([]);
   const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState({ projectId: "", startAt: "", endAt: "", topic: "", meetingUrl: "" });
+  const [form, setForm] = useState({ projectId: "", slotDate: "", slotKey: "", topic: "" });
+  const [expertSlots, setExpertSlots] = useState<Array<{ weekday: number; startTime: string; endTime: string }>>([]);
+  const [slotMsg, setSlotMsg] = useState("");
 
   async function load() {
     setLoading(true);
@@ -66,34 +69,69 @@ export default function ScheduleManagement() {
 
       {showCreate && (
         <div style={{ background: "#fff", border: "1px solid var(--c-border)", borderRadius: 12, padding: 16, display: "grid", gap: 10 }}>
-          <select className="ant-input" value={form.projectId} onChange={(e) => setForm({ ...form, projectId: e.target.value })}>
+          <select
+            className="ant-input"
+            value={form.projectId}
+            onChange={async (e) => {
+              const projectId = e.target.value;
+              setForm({ ...form, projectId, slotKey: "" });
+              setSlotMsg("");
+              const proj = projects.find((p) => String(p.id) === projectId);
+              if (proj?.expertId) {
+                const res = await fetchExpertScheduleSlots(proj.expertId);
+                if (res.success) {
+                  setExpertSlots(res.data.items);
+                  if (!res.data.items.length) setSlotMsg("该专家尚未设置可预约时段");
+                }
+              } else {
+                setExpertSlots([]);
+                setSlotMsg("请先为项目指定专家");
+              }
+            }}
+          >
             <option value="">选择项目</option>
             {projects.map((p) => (
               <option key={p.id} value={p.id}>{p.title} · {p.studentName}</option>
             ))}
           </select>
-          <input className="ant-input" type="datetime-local" value={form.startAt} onChange={(e) => setForm({ ...form, startAt: e.target.value })} />
-          <input className="ant-input" type="datetime-local" value={form.endAt} onChange={(e) => setForm({ ...form, endAt: e.target.value })} />
-          <input className="ant-input" placeholder="课程主题" value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })} />
-          <input className="ant-input" placeholder="会议链接" value={form.meetingUrl} onChange={(e) => setForm({ ...form, meetingUrl: e.target.value })} />
+          <input className="ant-input" type="date" value={form.slotDate} onChange={(e) => setForm({ ...form, slotDate: e.target.value })} />
+          <select className="ant-input" value={form.slotKey} onChange={(e) => setForm({ ...form, slotKey: e.target.value })}>
+            <option value="">选择专家开放时段</option>
+            {expertSlots.map((s) => {
+              const key = `${s.weekday}-${s.startTime}-${s.endTime}`;
+              return (
+                <option key={key} value={key}>
+                  {weekDays[s.weekday]} {String(s.startTime).slice(0, 5)}–{String(s.endTime).slice(0, 5)}
+                </option>
+              );
+            })}
+          </select>
+          {slotMsg && <p style={{ margin: 0, fontSize: 13, color: "var(--c-warning)" }}>{slotMsg}</p>}
+          <input className="ant-input" placeholder="课程主题（可选）" value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })} />
           <button
             className="ant-btn ant-btn-primary"
             onClick={async () => {
-              if (!form.projectId || !form.startAt || !form.endAt) return alert("请填写项目与时间");
-              const res = await createOpsAppointment(Number(form.projectId), {
-                startAt: new Date(form.startAt).toISOString().slice(0, 19).replace("T", " "),
-                endAt: new Date(form.endAt).toISOString().slice(0, 19).replace("T", " "),
+              if (!form.projectId || !form.slotDate || !form.slotKey) return alert("请选择项目、日期和时段");
+              const slot = expertSlots.find((s) => `${s.weekday}-${s.startTime}-${s.endTime}` === form.slotKey);
+              if (!slot) return alert("时段无效");
+              const day = new Date(`${form.slotDate}T12:00:00`);
+              if (day.getDay() !== slot.weekday) return alert("所选日期与专家开放星期不一致");
+              const startAt = `${form.slotDate} ${String(slot.startTime).slice(0, 8)}`;
+              const endAt = `${form.slotDate} ${String(slot.endTime).slice(0, 8)}`;
+              const res = await createOpsAppointmentFromSlot(Number(form.projectId), {
+                startAt,
+                endAt,
                 topic: form.topic || undefined,
-                meetingUrl: form.meetingUrl || undefined,
               });
               if (res.success) {
                 setShowCreate(false);
-                setForm({ projectId: "", startAt: "", endAt: "", topic: "", meetingUrl: "" });
+                setForm({ projectId: "", slotDate: "", slotKey: "", topic: "" });
+                setExpertSlots([]);
                 await load();
               } else alert(res.message);
             }}
           >
-            创建
+            创建课次
           </button>
         </div>
       )}

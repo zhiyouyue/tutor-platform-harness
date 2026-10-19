@@ -1,6 +1,6 @@
 # Phase 2 测试汇总
 
-- **更新时间**: 2026-10-19T03:15:26.894Z
+- **更新时间**: 2026-10-19T03:22:55.792Z
 
 ## 集成测试（Vitest）
 
@@ -8,9 +8,10 @@
 |------|------|
 | course-flow.test.ts | 课次主链路 + 入账 |
 | course-flow-boundary.test.ts | 双确认边界、三分拆 1000、导入重复 |
+| rtc-phase21.test.ts | 档期排课、入会、录制回调 |
 | project-flow.test.ts | Phase 1 回归 |
 
-执行：`npm run test -w backend` → **30 passed**
+执行：`npm run test -w backend` → **34 passed**
 
 
 ## E2E 冒烟

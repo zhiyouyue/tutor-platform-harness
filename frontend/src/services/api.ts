@@ -190,6 +190,14 @@ export const createOpsAppointment = (
     method: "POST",
     body: JSON.stringify(body),
   });
+export const createOpsAppointmentFromSlot = (
+  projectId: number,
+  body: { startAt: string; endAt: string; topic?: string },
+) =>
+  apiFetch<Record<string, unknown>>(`/api/v1/ops/projects/${projectId}/appointments/from-slot`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
 export const confirmOpsAppointmentCompletion = (appointmentId: number) =>
   apiFetch<Record<string, unknown>>(`/api/v1/ops/appointments/${appointmentId}/confirm-completion`, {
     method: "POST",
@@ -211,8 +219,13 @@ export const joinClassroom = (appointmentId: number) =>
     { method: "POST" },
   );
 export const fetchExpertScheduleSlots = (expertId: number) =>
-  apiFetch<{ items: Array<{ weekday: number; startTime: string; endTime: string }> }>(
-    `/api/v1/ops/experts/${expertId}/schedule-slots`,
+  apiFetch<{
+    items: Array<{ weekday: number; startTime: string; endTime: string }>;
+    blackouts: Array<{ startAt: string; endAt: string; reason: string | null }>;
+  }>(`/api/v1/ops/experts/${expertId}/schedule-slots`);
+export const fetchAppointmentRecordings = (appointmentId: number) =>
+  apiFetch<{ items: Array<{ id: number; ossKey: string; durationSec?: number | null; status: string }> }>(
+    `/api/v1/appointments/${appointmentId}/recordings`,
   );
 export const expertCompleteAppointment = (projectId: number, appointmentId: number) =>
   apiFetch<Record<string, unknown>>(`/api/v1/projects/${projectId}/appointments/${appointmentId}/expert-complete`, {

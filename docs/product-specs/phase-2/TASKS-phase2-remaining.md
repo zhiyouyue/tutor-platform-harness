@@ -17,8 +17,8 @@
 | T-P2-FE-04 | 公司后台财务页（P1） | ⬜ |
 | T-P2-BE-04 | 通知占位表/队列 | ⬜ |
 | T-P2-REG-01 | Phase 1 E2E 回归 | ⬜ |
-| **T-P2-RTC-01** | 运营从 expert slot 排课 + 校验 blackout | ⬜ |
-| **T-P2-RTC-02** | 课次 prepare RTC + `join-token` API | ⬜ |
-| **T-P2-RTC-03** | 前端 MeetingRoom（dingrtc SDK） | ⬜ |
-| **T-P2-RTC-04** | 云端录制回调 → OSS + 元数据表 | ⬜ |
+| **T-P2-RTC-01** | 运营从 expert slot 排课 + 校验 blackout | ✅ |
+| **T-P2-RTC-02** | 课次 prepare RTC + join-classroom | ✅ |
+| **T-P2-RTC-03** | 前端 MeetingRoom（dingrtc SDK） | ✅ |
+| **T-P2-RTC-04** | 云端录制回调 → OSS + 元数据表 | ✅ |
 | **T-P2-INC-01** | 运营确认课次 → `income_lines`（防重复） | ✅ |

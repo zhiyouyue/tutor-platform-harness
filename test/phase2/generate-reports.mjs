@@ -15,9 +15,10 @@ function main() {
 |------|------|
 | course-flow.test.ts | 课次主链路 + 入账 |
 | course-flow-boundary.test.ts | 双确认边界、三分拆 1000、导入重复 |
+| rtc-phase21.test.ts | 档期排课、入会、录制回调 |
 | project-flow.test.ts | Phase 1 回归 |
 
-执行：\`npm run test -w backend\` → **30 passed**
+执行：\`npm run test -w backend\` → **34 passed**
 `;
   let e2e = "_（未运行 Playwright）_";
   if (fs.existsSync(resultsPath)) {
