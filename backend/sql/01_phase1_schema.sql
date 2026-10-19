@@ -485,7 +485,10 @@ CREATE TABLE project_appointments (
     start_at        DATETIME        NOT NULL,
     end_at          DATETIME        NOT NULL,
     topic           VARCHAR(255)    DEFAULT NULL,
+    meeting_url     VARCHAR(512)    DEFAULT NULL COMMENT '第三方会议链接',
     status          ENUM('scheduled','confirmed','cancelled','completed') NOT NULL DEFAULT 'scheduled',
+    expert_completed_at DATETIME    DEFAULT NULL COMMENT '专家标记课次完成',
+    ops_confirmed_at    DATETIME    DEFAULT NULL COMMENT '班主任确认课次完成',
     created_by      BIGINT UNSIGNED NOT NULL,
     created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -503,6 +506,7 @@ CREATE TABLE income_lines (
     id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     expert_id       BIGINT UNSIGNED NOT NULL,
     project_id      BIGINT UNSIGNED NOT NULL,
+    appointment_id  BIGINT UNSIGNED DEFAULT NULL COMMENT '课次入账',
     amount          DECIMAL(10,2)   NOT NULL,
     currency        CHAR(3)         NOT NULL DEFAULT 'CNY',
     status          ENUM('accrued','pending_settlement','settled') NOT NULL DEFAULT 'accrued',
@@ -511,10 +515,12 @@ CREATE TABLE income_lines (
     settled_at      DATETIME        DEFAULT NULL,
 
     PRIMARY KEY (id),
+    UNIQUE KEY uk_income_lines_appointment (appointment_id),
     INDEX idx_income_lines_expert (expert_id),
     INDEX idx_income_lines_project (project_id),
     CONSTRAINT fk_income_lines_expert FOREIGN KEY (expert_id) REFERENCES expert_profiles(id),
-    CONSTRAINT fk_income_lines_project FOREIGN KEY (project_id) REFERENCES projects(id)
+    CONSTRAINT fk_income_lines_project FOREIGN KEY (project_id) REFERENCES projects(id),
+    CONSTRAINT fk_income_lines_appointment FOREIGN KEY (appointment_id) REFERENCES project_appointments(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='专家收入账本';
 

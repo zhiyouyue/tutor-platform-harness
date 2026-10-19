@@ -24,7 +24,10 @@ export interface AppointmentRow extends RowDataPacket {
   start_at: Date;
   end_at: Date;
   topic: string | null;
+  meeting_url: string | null;
   status: string;
+  expert_completed_at: Date | null;
+  ops_confirmed_at: Date | null;
   created_by: number;
   created_at: Date;
 }
@@ -107,24 +110,37 @@ export async function listAppointments(projectId: number): Promise<AppointmentRo
   return rows;
 }
 
+export async function findAppointmentById(id: number): Promise<AppointmentRow | null> {
+  const [rows] = await pool.query<AppointmentRow[]>(
+    `SELECT * FROM project_appointments WHERE id = ?`,
+    [id],
+  );
+  return rows[0] ?? null;
+}
+
 export async function createAppointment(params: {
   projectId: number;
   nodeId?: number;
   startAt: string;
   endAt: string;
   topic?: string;
+  meetingUrl?: string;
   createdBy: number;
+  status?: string;
 }): Promise<AppointmentRow> {
+  const status = params.status ?? "scheduled";
   const [result] = await pool.query<ResultSetHeader>(
-    `INSERT INTO project_appointments (project_id, node_id, start_at, end_at, topic, created_by, status)
-     VALUES (?, ?, ?, ?, ?, ?, 'scheduled')`,
+    `INSERT INTO project_appointments (project_id, node_id, start_at, end_at, topic, meeting_url, created_by, status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       params.projectId,
       params.nodeId ?? null,
       params.startAt,
       params.endAt,
       params.topic ?? null,
+      params.meetingUrl ?? null,
       params.createdBy,
+      status,
     ],
   );
   const [rows] = await pool.query<AppointmentRow[]>(
@@ -132,6 +148,38 @@ export async function createAppointment(params: {
     [result.insertId],
   );
   return rows[0]!;
+}
+
+export async function updateAppointment(
+  appointmentId: number,
+  patch: {
+    meetingUrl?: string;
+    status?: string;
+    expertCompletedAt?: Date;
+    opsConfirmedAt?: Date;
+  },
+): Promise<void> {
+  const sets: string[] = [];
+  const vals: unknown[] = [];
+  if (patch.meetingUrl !== undefined) {
+    sets.push("meeting_url = ?");
+    vals.push(patch.meetingUrl);
+  }
+  if (patch.status !== undefined) {
+    sets.push("status = ?");
+    vals.push(patch.status);
+  }
+  if (patch.expertCompletedAt !== undefined) {
+    sets.push("expert_completed_at = ?");
+    vals.push(patch.expertCompletedAt);
+  }
+  if (patch.opsConfirmedAt !== undefined) {
+    sets.push("ops_confirmed_at = ?");
+    vals.push(patch.opsConfirmedAt);
+  }
+  if (sets.length === 0) return;
+  vals.push(appointmentId);
+  await pool.query(`UPDATE project_appointments SET ${sets.join(", ")} WHERE id = ?`, vals);
 }
 
 export async function updateAppointmentStatus(
@@ -184,6 +232,35 @@ export async function listAllAppointments(limit = 50): Promise<AppointmentDetail
      ORDER BY pa.start_at DESC
      LIMIT ?`,
     [limit],
+  );
+  return rows;
+}
+
+export async function countActiveAppointmentsForProject(projectId: number): Promise<number> {
+  const [rows] = await pool.query<Array<RowDataPacket & { cnt: number }>>(
+    `SELECT COUNT(*) AS cnt FROM project_appointments WHERE project_id = ? AND status != 'cancelled'`,
+    [projectId],
+  );
+  return rows[0]?.cnt ?? 0;
+}
+
+export async function listActiveAppointmentIdsForProject(projectId: number): Promise<number[]> {
+  const [rows] = await pool.query<Array<RowDataPacket & { id: number }>>(
+    `SELECT id FROM project_appointments
+     WHERE project_id = ? AND status != 'cancelled'
+     ORDER BY start_at, id`,
+    [projectId],
+  );
+  return rows.map((r) => r.id);
+}
+
+export async function listAppointmentsForStudent(studentProfileId: number): Promise<AppointmentDetailRow[]> {
+  const [rows] = await pool.query<AppointmentDetailRow[]>(
+    `${APPOINTMENT_DETAIL_SQL}
+     WHERE p.student_id = ?
+     ORDER BY pa.start_at DESC
+     LIMIT 100`,
+    [studentProfileId],
   );
   return rows;
 }

@@ -3,6 +3,7 @@ import { AppError } from "../errors/AppError.js";
 import * as deliveryRepo from "../repositories/deliveryRepository.js";
 import * as projectRepo from "../repositories/projectRepository.js";
 import * as scheduleRepo from "../repositories/scheduleRepository.js";
+import * as appointmentService from "../services/appointmentService.js";
 import {
   requireExpertProfile,
   requireProjectAccess,
@@ -312,7 +313,8 @@ export default async function projectRoutes(fastify: FastifyInstance) {
     try {
       const { id } = request.params as { id: string };
       await requireProjectAccess(parseInt(id, 10), request.user.userId, request.user.role);
-      return success(reply, { items: await scheduleRepo.listAppointments(parseInt(id, 10)) });
+      const items = await scheduleRepo.listAppointments(parseInt(id, 10));
+      return success(reply, { items: items.map((a) => appointmentService.formatAppointment(a)) });
     } catch (e) {
       return handleRouteError(reply, e);
     }
@@ -331,7 +333,21 @@ export default async function projectRoutes(fastify: FastifyInstance) {
         topic: body.topic,
         createdBy: request.user.userId,
       });
-      return success(reply, appt, "预约已创建", 201);
+      return success(reply, appointmentService.formatAppointment(appt), "预约已创建", 201);
+    } catch (e) {
+      return handleRouteError(reply, e);
+    }
+  });
+
+  fastify.post("/projects/:id/appointments/:apptId/expert-complete", async (request, reply) => {
+    try {
+      const { id, apptId } = request.params as { id: string; apptId: string };
+      const projectId = parseInt(id, 10);
+      const appointmentId = parseInt(apptId, 10);
+      await requireProjectAccess(projectId, request.user.userId, request.user.role);
+      if (request.user.role !== "expert") throw new AppError("仅专家可标记课次完成", 403);
+      const appt = await appointmentService.expertCompleteAppointment(projectId, appointmentId);
+      return success(reply, appt, "课次已标记完成");
     } catch (e) {
       return handleRouteError(reply, e);
     }

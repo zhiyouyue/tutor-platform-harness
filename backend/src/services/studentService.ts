@@ -64,6 +64,33 @@ export async function createStudent(body: {
   return getStudent(studentId);
 }
 
+export async function importStudents(
+  items: Array<{
+    realName: string;
+    phone: string;
+    school?: string;
+    major?: string;
+    targetRole?: string;
+  }>,
+  opsUserId: number,
+) {
+  const created: Awaited<ReturnType<typeof getStudent>>[] = [];
+  const failed: Array<{ phone: string; reason: string }> = [];
+  for (const item of items) {
+    try {
+      if (!item.realName?.trim() || !item.phone?.trim()) {
+        failed.push({ phone: item.phone || "", reason: "姓名或手机号为空" });
+        continue;
+      }
+      created.push(await createStudent(item, opsUserId));
+    } catch (e) {
+      const msg = e instanceof AppError ? e.message : "创建失败";
+      failed.push({ phone: item.phone, reason: msg });
+    }
+  }
+  return { created, failed };
+}
+
 export async function createLoginLink(studentId: number) {
   const student = await studentRepo.findStudentById(studentId);
   if (!student) throw new AppError("学员不存在", 404);

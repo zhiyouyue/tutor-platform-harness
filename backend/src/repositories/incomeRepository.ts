@@ -5,6 +5,7 @@ export interface IncomeLineRow extends RowDataPacket {
   id: number;
   expert_id: number;
   project_id: number;
+  appointment_id: number | null;
   amount: string;
   currency: string;
   status: string;
@@ -38,4 +39,32 @@ export async function getSummary(expertId: number) {
     [expertId],
   );
   return rows[0] ?? { total: "0", pending: "0", settled: "0" };
+}
+
+export async function existsForAppointment(appointmentId: number): Promise<boolean> {
+  const [rows] = await pool.query<Array<RowDataPacket & { cnt: number }>>(
+    `SELECT COUNT(*) AS cnt FROM income_lines WHERE appointment_id = ?`,
+    [appointmentId],
+  );
+  return (rows[0]?.cnt ?? 0) > 0;
+}
+
+export async function insertLine(params: {
+  expertId: number;
+  projectId: number;
+  appointmentId?: number | null;
+  amount: number;
+  description?: string;
+}): Promise<void> {
+  await pool.query(
+    `INSERT INTO income_lines (expert_id, project_id, appointment_id, amount, description, status)
+     VALUES (?, ?, ?, ?, ?, 'accrued')`,
+    [
+      params.expertId,
+      params.projectId,
+      params.appointmentId ?? null,
+      params.amount,
+      params.description ?? null,
+    ],
+  );
 }

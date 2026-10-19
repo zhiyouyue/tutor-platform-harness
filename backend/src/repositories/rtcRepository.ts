@@ -47,6 +47,21 @@ export async function createSession(params: {
   return findByChannelId(channelId);
 }
 
+export async function findByAppointmentId(appointmentId: number): Promise<RtcSessionRow | null> {
+  const [rows] = await pool.query<RtcSessionRow[]>(
+    `SELECT s.*,
+            cu.account AS creator_account, cu.phone AS creator_phone,
+            ca.account AS callee_account, ca.phone AS callee_phone
+     FROM rtc_sessions s
+     JOIN users cu ON cu.id = s.creator_id
+     JOIN users ca ON ca.id = s.callee_id
+     WHERE s.appointment_id = ? AND s.status != 'cancelled'
+     ORDER BY s.id DESC LIMIT 1`,
+    [appointmentId],
+  );
+  return rows[0] ?? null;
+}
+
 export async function findByChannelId(channelId: string): Promise<RtcSessionRow | null> {
   const [rows] = await pool.query<RtcSessionRow[]>(
     `SELECT s.*,

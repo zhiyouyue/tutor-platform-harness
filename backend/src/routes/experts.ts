@@ -4,6 +4,7 @@ import * as capRepo from "../repositories/capabilityRepository.js";
 import * as scheduleRepo from "../repositories/scheduleRepository.js";
 import * as expertRepo from "../repositories/expertRepository.js";
 import * as expertProfileService from "../services/expertProfileService.js";
+import * as appointmentService from "../services/appointmentService.js";
 import { fail, success } from "../utils/response.js";
 
 function handleError(reply: Parameters<typeof fail>[0], err: unknown) {
@@ -173,16 +174,7 @@ export default async function expertRoutes(fastify: FastifyInstance) {
       if (!ep) throw new AppError("专家档案不存在", 404);
       const items = await scheduleRepo.listUpcomingForExpert(ep.id, 20);
       return success(reply, {
-        items: items.map((a) => ({
-          id: a.id,
-          projectId: a.project_id,
-          projectTitle: a.project_title,
-          studentName: a.student_name,
-          startAt: a.start_at,
-          endAt: a.end_at,
-          topic: a.topic,
-          status: a.status,
-        })),
+        items: items.map((a) => appointmentService.formatAppointment(a)),
       });
     } catch (err) {
       return handleError(reply, err);

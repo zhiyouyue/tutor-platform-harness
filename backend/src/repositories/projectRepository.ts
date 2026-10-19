@@ -209,11 +209,18 @@ export async function confirmCompletion(projectId: number, opsUserId: number): P
     const [projRows] = await conn.query<ProjectRow[]>(`SELECT * FROM projects WHERE id = ?`, [projectId]);
     const proj = projRows[0];
     if (proj?.expert_id) {
-      await conn.query(
-        `INSERT INTO income_lines (expert_id, project_id, amount, description, status)
-         VALUES (?, ?, ?, ?, 'accrued')`,
-        [proj.expert_id, projectId, proj.total_amount, proj.title],
+      const [apptCnt] = await conn.query<Array<RowDataPacket & { cnt: number }>>(
+        `SELECT COUNT(*) AS cnt FROM project_appointments WHERE project_id = ? AND status != 'cancelled'`,
+        [projectId],
       );
+      const hasSessionBilling = (apptCnt[0]?.cnt ?? 0) > 0;
+      if (!hasSessionBilling) {
+        await conn.query(
+          `INSERT INTO income_lines (expert_id, project_id, amount, description, status)
+           VALUES (?, ?, ?, ?, 'accrued')`,
+          [proj.expert_id, projectId, proj.total_amount, proj.title],
+        );
+      }
     }
     await conn.commit();
     return findProjectById(projectId);
@@ -240,4 +247,27 @@ export async function listExpertsForOps(): Promise<
     realName: r.real_name,
     profileStatus: r.profile_status,
   }));
+}
+
+export async function getProjectRevenueSummary(): Promise<{
+  totalAmount: number;
+  projectCount: number;
+  byStatus: Record<string, { count: number; amount: number }>;
+}> {
+  const [rows] = await pool.query<
+    Array<RowDataPacket & { status: string; cnt: number; amt: string }>
+  >(
+    `SELECT status, COUNT(*) AS cnt, COALESCE(SUM(total_amount), 0) AS amt
+     FROM projects GROUP BY status`,
+  );
+  const byStatus: Record<string, { count: number; amount: number }> = {};
+  let totalAmount = 0;
+  let projectCount = 0;
+  for (const r of rows) {
+    const amount = parseFloat(r.amt);
+    byStatus[r.status] = { count: r.cnt, amount };
+    totalAmount += amount;
+    projectCount += r.cnt;
+  }
+  return { totalAmount, projectCount, byStatus };
 }
