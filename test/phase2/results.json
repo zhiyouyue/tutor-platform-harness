@@ -1,0 +1,241 @@
+{
+  "config": {
+    "argv": [
+      "D:\\node.exe",
+      "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "phase2-course-chain.spec.ts",
+      "--reporter=list",
+      "--reporter=json"
+    ],
+    "configFile": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\frontend\\playwright.config.ts",
+    "rootDir": "C:/Users/Administrator/Desktop/职优越导师平台/tutor-platform-harness/frontend/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/Administrator/Desktop/职优越导师平台/tutor-platform-harness/test/phase1/playwright-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chrome",
+        "name": "chrome",
+        "testDir": "C:/Users/Administrator/Desktop/职优越导师平台/tutor-platform-harness/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.61.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "phase2-course-chain.spec.ts",
+      "file": "phase2-course-chain.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "FEAT-P2-OPS 运营登录与首页",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1384,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-19T03:15:17.460Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase2-course-chain-FEAT-P2-OPS-运营登录与首页-chrome\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a5feba2280967279d6cb-05552b0050dcbe396ced",
+          "file": "phase2-course-chain.spec.ts",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "FEAT-P2-STU 学生管理页",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1289,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-19T03:15:18.965Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase2-course-chain-FEAT-P2-STU-学生管理页-chrome\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a5feba2280967279d6cb-56dc10dad17e973e0afc",
+          "file": "phase2-course-chain.spec.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "title": "FEAT-P2-SCH 课程管理页",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1209,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-19T03:15:20.261Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase2-course-chain-FEAT-P2-SCH-课程管理页-chrome\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a5feba2280967279d6cb-21364c9fe3bf12a62f8c",
+          "file": "phase2-course-chain.spec.ts",
+          "line": 25,
+          "column": 1
+        },
+        {
+          "title": "FEAT-P2-FIN 收入页",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1123,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-19T03:15:21.476Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase2-course-chain-FEAT-P2-FIN-收入页-chrome\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a5feba2280967279d6cb-56324aa40c1feb16a7ee",
+          "file": "phase2-course-chain.spec.ts",
+          "line": 32,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-19T03:15:17.152Z",
+    "duration": 5567.052000000001,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
