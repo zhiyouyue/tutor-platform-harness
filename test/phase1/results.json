@@ -4,8 +4,7 @@
       "D:\\node.exe",
       "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\node_modules\\@playwright\\test\\cli.js",
       "test",
-      "e2e/phase1-delivery-chain.spec.ts",
-      "--project=chrome"
+      "phase3-po-features"
     ],
     "configFile": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\frontend\\playwright.config.ts",
     "rootDir": "C:/Users/Administrator/Desktop/职优越导师平台/tutor-platform-harness/frontend/e2e",
@@ -74,13 +73,13 @@
   },
   "suites": [
     {
-      "title": "phase1-delivery-chain.spec.ts",
-      "file": "phase1-delivery-chain.spec.ts",
+      "title": "phase3-po-features.spec.ts",
+      "file": "phase3-po-features.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "FEAT-P1-001 专家开放注册与登录",
+          "title": "FEAT-P3-ADM 管理员按专家项目看板",
           "ok": true,
           "tags": [],
           "tests": [
@@ -95,18 +94,18 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4491,
+                  "duration": 877,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T07:03:36.160Z",
+                  "startTime": "2026-10-19T03:37:16.024Z",
                   "annotations": [],
                   "attachments": [
                     {
                       "name": "screenshot",
                       "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase1-delivery-chain-FEAT-P1-001-专家开放注册与登录-chrome\\test-finished-1.png"
+                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase3-po-features-FEAT-P3-ADM-管理员按专家项目看板-chrome\\test-finished-1.png"
                     }
                   ]
                 }
@@ -114,13 +113,13 @@
               "status": "expected"
             }
           ],
-          "id": "29e729d9d2091e721e12-a4210c53c040ab2db381",
-          "file": "phase1-delivery-chain.spec.ts",
-          "line": 38,
+          "id": "6414c9735cd9f6f13c09-d94c200e916ebab3d9bf",
+          "file": "phase3-po-features.spec.ts",
+          "line": 17,
           "column": 1
         },
         {
-          "title": "FEAT-P1-002 专家资料与能力资产",
+          "title": "FEAT-P3-OPS 项目管理改派入口",
           "ok": true,
           "tags": [],
           "tests": [
@@ -135,18 +134,18 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2495,
+                  "duration": 1212,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T07:03:40.789Z",
+                  "startTime": "2026-10-19T03:37:17.022Z",
                   "annotations": [],
                   "attachments": [
                     {
                       "name": "screenshot",
                       "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase1-delivery-chain-FEAT-P1-002-专家资料与能力资产-chrome\\test-finished-1.png"
+                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase3-po-features-FEAT-P3-OPS-项目管理改派入口-chrome\\test-finished-1.png"
                     }
                   ]
                 }
@@ -154,13 +153,13 @@
               "status": "expected"
             }
           ],
-          "id": "29e729d9d2091e721e12-4d927e3e86144cebfb67",
-          "file": "phase1-delivery-chain.spec.ts",
-          "line": 45,
+          "id": "6414c9735cd9f6f13c09-9e0b355c6c582fdece46",
+          "file": "phase3-po-features.spec.ts",
+          "line": 26,
           "column": 1
         },
         {
-          "title": "FEAT-P1-003 专家提交认证",
+          "title": "FEAT-P3-OPS 课次延期/改期操作",
           "ok": true,
           "tags": [],
           "tests": [
@@ -175,18 +174,18 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2884,
+                  "duration": 1455,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-09-15T07:03:43.292Z",
+                  "startTime": "2026-10-19T03:37:18.240Z",
                   "annotations": [],
                   "attachments": [
                     {
                       "name": "screenshot",
                       "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase1-delivery-chain-FEAT-P1-003-专家提交认证-chrome\\test-finished-1.png"
+                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase3-po-features-FEAT-P3-OPS-课次延期-改期操作-chrome\\test-finished-1.png"
                     }
                   ]
                 }
@@ -194,369 +193,9 @@
               "status": "expected"
             }
           ],
-          "id": "29e729d9d2091e721e12-2b4b7d2a405897f46600",
-          "file": "phase1-delivery-chain.spec.ts",
-          "line": 63,
-          "column": 1
-        },
-        {
-          "title": "FEAT-P1-ADM 管理员审核专家认证",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 60000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 2053,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-15T07:03:46.183Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase1-delivery-chain-FEAT-P1-ADM-管理员审核专家认证-chrome\\test-finished-1.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "29e729d9d2091e721e12-31a96199dc6b05ed57b4",
-          "file": "phase1-delivery-chain.spec.ts",
-          "line": 73,
-          "column": 1
-        },
-        {
-          "title": "FEAT-P1-OPS 运营创建学员与项目并发布",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 60000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3170,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-15T07:03:48.242Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase1-delivery-chain-FEAT-P1-OPS-运营创建学员与项目并发布-chrome\\test-finished-1.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "29e729d9d2091e721e12-6d554f4b0f19fae19e68",
-          "file": "phase1-delivery-chain.spec.ts",
-          "line": 84,
-          "column": 1
-        },
-        {
-          "title": "FEAT-P1-005 专家接受项目",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 60000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 3750,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-15T07:03:51.419Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase1-delivery-chain-FEAT-P1-005-专家接受项目-chrome\\test-finished-1.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "29e729d9d2091e721e12-d80af10750aae57657c9",
-          "file": "phase1-delivery-chain.spec.ts",
-          "line": 119,
-          "column": 1
-        },
-        {
-          "title": "FEAT-P1-006 专家项目详情与节点",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 60000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 8224,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-15T07:03:55.175Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase1-delivery-chain-FEAT-P1-006-专家项目详情与节点-chrome\\test-finished-1.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "29e729d9d2091e721e12-2e9830135743c79defdc",
-          "file": "phase1-delivery-chain.spec.ts",
-          "line": 131,
-          "column": 1
-        },
-        {
-          "title": "FEAT-P1-008 辅导记录与交付物",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 60000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1398,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-15T07:04:03.405Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase1-delivery-chain-FEAT-P1-008-辅导记录与交付物-chrome\\test-finished-1.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "29e729d9d2091e721e12-7cd3ee10c9875a53f1b5",
-          "file": "phase1-delivery-chain.spec.ts",
-          "line": 142,
-          "column": 1
-        },
-        {
-          "title": "FEAT-P1-CMP 专家提交完成",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 60000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1721,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-15T07:04:04.810Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase1-delivery-chain-FEAT-P1-CMP-专家提交完成-chrome\\test-finished-1.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "29e729d9d2091e721e12-7c193f9ee58623f5c31a",
-          "file": "phase1-delivery-chain.spec.ts",
-          "line": 156,
-          "column": 1
-        },
-        {
-          "title": "FEAT-P1-CMP 运营确认完成并入账",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 60000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 6250,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-15T07:04:06.537Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase1-delivery-chain-FEAT-P1-CMP-运营确认完成并入账-chrome\\test-finished-1.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "29e729d9d2091e721e12-745475310dcde49a34ef",
-          "file": "phase1-delivery-chain.spec.ts",
-          "line": 167,
-          "column": 1
-        },
-        {
-          "title": "FEAT-P1-010 专家收入账本",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 60000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1620,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-15T07:04:12.794Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase1-delivery-chain-FEAT-P1-010-专家收入账本-chrome\\test-finished-1.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "29e729d9d2091e721e12-17d50807fafa40fccae0",
-          "file": "phase1-delivery-chain.spec.ts",
-          "line": 178,
-          "column": 1
-        },
-        {
-          "title": "AC-P1-02 运营无法访问管理员审核 API",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 60000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 468,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-15T07:04:14.422Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase1-delivery-chain-AC-P1-02-运营无法访问管理员审核-API-chrome\\test-finished-1.png"
-                    }
-                  ]
-                }
-              ],
-              "status": "expected"
-            }
-          ],
-          "id": "29e729d9d2091e721e12-f373f21fd34a8c785494",
-          "file": "phase1-delivery-chain.spec.ts",
-          "line": 188,
+          "id": "6414c9735cd9f6f13c09-0a047a5a2341691ed265",
+          "file": "phase3-po-features.spec.ts",
+          "line": 37,
           "column": 1
         }
       ]
@@ -564,9 +203,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-15T07:03:35.837Z",
-    "duration": 39193.095,
-    "expected": 12,
+    "startTime": "2026-10-19T03:37:15.705Z",
+    "duration": 4093.282,
+    "expected": 3,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
