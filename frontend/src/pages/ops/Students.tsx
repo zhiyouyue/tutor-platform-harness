@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { createStudent, fetchStudents, sendStudentLoginLink, type Student } from "../../services/api";
+import { createStudent, fetchStudents, importStudents, sendStudentLoginLink, type Student } from "../../services/api";
+import { PrimaryButton, SimpleCard, SimpleScreen } from "../../components/SimpleScreen";
 
 export default function Students() {
   const [items, setItems] = useState<Student[]>([]);
   const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ realName: "", phone: "", school: "", major: "", targetRole: "" });
-  const [linkMsg, setLinkMsg] = useState("");
+  const [form, setForm] = useState({ realName: "", phone: "" });
+  const [msg, setMsg] = useState("");
 
   const load = useCallback(async () => {
     const res = await fetchStudents();
@@ -18,45 +19,56 @@ export default function Students() {
     const res = await createStudent(form);
     if (res.success) {
       setShowAdd(false);
-      setForm({ realName: "", phone: "", school: "", major: "", targetRole: "" });
+      setForm({ realName: "", phone: "" });
+      setMsg("已添加");
       await load();
-    } else alert(res.message);
+    } else setMsg(res.message);
   }
 
   async function handleLoginLink(id: number) {
     const res = await sendStudentLoginLink(id);
-    if (res.success) setLinkMsg(`登录 token: ${res.data.token}（7天有效）`);
-    else alert(res.message);
+    setMsg(res.success ? "登录链接已发送到系统，请告知学生查收。" : res.message);
+  }
+
+  async function handleImport() {
+    const raw = window.prompt("每行一名学生：姓名,手机号");
+    if (!raw) return;
+    const items = raw.split("\n").map((line) => {
+      const [realName, phone] = line.split(/[,，\s]+/);
+      return { realName: realName?.trim() || "", phone: phone?.trim() || "" };
+    }).filter((r) => r.realName && r.phone);
+    const res = await importStudents(items);
+    if (res.success) {
+      setMsg(`成功 ${res.data.created.length} 人，未导入 ${res.data.failed.length} 人`);
+      await load();
+    } else setMsg(res.message);
   }
 
   return (
-    <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div>
-          <div style={{ fontSize: 20, fontWeight: 600 }}>学员管理</div>
-          <div style={{ fontSize: 13, color: "var(--c-text-3)" }}>共 {items.length} 名学员</div>
-        </div>
-        <button className="ant-btn ant-btn-primary" onClick={() => setShowAdd(!showAdd)}>新增学员</button>
+    <SimpleScreen title="学生" subtitle={`共 ${items.length} 人`}>
+      {msg && <p style={{ margin: 0, fontSize: 14, color: "var(--c-primary)" }}>{msg}</p>}
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <button type="button" className="ant-btn ant-btn-default" onClick={() => setShowAdd(!showAdd)}>添加</button>
+        <button type="button" className="ant-btn ant-btn-default" onClick={handleImport}>批量添加</button>
       </div>
-      {linkMsg && <div style={{ fontSize: 12, color: "var(--c-primary)", wordBreak: "break-all" }}>{linkMsg}</div>}
       {showAdd && (
-        <div style={{ background: "#fff", border: "1px solid var(--c-border)", borderRadius: 12, padding: 16, display: "grid", gap: 12 }}>
-          {[["realName", "姓名"], ["phone", "手机号"], ["school", "学校"], ["major", "专业"], ["targetRole", "目标岗位"]].map(([k, l]) => (
-            <input key={k} className="ant-input" placeholder={l} value={form[k as keyof typeof form]}
-              onChange={(e) => setForm({ ...form, [k]: e.target.value })} />
-          ))}
-          <button className="ant-btn ant-btn-primary" onClick={handleCreate}>创建</button>
-        </div>
+        <SimpleCard>
+          <input className="ant-input" placeholder="姓名" value={form.realName} onChange={(e) => setForm({ ...form, realName: e.target.value })} style={{ marginBottom: 8, width: "100%" }} />
+          <input className="ant-input" placeholder="手机号" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} style={{ marginBottom: 12, width: "100%" }} />
+          <PrimaryButton onClick={handleCreate}>保存</PrimaryButton>
+        </SimpleCard>
       )}
       {items.map((s) => (
-        <div key={s.id} style={{ background: "#fff", border: "1px solid var(--c-border)", borderRadius: 12, padding: 16, display: "flex", justifyContent: "space-between" }}>
-          <div>
-            <div style={{ fontWeight: 600 }}>{s.realName}</div>
-            <div style={{ fontSize: 13, color: "var(--c-text-3)" }}>{s.phone} · {s.city || "—"}</div>
+        <SimpleCard key={s.id}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+            <div>
+              <div style={{ fontWeight: 600 }}>{s.realName}</div>
+              <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 4 }}>{s.phone}</div>
+            </div>
+            <button type="button" className="ant-btn ant-btn-default" onClick={() => handleLoginLink(s.id)}>发登录链接</button>
           </div>
-          <button className="ant-btn ant-btn-default" onClick={() => handleLoginLink(s.id)}>生成登录链接</button>
-        </div>
+        </SimpleCard>
       ))}
-    </div>
+    </SimpleScreen>
   );
 }

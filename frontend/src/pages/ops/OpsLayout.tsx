@@ -1,19 +1,21 @@
 import { useState } from "react";
 
-export type OpsPage = "dashboard" | "students" | "projects" | "schedule";
+export type OpsPage = "dashboard" | "students" | "projects" | "schedule" | "finance";
 
 const nav: { id: OpsPage; label: string; icon: string }[] = [
-  { id: "dashboard", label: "工作台总览",  icon: "M2 2h6v6H2V2zm8 0h6v6h-6V2zM2 10h6v6H2v-6zm8 3h2m2 0h2m-3-3v2m0 2v2" },
-  { id: "students",  label: "学员管理",   icon: "M7 7a3 3 0 100-6 3 3 0 000 6zM1 16c0-3.3 2.7-6 6-6s6 2.7 6 6M13 7a2 2 0 100-4 2 2 0 000 4M15 14c.6.5 1 1.2 1 2" },
-  { id: "projects",  label: "项目管理",   icon: "M3 5a2 2 0 012-2h4l2 2h4a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" },
-  { id: "schedule",  label: "预约协调",   icon: "M2 4a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4zM2 8h16M6 2v3M10 2v3" },
+  { id: "dashboard", label: "首页",  icon: "M2 2h6v6H2V2zm8 0h6v6h-6V2zM2 10h6v6H2v-6zm8 3h2m2 0h2m-3-3v2m0 2v2" },
+  { id: "students",  label: "学生",   icon: "M7 7a3 3 0 100-6 3 3 0 000 6zM1 16c0-3.3 2.7-6 6-6s6 2.7 6 6M13 7a2 2 0 100-4 2 2 0 000 4M15 14c.6.5 1 1.2 1 2" },
+  { id: "projects",  label: "项目",   icon: "M3 5a2 2 0 012-2h4l2 2h4a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" },
+  { id: "schedule",  label: "课程",   icon: "M2 4a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4zM2 8h16M6 2v3M10 2v3" },
+  { id: "finance",   label: "收入",   icon: "M2 6h14v8H2V6zm2 10h10" },
 ];
 
 const pageTitle: Record<OpsPage, string> = {
-  dashboard: "工作台总览",
-  students: "学员管理",
-  projects: "项目管理",
-  schedule: "预约协调",
+  dashboard: "首页",
+  students: "学生",
+  projects: "项目",
+  schedule: "课程",
+  finance: "收入",
 };
 
 function NavIcon({ path }: { path: string }) {

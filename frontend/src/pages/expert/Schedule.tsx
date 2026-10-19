@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   addScheduleBlackout,
+  expertCompleteAppointment,
   fetchExpertAppointments,
   fetchMyExpertProfile,
   fetchMySchedule,
@@ -195,6 +196,23 @@ export default function Schedule() {
                   <div style={{ fontSize: 12, color: "var(--c-text-3)", marginTop: 3 }}>
                     {new Date(s.startAt as string).toLocaleString("zh-CN")}
                   </div>
+                  {typeof s.meetingUrl === "string" && s.meetingUrl && (
+                    <a href={s.meetingUrl} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: "var(--c-primary)", display: "inline-block", marginTop: 6 }}>
+                      进入会议
+                    </a>
+                  )}
+                  {!Boolean(s.expertCompletedAt) && (
+                    <button
+                      className="ant-btn ant-btn-default"
+                      style={{ marginTop: 8, fontSize: 12 }}
+                      onClick={async () => {
+                        await expertCompleteAppointment(s.projectId as number, s.id as number);
+                        await load();
+                      }}
+                    >
+                      标记课次完成
+                    </button>
+                  )}
                 </div>
               ))}
             </div>

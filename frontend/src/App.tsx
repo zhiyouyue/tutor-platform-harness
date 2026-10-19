@@ -55,12 +55,12 @@ function AppInner() {
               <circle cx="11" cy="10" r="3" fill="#2563EB"/>
             </svg>
           </div>
-          <span className="text-xl font-semibold tracking-tight text-[#0F172A]">求职辅导平台</span>
+          <span className="text-xl font-semibold tracking-tight text-[#0F172A]">职优越导师</span>
         </div>
         <h1 className="text-4xl font-bold text-[#0F172A] mb-3" style={{ fontFamily: "'DM Serif Display', serif" }}>
-          专家交付平台 1.0
+          欢迎登录
         </h1>
-        <p className="text-[#64748B] text-lg">选择身份登录并进入工作台</p>
+        <p className="text-[#64748B] text-lg">请选择您的身份</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full max-w-5xl px-6">

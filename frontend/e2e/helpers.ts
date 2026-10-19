@@ -13,7 +13,7 @@ export async function snap(page: Page, name: string) {
 
 export async function gotoHome(page: Page) {
   await page.goto("/");
-  await expect(page.getByText("专家交付平台 1.0")).toBeVisible();
+  await expect(page.getByText("欢迎登录")).toBeVisible();
 }
 
 const ROLE_BUTTON: Record<"专家" | "运营" | "管理员" | "学员", RegExp> = {

@@ -87,18 +87,15 @@ test("FEAT-P1-OPS 运营创建学员与项目并发布", async ({ page }) => {
   await expect(page.getByText("管理后台").first()).toBeVisible();
   await expect(page.locator("main").getByText("活跃项目").first()).toBeVisible();
 
-  await opsNav(page, "学员管理");
-  await page.getByRole("button", { name: "新增学员" }).click();
+  await opsNav(page, "学生");
+  await page.getByRole("button", { name: "添加", exact: true }).click();
   await page.getByPlaceholder("姓名").fill(STUDENT.realName);
   await page.getByPlaceholder("手机号").fill(STUDENT.phone);
-  await page.getByPlaceholder("学校").fill(STUDENT.school);
-  await page.getByPlaceholder("专业").fill(STUDENT.major);
-  await page.getByPlaceholder("目标岗位").fill(STUDENT.targetRole);
-  await page.getByRole("button", { name: "创建", exact: true }).click();
+  await page.getByRole("button", { name: "保存" }).click();
   await expect(page.getByText(STUDENT.realName).first()).toBeVisible();
   await snap(page, "FEAT-P1-OPS-student-created");
 
-  await opsNav(page, "项目管理");
+  await opsNav(page, "项目");
   await page.getByRole("button", { name: "创建项目" }).click();
   await page.getByPlaceholder("项目标题").fill(PROJECT_TITLE);
   await page.locator("select").first().selectOption({ label: `${STUDENT.realName} (${STUDENT.phone})` });
@@ -167,7 +164,7 @@ test("FEAT-P1-CMP 专家提交完成", async ({ page }) => {
 test("FEAT-P1-CMP 运营确认完成并入账", async ({ page }) => {
   await pickRole(page, "运营");
   await login(page, "ops1", "ops123456");
-  await opsNav(page, "项目管理");
+  await opsNav(page, "项目");
   const projectCard = page.getByText(PROJECT_TITLE, { exact: true }).locator("xpath=ancestor::div[1]");
   await expect(projectCard).toBeVisible();
   await projectCard.getByRole("button", { name: "确认完成并入账" }).click();

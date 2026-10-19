@@ -4,6 +4,7 @@ import OpsDashboard from "./Dashboard";
 import Students from "./Students";
 import OpsProjects from "./Projects";
 import ScheduleManagement from "./ScheduleManagement";
+import OpsFinance from "./Finance";
 
 interface Props {
   onBack: () => void;
@@ -18,6 +19,7 @@ export default function OpsApp({ onBack }: Props) {
       {page === "students" && <Students />}
       {page === "projects" && <OpsProjects />}
       {page === "schedule" && <ScheduleManagement />}
+      {page === "finance" && <OpsFinance />}
     </OpsLayout>
   );
 }

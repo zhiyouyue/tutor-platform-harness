@@ -182,6 +182,42 @@ export const fetchOpsDashboard = () =>
   }>("/api/v1/ops/dashboard");
 export const fetchOpsAppointments = () =>
   apiFetch<{ items: Array<Record<string, unknown>> }>("/api/v1/ops/appointments");
+export const createOpsAppointment = (
+  projectId: number,
+  body: { startAt: string; endAt: string; topic?: string; meetingUrl?: string },
+) =>
+  apiFetch<Record<string, unknown>>(`/api/v1/ops/projects/${projectId}/appointments`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+export const confirmOpsAppointmentCompletion = (appointmentId: number) =>
+  apiFetch<Record<string, unknown>>(`/api/v1/ops/appointments/${appointmentId}/confirm-completion`, {
+    method: "POST",
+  });
+export const importStudents = (items: Array<Record<string, unknown>>) =>
+  apiFetch<{ created: Student[]; failed: Array<{ phone: string; reason: string }> }>(
+    "/api/v1/ops/students/import",
+    { method: "POST", body: JSON.stringify({ items }) },
+  );
+export const fetchOpsFinanceSummary = () =>
+  apiFetch<{ totalAmount: number; projectCount: number; byStatus: Record<string, { count: number; amount: number }> }>(
+    "/api/v1/ops/finance/summary",
+  );
+export const fetchStudentAppointments = () =>
+  apiFetch<{ items: Array<Record<string, unknown>> }>("/api/v1/student/appointments");
+export const joinClassroom = (appointmentId: number) =>
+  apiFetch<{ ready: boolean; message?: string; joinInfo?: Record<string, unknown> }>(
+    `/api/v1/appointments/${appointmentId}/join-classroom`,
+    { method: "POST" },
+  );
+export const fetchExpertScheduleSlots = (expertId: number) =>
+  apiFetch<{ items: Array<{ weekday: number; startTime: string; endTime: string }> }>(
+    `/api/v1/ops/experts/${expertId}/schedule-slots`,
+  );
+export const expertCompleteAppointment = (projectId: number, appointmentId: number) =>
+  apiFetch<Record<string, unknown>>(`/api/v1/projects/${projectId}/appointments/${appointmentId}/expert-complete`, {
+    method: "POST",
+  });
 
 // Projects
 export const fetchProjects = () => apiFetch<{ items: Project[] }>("/api/v1/projects");

@@ -5,6 +5,7 @@ import MyProject from "./MyProject";
 import StudentSchedule from "./Schedule";
 import StudentMessages from "./Messages";
 import StudentProfile from "./Profile";
+import StudentClassroom from "./Classroom";
 import DeliverySpace from "../expert/DeliverySpace";
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 export default function StudentApp({ onBack }: Props) {
   const [page, setPage] = useState<StudentPage>("dashboard");
   const [deliveryProjectId, setDeliveryProjectId] = useState<number | null>(null);
+  const [classroomId, setClassroomId] = useState<number | null>(null);
 
   return (
     <StudentLayout page={page} onNavigate={setPage} onBack={onBack}>
@@ -24,7 +26,12 @@ export default function StudentApp({ onBack }: Props) {
       {page === "project" && deliveryProjectId && (
         <DeliverySpace projectId={String(deliveryProjectId)} />
       )}
-      {page === "schedule" && <StudentSchedule />}
+      {page === "schedule" && !classroomId && (
+        <StudentSchedule onEnterClassroom={(id) => setClassroomId(id)} />
+      )}
+      {page === "schedule" && classroomId && (
+        <StudentClassroom appointmentId={classroomId} onBack={() => setClassroomId(null)} />
+      )}
       {page === "messages" && <StudentMessages />}
       {page === "profile" && <StudentProfile />}
     </StudentLayout>
