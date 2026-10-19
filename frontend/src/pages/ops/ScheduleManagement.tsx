@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import {
   confirmOpsAppointmentCompletion,
+  deferOpsAppointment,
+  markOpsAppointmentIncomplete,
+  rescheduleOpsAppointment,
   createOpsAppointmentFromSlot,
   fetchExpertScheduleSlots,
   fetchOpsAppointments,
@@ -13,8 +16,11 @@ const weekDays = ["周日", "周一", "周二", "周三", "周四", "周五", "�
 
 const STATUS_LABEL: Record<string, string> = {
   scheduled: "已确认",
+  confirmed: "已确认",
   completed: "已完成",
   cancelled: "已取消",
+  deferred: "已延期",
+  incomplete: "未完成",
 };
 
 const AST: Record<string, string> = {
@@ -181,6 +187,52 @@ export default function ScheduleManagement() {
                       >
                         确认完成
                       </button>
+                    )}
+                    {!["completed", "cancelled"].includes(a.status as string) && (
+                      <>
+                        <button
+                          className="ant-btn ant-btn-link"
+                          style={{ fontSize: 12 }}
+                          onClick={async () => {
+                            const reason = prompt("延期原因");
+                            if (!reason?.trim()) return;
+                            await deferOpsAppointment(a.id as number, reason.trim());
+                            await load();
+                          }}
+                        >
+                          延期
+                        </button>
+                        <button
+                          className="ant-btn ant-btn-link"
+                          style={{ fontSize: 12 }}
+                          onClick={async () => {
+                            const start = prompt("新开始时间 YYYY-MM-DD HH:mm:ss");
+                            const end = prompt("新结束时间 YYYY-MM-DD HH:mm:ss");
+                            if (!start || !end) return;
+                            await rescheduleOpsAppointment(a.id as number, start, end);
+                            await load();
+                          }}
+                        >
+                          改期
+                        </button>
+                        <button
+                          className="ant-btn ant-btn-link"
+                          style={{ fontSize: 12 }}
+                          onClick={async () => {
+                            const reason = prompt("未完成原因");
+                            if (!reason?.trim()) return;
+                            const fee = prompt("扣费金额（可选，数字）");
+                            await markOpsAppointmentIncomplete(
+                              a.id as number,
+                              reason.trim(),
+                              fee ? Number(fee) : undefined,
+                            );
+                            await load();
+                          }}
+                        >
+                          未完成/扣费
+                        </button>
+                      </>
                     )}
                   </td>
                 </tr>

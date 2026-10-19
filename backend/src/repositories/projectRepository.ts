@@ -138,6 +138,85 @@ export async function listProjects(filter: {
   return rows;
 }
 
+export async function getProjectStakeholderUserIds(projectId: number): Promise<{
+  opsUserId: number;
+  expertUserId: number | null;
+  studentUserId: number | null;
+}> {
+  const [rows] = await pool.query<
+    Array<RowDataPacket & { ops_user_id: number; expert_user_id: number | null; student_user_id: number | null }>
+  >(
+    `SELECT p.ops_user_id, eu.id AS expert_user_id, su.id AS student_user_id
+     FROM projects p
+     LEFT JOIN expert_profiles ep ON ep.id = p.expert_id
+     LEFT JOIN users eu ON eu.id = ep.user_id
+     LEFT JOIN student_profiles sp ON sp.id = p.student_id
+     LEFT JOIN users su ON su.id = sp.user_id
+     WHERE p.id = ?`,
+    [projectId],
+  );
+  const r = rows[0];
+  if (!r) throw new Error("project not found");
+  return {
+    opsUserId: r.ops_user_id,
+    expertUserId: r.expert_user_id,
+    studentUserId: r.student_user_id,
+  };
+}
+
+export async function getExpertUserId(expertProfileId: number): Promise<number | null> {
+  const [rows] = await pool.query<Array<RowDataPacket & { user_id: number }>>(
+    `SELECT user_id FROM expert_profiles WHERE id = ?`,
+    [expertProfileId],
+  );
+  return rows[0]?.user_id ?? null;
+}
+
+export async function updateProjectAssignment(
+  projectId: number,
+  patch: { expertId?: number | null; title?: string; totalAmount?: number },
+): Promise<void> {
+  const sets: string[] = [];
+  const vals: unknown[] = [];
+  if (patch.expertId !== undefined) {
+    sets.push("expert_id = ?");
+    vals.push(patch.expertId);
+  }
+  if (patch.title !== undefined) {
+    sets.push("title = ?");
+    vals.push(patch.title);
+  }
+  if (patch.totalAmount !== undefined) {
+    sets.push("total_amount = ?");
+    vals.push(patch.totalAmount);
+  }
+  if (sets.length === 0) return;
+  vals.push(projectId);
+  await pool.query(`UPDATE projects SET ${sets.join(", ")} WHERE id = ?`, vals);
+}
+
+export async function listProjectStatsByExpert(): Promise<
+  Array<{ expertId: number | null; expertName: string | null; projectCount: number; inProgress: number }>
+> {
+  const [rows] = await pool.query<
+    Array<RowDataPacket & { expert_id: number | null; expert_name: string | null; cnt: number; in_prog: number }>
+  >(
+    `SELECT p.expert_id, ep.real_name AS expert_name,
+            COUNT(*) AS cnt,
+            SUM(CASE WHEN p.status IN ('in_progress','pending_confirm','pending_completion_review') THEN 1 ELSE 0 END) AS in_prog
+     FROM projects p
+     LEFT JOIN expert_profiles ep ON ep.id = p.expert_id
+     GROUP BY p.expert_id, ep.real_name
+     ORDER BY cnt DESC`,
+  );
+  return rows.map((r) => ({
+    expertId: r.expert_id,
+    expertName: r.expert_name,
+    projectCount: r.cnt,
+    inProgress: Number(r.in_prog),
+  }));
+}
+
 export async function publishProject(id: number): Promise<void> {
   await pool.query(
     `UPDATE projects SET status = 'pending_confirm', published_at = NOW() WHERE id = ? AND status = 'draft'`,

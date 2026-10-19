@@ -217,7 +217,8 @@ export default function Schedule({ onEnterClassroom }: Props) {
                       className="ant-btn ant-btn-default"
                       style={{ marginTop: 8, fontSize: 12 }}
                       onClick={async () => {
-                        await expertCompleteAppointment(s.projectId as number, s.id as number);
+                        const notes = prompt("课次完成备注（可选）") ?? "";
+                        await expertCompleteAppointment(s.projectId as number, s.id as number, notes || undefined);
                         await load();
                       }}
                     >

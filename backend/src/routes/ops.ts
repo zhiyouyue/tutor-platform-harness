@@ -4,6 +4,7 @@ import * as projectRepo from "../repositories/projectRepository.js";
 import * as scheduleRepo from "../repositories/scheduleRepository.js";
 import * as studentService from "../services/studentService.js";
 import * as appointmentService from "../services/appointmentService.js";
+import * as projectOpsService from "../services/projectOpsService.js";
 import { requireProjectAccess } from "../services/projectAccessService.js";
 import { success } from "../utils/response.js";
 import { formatProject, handleRouteError } from "../utils/routeHelpers.js";
@@ -144,6 +145,23 @@ export default async function opsRoutes(fastify: FastifyInstance) {
     }
   });
 
+  fastify.patch("/ops/projects/:id", async (request, reply) => {
+    try {
+      const { id } = request.params as { id: string };
+      const projectId = parseInt(id, 10);
+      await requireProjectAccess(projectId, request.user.userId, "ops");
+      const body = request.body as {
+        expertId?: number | null;
+        title?: string;
+        totalAmount?: number;
+      };
+      const project = await projectOpsService.patchOpsProject(projectId, request.user.userId, body);
+      return success(reply, project, "项目已更新");
+    } catch (e) {
+      return handleRouteError(reply, e);
+    }
+  });
+
   fastify.get("/ops/projects/:id", async (request, reply) => {
     try {
       const { id } = request.params as { id: string };
@@ -211,6 +229,80 @@ export default async function opsRoutes(fastify: FastifyInstance) {
         nodeId: body.nodeId,
       });
       return success(reply, appt, "课次已创建", 201);
+    } catch (e) {
+      return handleRouteError(reply, e);
+    }
+  });
+
+  fastify.post("/ops/appointments/:id/reschedule", async (request, reply) => {
+    try {
+      const { id } = request.params as { id: string };
+      const appointmentId = parseInt(id, 10);
+      const row = await scheduleRepo.findAppointmentById(appointmentId);
+      if (!row) throw new AppError("课次不存在", 404);
+      await requireProjectAccess(row.project_id, request.user.userId, "ops");
+      const body = request.body as { startAt: string; endAt: string };
+      if (!body.startAt || !body.endAt) throw new AppError("请填写新的开始与结束时间", 400);
+      const appt = await appointmentService.rescheduleAppointment(
+        appointmentId,
+        body.startAt,
+        body.endAt,
+      );
+      return success(reply, appt, "课次已改期");
+    } catch (e) {
+      return handleRouteError(reply, e);
+    }
+  });
+
+  fastify.post("/ops/appointments/:id/defer", async (request, reply) => {
+    try {
+      const { id } = request.params as { id: string };
+      const appointmentId = parseInt(id, 10);
+      const row = await scheduleRepo.findAppointmentById(appointmentId);
+      if (!row) throw new AppError("课次不存在", 404);
+      await requireProjectAccess(row.project_id, request.user.userId, "ops");
+      const body = request.body as { reason: string; startAt?: string; endAt?: string };
+      if (!body.reason?.trim()) throw new AppError("请填写延期原因", 400);
+      const appt = await appointmentService.deferAppointment(
+        appointmentId,
+        body.reason.trim(),
+        body.startAt,
+        body.endAt,
+      );
+      return success(reply, appt, "课次已延期处理");
+    } catch (e) {
+      return handleRouteError(reply, e);
+    }
+  });
+
+  fastify.post("/ops/appointments/:id/mark-incomplete", async (request, reply) => {
+    try {
+      const { id } = request.params as { id: string };
+      const appointmentId = parseInt(id, 10);
+      const row = await scheduleRepo.findAppointmentById(appointmentId);
+      if (!row) throw new AppError("课次不存在", 404);
+      await requireProjectAccess(row.project_id, request.user.userId, "ops");
+      const body = request.body as { reason: string; feeDeductAmount?: number };
+      if (!body.reason?.trim()) throw new AppError("请填写原因", 400);
+      const appt = await appointmentService.markAppointmentIncomplete(
+        appointmentId,
+        body.reason.trim(),
+        body.feeDeductAmount,
+      );
+      return success(reply, appt, "课次已标记未完成");
+    } catch (e) {
+      return handleRouteError(reply, e);
+    }
+  });
+
+  fastify.get("/ops/appointments/:id/completion-record", async (request, reply) => {
+    try {
+      const { id } = request.params as { id: string };
+      const appointmentId = parseInt(id, 10);
+      const row = await scheduleRepo.findAppointmentById(appointmentId);
+      if (!row) throw new AppError("课次不存在", 404);
+      await requireProjectAccess(row.project_id, request.user.userId, "ops");
+      return success(reply, await appointmentService.getCompletionRecord(appointmentId));
     } catch (e) {
       return handleRouteError(reply, e);
     }

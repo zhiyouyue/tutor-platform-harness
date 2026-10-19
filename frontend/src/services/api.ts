@@ -227,10 +227,45 @@ export const fetchAppointmentRecordings = (appointmentId: number) =>
   apiFetch<{ items: Array<{ id: number; ossKey: string; durationSec?: number | null; status: string }> }>(
     `/api/v1/appointments/${appointmentId}/recordings`,
   );
-export const expertCompleteAppointment = (projectId: number, appointmentId: number) =>
+export const expertCompleteAppointment = (
+  projectId: number,
+  appointmentId: number,
+  completionNotes?: string,
+) =>
   apiFetch<Record<string, unknown>>(`/api/v1/projects/${projectId}/appointments/${appointmentId}/expert-complete`, {
     method: "POST",
+    body: JSON.stringify(completionNotes ? { completionNotes } : {}),
   });
+export const patchOpsProject = (
+  projectId: number,
+  body: { expertId?: number | null; title?: string; totalAmount?: number },
+) =>
+  apiFetch<Project>(`/api/v1/ops/projects/${projectId}`, { method: "PATCH", body: JSON.stringify(body) });
+export const deferOpsAppointment = (id: number, reason: string, startAt?: string, endAt?: string) =>
+  apiFetch<Record<string, unknown>>(`/api/v1/ops/appointments/${id}/defer`, {
+    method: "POST",
+    body: JSON.stringify({ reason, startAt, endAt }),
+  });
+export const rescheduleOpsAppointment = (id: number, startAt: string, endAt: string) =>
+  apiFetch<Record<string, unknown>>(`/api/v1/ops/appointments/${id}/reschedule`, {
+    method: "POST",
+    body: JSON.stringify({ startAt, endAt }),
+  });
+export const markOpsAppointmentIncomplete = (id: number, reason: string, feeDeductAmount?: number) =>
+  apiFetch<Record<string, unknown>>(`/api/v1/ops/appointments/${id}/mark-incomplete`, {
+    method: "POST",
+    body: JSON.stringify({ reason, feeDeductAmount }),
+  });
+export const fetchNotifications = () =>
+  apiFetch<{ items: Array<{ id: number; title: string; body: string; readAt: string | null; createdAt: string }> }>(
+    "/api/v1/notifications",
+  );
+export const markNotificationRead = (id: number) =>
+  apiFetch<unknown>(`/api/v1/notifications/${id}/read`, { method: "PATCH" });
+export const fetchAdminDashboardByExpert = () =>
+  apiFetch<{
+    items: Array<{ expertId: number | null; expertName: string | null; projectCount: number; inProgress: number }>;
+  }>("/api/v1/admin/dashboard/by-expert");
 
 // Projects
 export const fetchProjects = () => apiFetch<{ items: Project[] }>("/api/v1/projects");

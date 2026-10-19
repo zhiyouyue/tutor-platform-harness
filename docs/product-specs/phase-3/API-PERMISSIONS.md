@@ -34,6 +34,7 @@
 | GET | `/admin/experts/certifications` | ✅ | ⛔ | ⛔ | ⛔ |
 | POST | `/admin/experts/:id/certification/approve` | ✅ | ⛔ | ⛔ | ⛔ |
 | POST | `/admin/experts/:id/certification/reject` | ✅ | ⛔ | ⛔ | ⛔ |
+| GET | `/admin/dashboard/by-expert` | ✅ | ⛔ | ⛔ | ⛔ |
 
 ## 班主任（ops）
 
@@ -49,12 +50,17 @@
 | GET | `/ops/experts/:id/schedule-slots` | ⛔ | ✅ | ⛔ | ⛔ |
 | GET | `/ops/projects` | ⛔ | ✅‡ | ⛔ | ⛔ |
 | GET | `/ops/projects/:id` | ⛔ | 🔒 | ⛔ | ⛔ |
+| PATCH | `/ops/projects/:id` | ⛔ | 🔒 | ⛔ | ⛔ |
 | POST | `/ops/projects` | ⛔ | ✅ | ⛔ | ⛔ |
 | POST | `/ops/projects/:id/publish` | ⛔ | 🔒 | ⛔ | ⛔ |
 | POST | `/ops/projects/:id/appointments` | ⛔ | 🔒 | ⛔ | ⛔ |
 | POST | `/ops/projects/:id/appointments/from-slot` | ⛔ | 🔒 | ⛔ | ⛔ |
 | GET | `/ops/appointments` | ⛔ | ✅‡ | ⛔ | ⛔ |
 | PATCH | `/ops/appointments/:id` | ⛔ | 🔒 | ⛔ | ⛔ |
+| POST | `/ops/appointments/:id/reschedule` | ⛔ | 🔒 | ⛔ | ⛔ |
+| POST | `/ops/appointments/:id/defer` | ⛔ | 🔒 | ⛔ | ⛔ |
+| POST | `/ops/appointments/:id/mark-incomplete` | ⛔ | 🔒 | ⛔ | ⛔ |
+| GET | `/ops/appointments/:id/completion-record` | ⛔ | 🔒 | ⛔ | ⛔ |
 | POST | `/ops/appointments/:id/confirm-completion` | ⛔ | 🔒 | ⛔ | ⛔ |
 | POST | `/ops/projects/:id/completion/confirm` | ⛔ | 🔒 | ⛔ | ⛔ |
 | GET | `/ops/finance/summary` | ⛔ | ✅ | ⛔ | ⛔ |
@@ -93,6 +99,14 @@
 |------|------|-------|-----|--------|---------|
 | POST | `/appointments/:id/join-classroom` | 🔒 | 🔒 | 🔒 | 🔒 |
 | GET | `/appointments/:id/recordings` | 🔒 | 🔒 | 🔒 | 🔒 |
+| GET | `/appointments/:id/completion-record` | 🔒 | 🔒 | 🔒 | 🔒 |
+
+## 站内通知（全角色）
+
+| 方法 | 路径 | admin | ops | expert | student |
+|------|------|-------|-----|--------|---------|
+| GET | `/notifications` | ✅ | ✅ | ✅ | ✅ |
+| PATCH | `/notifications/:id/read` | ✅ | ✅ | ✅ | ✅ |
 
 ## RTC 直连（专家/学员用户）
 
@@ -111,6 +125,7 @@
 
 - `tests/integration/auth.test.ts` — 注册登录  
 - `tests/integration/rbac-ops-scope.test.ts` — 班主任跨项目 403  
+- `tests/integration/phase3-po-decisions.test.ts` — Q-P3-03~09  
 - E2E `AC-P1-02` — ops 不可调 admin API  
 
 维护：新增 route 时同步更新本表。

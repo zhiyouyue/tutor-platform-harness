@@ -4,6 +4,8 @@ import corsPlugin from "./plugins/cors.js";
 import authPlugin from "./plugins/auth.js";
 import redisPlugin from "./plugins/redis.js";
 import adminExpertRoutes from "./routes/adminExperts.js";
+import adminDashboardRoutes from "./routes/adminDashboard.js";
+import notificationRoutes from "./routes/notifications.js";
 import authRoutes from "./routes/auth.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import dictionaryRoutes from "./routes/dictionaries.js";
@@ -31,6 +33,8 @@ export async function buildApp() {
   await app.register(dictionaryRoutes, { prefix: "/api/v1" });
   await app.register(expertRoutes, { prefix: "/api/v1" });
   await app.register(adminExpertRoutes, { prefix: "/api/v1" });
+  await app.register(adminDashboardRoutes, { prefix: "/api/v1" });
+  await app.register(notificationRoutes, { prefix: "/api/v1" });
   await app.register(dashboardRoutes, { prefix: "/api/v1" });
   await app.register(opsRoutes, { prefix: "/api/v1" });
   await app.register(projectRoutes, { prefix: "/api/v1" });

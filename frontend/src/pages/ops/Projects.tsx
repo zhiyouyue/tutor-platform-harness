@@ -6,6 +6,7 @@ import {
   fetchOpsExperts,
   fetchOpsProjects,
   fetchStudents,
+  patchOpsProject,
   publishProject,
   type DictItem,
   type Project,
@@ -103,6 +104,20 @@ export default function SupervisorProjects() {
             )}
             {p.status === "pending_completion_review" && (
               <button className="ant-btn ant-btn-primary" onClick={async () => { await confirmProjectCompletion(p.id); await load(); }}>确认完成并入账</button>
+            )}
+            {["in_progress", "pending_confirm", "published"].includes(p.status) && (
+              <button
+                className="ant-btn ant-btn-default"
+                onClick={async () => {
+                  const expertId = prompt("输入新专家档案 ID（留空取消）", p.expertId ? String(p.expertId) : "");
+                  if (expertId === null || !expertId.trim()) return;
+                  const res = await patchOpsProject(p.id, { expertId: Number(expertId) });
+                  if (!res.success) alert(res.message);
+                  await load();
+                }}
+              >
+                改派专家
+              </button>
             )}
           </div>
         </div>

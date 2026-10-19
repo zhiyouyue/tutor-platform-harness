@@ -28,6 +28,9 @@ export interface AppointmentRow extends RowDataPacket {
   status: string;
   expert_completed_at: Date | null;
   ops_confirmed_at: Date | null;
+  completion_notes: string | null;
+  fee_deduct_amount: string | null;
+  defer_reason: string | null;
   created_by: number;
   created_at: Date;
 }
@@ -35,6 +38,7 @@ export interface AppointmentRow extends RowDataPacket {
 export interface AppointmentDetailRow extends AppointmentRow {
   project_title?: string;
   student_name?: string;
+  student_phone?: string;
   expert_name?: string;
 }
 
@@ -155,8 +159,13 @@ export async function updateAppointment(
   patch: {
     meetingUrl?: string;
     status?: string;
-    expertCompletedAt?: Date;
+    startAt?: string;
+    endAt?: string;
+    expertCompletedAt?: Date | null;
     opsConfirmedAt?: Date;
+    completionNotes?: string;
+    feeDeductAmount?: number | null;
+    deferReason?: string | null;
   },
 ): Promise<void> {
   const sets: string[] = [];
@@ -169,6 +178,14 @@ export async function updateAppointment(
     sets.push("status = ?");
     vals.push(patch.status);
   }
+  if (patch.startAt !== undefined) {
+    sets.push("start_at = ?");
+    vals.push(patch.startAt);
+  }
+  if (patch.endAt !== undefined) {
+    sets.push("end_at = ?");
+    vals.push(patch.endAt);
+  }
   if (patch.expertCompletedAt !== undefined) {
     sets.push("expert_completed_at = ?");
     vals.push(patch.expertCompletedAt);
@@ -177,9 +194,29 @@ export async function updateAppointment(
     sets.push("ops_confirmed_at = ?");
     vals.push(patch.opsConfirmedAt);
   }
+  if (patch.completionNotes !== undefined) {
+    sets.push("completion_notes = ?");
+    vals.push(patch.completionNotes);
+  }
+  if (patch.feeDeductAmount !== undefined) {
+    sets.push("fee_deduct_amount = ?");
+    vals.push(patch.feeDeductAmount);
+  }
+  if (patch.deferReason !== undefined) {
+    sets.push("defer_reason = ?");
+    vals.push(patch.deferReason);
+  }
   if (sets.length === 0) return;
   vals.push(appointmentId);
   await pool.query(`UPDATE project_appointments SET ${sets.join(", ")} WHERE id = ?`, vals);
+}
+
+export async function findAppointmentDetailById(id: number): Promise<AppointmentDetailRow | null> {
+  const [rows] = await pool.query<AppointmentDetailRow[]>(
+    `${APPOINTMENT_DETAIL_SQL} WHERE pa.id = ?`,
+    [id],
+  );
+  return rows[0] ?? null;
 }
 
 export async function updateAppointmentStatus(
@@ -195,10 +232,12 @@ export async function updateAppointmentStatus(
 
 const APPOINTMENT_DETAIL_SQL = `
   SELECT pa.*, p.title AS project_title,
-         sp.real_name AS student_name, ep.real_name AS expert_name
+         sp.real_name AS student_name, u.phone AS student_phone,
+         ep.real_name AS expert_name
   FROM project_appointments pa
   JOIN projects p ON p.id = pa.project_id
   LEFT JOIN student_profiles sp ON sp.id = p.student_id
+  LEFT JOIN users u ON u.id = sp.user_id
   LEFT JOIN expert_profiles ep ON ep.id = p.expert_id
 `;
 

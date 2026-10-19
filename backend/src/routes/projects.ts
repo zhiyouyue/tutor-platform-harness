@@ -346,7 +346,12 @@ export default async function projectRoutes(fastify: FastifyInstance) {
       const appointmentId = parseInt(apptId, 10);
       await requireProjectAccess(projectId, request.user.userId, request.user.role);
       if (request.user.role !== "expert") throw new AppError("仅专家可标记课次完成", 403);
-      const appt = await appointmentService.expertCompleteAppointment(projectId, appointmentId);
+      const body = (request.body as { completionNotes?: string }) ?? {};
+      const appt = await appointmentService.expertCompleteAppointment(
+        projectId,
+        appointmentId,
+        body.completionNotes,
+      );
       return success(reply, appt, "课次已标记完成");
     } catch (e) {
       return handleRouteError(reply, e);

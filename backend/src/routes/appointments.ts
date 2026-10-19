@@ -3,6 +3,7 @@ import { AppError } from "../errors/AppError.js";
 import * as scheduleRepo from "../repositories/scheduleRepository.js";
 import { joinClassroomForAppointment } from "../services/appointmentClassroomService.js";
 import * as rtcRecordingService from "../services/rtcRecordingService.js";
+import * as appointmentService from "../services/appointmentService.js";
 import { requireProjectAccess } from "../services/projectAccessService.js";
 import { success } from "../utils/response.js";
 import { handleRouteError } from "../utils/routeHelpers.js";
@@ -21,6 +22,19 @@ export default async function appointmentRoutes(fastify: FastifyInstance) {
         cache: fastify.cache,
       });
       return success(reply, data, data.ready ? "可以进入课堂" : data.message);
+    } catch (e) {
+      return handleRouteError(reply, e);
+    }
+  });
+
+  fastify.get("/appointments/:id/completion-record", async (request, reply) => {
+    try {
+      const { id } = request.params as { id: string };
+      const appointmentId = parseInt(id, 10);
+      const appt = await scheduleRepo.findAppointmentById(appointmentId);
+      if (!appt) throw new AppError("课次不存在", 404);
+      await requireProjectAccess(appt.project_id, request.user.userId, request.user.role);
+      return success(reply, await appointmentService.getCompletionRecord(appointmentId));
     } catch (e) {
       return handleRouteError(reply, e);
     }

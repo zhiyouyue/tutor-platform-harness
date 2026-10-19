@@ -1,7 +1,8 @@
-export type AdminPage = "certifications";
+export type AdminPage = "certifications" | "expertBoard";
 
 const nav: { id: AdminPage; label: string }[] = [
   { id: "certifications", label: "专家认证" },
+  { id: "expertBoard", label: "项目看板" },
 ];
 
 interface Props {

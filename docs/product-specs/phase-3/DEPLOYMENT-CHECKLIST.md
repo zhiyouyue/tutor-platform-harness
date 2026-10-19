@@ -2,9 +2,10 @@
 
 ## 1. 数据库
 
-- [ ] 已执行 Phase 1 schema 或增量脚本（`04`/`05`/`06`）  
+- [ ] 已执行 Phase 1 schema 或增量脚本（`04`/`05`/`06`/`07`）  
 - [ ] 在 **backend 目录**执行：  
   `npx tsx scripts/run-sql.ts sql/06_phase2_rtc_recordings.sql`  
+  `npx tsx scripts/run-sql.ts sql/07_phase3_appointments_notifications.sql`  
 - [ ] 确认 MySQL 账号与 `backend/.env` 中 `MYSQL_*` 一致  
 
 ## 2. 后端环境变量
