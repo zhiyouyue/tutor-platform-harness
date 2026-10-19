@@ -74,11 +74,17 @@ export default async function opsRoutes(fastify: FastifyInstance) {
       const { id } = request.params as { id: string };
       const expertId = parseInt(id, 10);
       const slots = await scheduleRepo.listSlots(expertId);
+      const blackouts = await scheduleRepo.listBlackouts(expertId);
       return success(reply, {
         items: slots.map((s) => ({
           weekday: s.weekday,
           startTime: s.start_time,
           endTime: s.end_time,
+        })),
+        blackouts: blackouts.map((b) => ({
+          startAt: b.start_at,
+          endAt: b.end_at,
+          reason: b.reason,
         })),
       });
     } catch (e) {
@@ -142,6 +148,26 @@ export default async function opsRoutes(fastify: FastifyInstance) {
       return success(reply, {
         items: items.map((a) => appointmentService.formatAppointment(a)),
       });
+    } catch (e) {
+      return handleRouteError(reply, e);
+    }
+  });
+
+  fastify.post("/ops/projects/:id/appointments/from-slot", async (request, reply) => {
+    try {
+      const { id } = request.params as { id: string };
+      const projectId = parseInt(id, 10);
+      await requireProjectAccess(projectId, request.user.userId, "ops");
+      const body = request.body as { startAt: string; endAt: string; topic?: string };
+      if (!body.startAt || !body.endAt) throw new AppError("请填写开始与结束时间", 400);
+      const appt = await appointmentService.createOpsAppointmentFromSlot({
+        projectId,
+        createdBy: request.user.userId,
+        startAt: body.startAt,
+        endAt: body.endAt,
+        topic: body.topic,
+      });
+      return success(reply, appt, "课次已按专家档期创建", 201);
     } catch (e) {
       return handleRouteError(reply, e);
     }

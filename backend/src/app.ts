@@ -15,6 +15,7 @@ import projectRoutes from "./routes/projects.js";
 import rtcRoutes from "./routes/rtc.js";
 import studentPortalRoutes from "./routes/studentPortal.js";
 import appointmentRoutes from "./routes/appointments.js";
+import internalRtcRoutes from "./routes/internalRtc.js";
 import wsRoutes from "./routes/ws.js";
 
 export async function buildApp() {
@@ -36,6 +37,7 @@ export async function buildApp() {
   await app.register(incomeRoutes, { prefix: "/api/v1" });
   await app.register(studentPortalRoutes, { prefix: "/api/v1" });
   await app.register(appointmentRoutes, { prefix: "/api/v1" });
+  await app.register(internalRtcRoutes, { prefix: "/api/v1" });
   await app.register(rtcRoutes, { prefix: "/api" });
   await app.register(wsRoutes, { prefix: "/api" });
 

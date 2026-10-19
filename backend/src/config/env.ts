@@ -50,6 +50,8 @@ export const config = {
     appId: process.env.ALIYUN_RTC_APP_ID || "",
     appKey: process.env.ALIYUN_RTC_APP_KEY || "",
     tokenTtlSeconds: envInt("ALIYUN_RTC_TOKEN_TTL_SECONDS", undefined, 7200),
+    recordingCallbackSecret:
+      process.env.RTC_RECORDING_CALLBACK_SECRET || "dev_rtc_callback_secret",
   },
 
   oss: {

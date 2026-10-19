@@ -1,6 +1,9 @@
 import { AppError } from "../errors/AppError.js";
+import * as projectRepo from "../repositories/projectRepository.js";
 import * as scheduleRepo from "../repositories/scheduleRepository.js";
+import { prepareRtcSessionForAppointment } from "./appointmentClassroomService.js";
 import { accrueIncomeForConfirmedAppointment } from "./sessionIncomeService.js";
+import { assertAppointmentInExpertSchedule } from "./slotScheduleService.js";
 
 export function formatAppointment(row: scheduleRepo.AppointmentRow | scheduleRepo.AppointmentDetailRow) {
   const detail = row as scheduleRepo.AppointmentDetailRow;
@@ -36,6 +39,30 @@ export async function createOpsAppointment(params: {
     meetingUrl: params.meetingUrl,
     status,
   });
+  return formatAppointment(row);
+}
+
+export async function createOpsAppointmentFromSlot(params: {
+  projectId: number;
+  createdBy: number;
+  startAt: string;
+  endAt: string;
+  topic?: string;
+}) {
+  const project = await projectRepo.findProjectById(params.projectId);
+  if (!project) throw new AppError("项目不存在", 404);
+  if (!project.expert_id) throw new AppError("项目尚未分配导师", 400);
+  await assertAppointmentInExpertSchedule(project.expert_id, params.startAt, params.endAt);
+
+  const row = await scheduleRepo.createAppointment({
+    projectId: params.projectId,
+    createdBy: params.createdBy,
+    startAt: params.startAt,
+    endAt: params.endAt,
+    topic: params.topic,
+    status: "confirmed",
+  });
+  await prepareRtcSessionForAppointment(row.id);
   return formatAppointment(row);
 }
 
