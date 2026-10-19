@@ -36,6 +36,19 @@ export async function listStudents(): Promise<StudentProfileRow[]> {
   return rows;
 }
 
+/** 班主任负责的学生：至少有一个项目由该 ops 创建/负责 */
+export async function listStudentsForOpsUser(opsUserId: number): Promise<StudentProfileRow[]> {
+  const [rows] = await pool.query<StudentProfileRow[]>(
+    `SELECT DISTINCT sp.*, u.account, u.phone, u.status AS user_status
+     FROM student_profiles sp
+     JOIN users u ON u.id = sp.user_id
+     JOIN projects p ON p.student_id = sp.id AND p.ops_user_id = ?
+     ORDER BY sp.created_at DESC`,
+    [opsUserId],
+  );
+  return rows;
+}
+
 export async function findStudentById(id: number): Promise<StudentProfileRow | null> {
   const [rows] = await pool.query<StudentProfileRow[]>(
     `SELECT sp.*, u.account, u.phone, u.status AS user_status

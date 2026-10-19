@@ -60,11 +60,11 @@ export async function getExpertDashboard(userId: number) {
   };
 }
 
-export async function getOpsDashboard() {
+export async function getOpsDashboard(opsUserId: number) {
   const [projects, students, appointments, expertSummaries] = await Promise.all([
-    projectRepo.listProjects({}),
-    studentRepo.listStudents(),
-    scheduleRepo.listAllAppointments(50),
+    projectRepo.listProjects({ opsUserId }),
+    studentRepo.listStudentsForOpsUser(opsUserId),
+    scheduleRepo.listAppointmentsForOpsUser(opsUserId, 50),
     scheduleRepo.listExpertAvailabilitySummary(),
   ]);
 

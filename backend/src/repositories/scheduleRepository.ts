@@ -236,6 +236,20 @@ export async function listAllAppointments(limit = 50): Promise<AppointmentDetail
   return rows;
 }
 
+export async function listAppointmentsForOpsUser(
+  opsUserId: number,
+  limit = 50,
+): Promise<AppointmentDetailRow[]> {
+  const [rows] = await pool.query<AppointmentDetailRow[]>(
+    `${APPOINTMENT_DETAIL_SQL}
+     WHERE p.ops_user_id = ?
+     ORDER BY pa.start_at DESC
+     LIMIT ?`,
+    [opsUserId, limit],
+  );
+  return rows;
+}
+
 export async function countActiveAppointmentsForProject(projectId: number): Promise<number> {
   const [rows] = await pool.query<Array<RowDataPacket & { cnt: number }>>(
     `SELECT COUNT(*) AS cnt FROM project_appointments WHERE project_id = ? AND status != 'cancelled'`,

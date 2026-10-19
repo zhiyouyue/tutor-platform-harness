@@ -10,6 +10,11 @@ export async function listStudents() {
   return rows.map(formatStudent);
 }
 
+export async function listStudentsForHomeroom(opsUserId: number) {
+  const rows = await studentRepo.listStudentsForOpsUser(opsUserId);
+  return rows.map(formatStudent);
+}
+
 export async function getStudent(id: number) {
   const row = await studentRepo.findStudentById(id);
   if (!row) throw new AppError("学员不存在", 404);

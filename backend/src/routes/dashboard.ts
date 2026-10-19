@@ -18,9 +18,9 @@ export default async function dashboardRoutes(fastify: FastifyInstance) {
 
   fastify.get("/ops/dashboard", {
     preHandler: [fastify.requireRole("ops")],
-  }, async (_request, reply) => {
+  }, async (request, reply) => {
     try {
-      return success(reply, await dashboardService.getOpsDashboard());
+      return success(reply, await dashboardService.getOpsDashboard(request.user.userId));
     } catch (e) {
       return handleRouteError(reply, e);
     }

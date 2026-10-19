@@ -8,6 +8,7 @@ import Capabilities from "./Capabilities";
 import Schedule from "./Schedule";
 import Income from "./Income";
 import Profile from "./Profile";
+import AppointmentClassroom from "../../components/AppointmentClassroom";
 
 interface Props {
   onBack: () => void;
@@ -16,6 +17,13 @@ interface Props {
 export default function ExpertApp({ onBack }: Props) {
   const [page, setPage] = useState<ExpertPage>("dashboard");
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [classroomId, setClassroomId] = useState<number | null>(null);
+
+  if (classroomId != null) {
+    return (
+      <AppointmentClassroom appointmentId={classroomId} onBack={() => setClassroomId(null)} />
+    );
+  }
 
   const navigate = (p: string) => {
     setPage(p as ExpertPage);
@@ -37,7 +45,7 @@ export default function ExpertApp({ onBack }: Props) {
       )}
       {page === "delivery" && <DeliverySpace projectId={selectedProjectId} />}
       {page === "capabilities" && <Capabilities />}
-      {page === "schedule" && <Schedule />}
+      {page === "schedule" && <Schedule onEnterClassroom={(id) => setClassroomId(id)} />}
       {page === "income" && <Income />}
       {page === "profile" && <Profile />}
     </ExpertLayout>

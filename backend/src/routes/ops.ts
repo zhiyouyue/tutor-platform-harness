@@ -12,9 +12,11 @@ export default async function opsRoutes(fastify: FastifyInstance) {
   fastify.addHook("preHandler", fastify.authenticate);
   fastify.addHook("preHandler", fastify.requireRole("ops"));
 
-  fastify.get("/ops/students", async (_req, reply) => {
+  fastify.get("/ops/students", async (request, reply) => {
     try {
-      return success(reply, { items: await studentService.listStudents() });
+      return success(reply, {
+        items: await studentService.listStudentsForHomeroom(request.user.userId),
+      });
     } catch (e) {
       return handleRouteError(reply, e);
     }
@@ -92,9 +94,9 @@ export default async function opsRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.get("/ops/projects", async (_req, reply) => {
+  fastify.get("/ops/projects", async (request, reply) => {
     try {
-      const rows = await projectRepo.listProjects({});
+      const rows = await projectRepo.listProjects({ opsUserId: request.user.userId });
       return success(reply, { items: rows.map(formatProject) });
     } catch (e) {
       return handleRouteError(reply, e);
@@ -142,9 +144,22 @@ export default async function opsRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.get("/ops/appointments", async (_req, reply) => {
+  fastify.get("/ops/projects/:id", async (request, reply) => {
     try {
-      const items = await scheduleRepo.listAllAppointments(100);
+      const { id } = request.params as { id: string };
+      const projectId = parseInt(id, 10);
+      await requireProjectAccess(projectId, request.user.userId, "ops");
+      const project = await projectRepo.findProjectById(projectId);
+      if (!project) throw new AppError("项目不存在", 404);
+      return success(reply, formatProject(project));
+    } catch (e) {
+      return handleRouteError(reply, e);
+    }
+  });
+
+  fastify.get("/ops/appointments", async (request, reply) => {
+    try {
+      const items = await scheduleRepo.listAppointmentsForOpsUser(request.user.userId, 100);
       return success(reply, {
         items: items.map((a) => appointmentService.formatAppointment(a)),
       });

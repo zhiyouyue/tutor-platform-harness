@@ -24,7 +24,11 @@ const STATUS_LABEL: Record<string, string> = {
   cancelled: "已取消",
 };
 
-export default function Schedule() {
+interface Props {
+  onEnterClassroom?: (appointmentId: number) => void;
+}
+
+export default function Schedule({ onEnterClassroom }: Props) {
   const [slots, setSlots] = useState<SlotMap>(emptySlots());
   const [blackouts, setBlackouts] = useState<Array<{ id: number; startAt: string; endAt: string; reason: string | null }>>([]);
   const [upcoming, setUpcoming] = useState<Array<Record<string, unknown>>>([]);
@@ -196,11 +200,18 @@ export default function Schedule() {
                   <div style={{ fontSize: 12, color: "var(--c-text-3)", marginTop: 3 }}>
                     {new Date(s.startAt as string).toLocaleString("zh-CN")}
                   </div>
-                  {typeof s.meetingUrl === "string" && s.meetingUrl && (
-                    <a href={s.meetingUrl} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: "var(--c-primary)", display: "inline-block", marginTop: 6 }}>
-                      进入会议
-                    </a>
-                  )}
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+                    {onEnterClassroom && (
+                      <button type="button" className="ant-btn ant-btn-primary" style={{ fontSize: 12 }} onClick={() => onEnterClassroom(s.id as number)}>
+                        进入课堂
+                      </button>
+                    )}
+                    {typeof s.meetingUrl === "string" && s.meetingUrl && (
+                      <a href={s.meetingUrl} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: "var(--c-primary)", lineHeight: "28px" }}>
+                        备用链接
+                      </a>
+                    )}
+                  </div>
                   {!Boolean(s.expertCompletedAt) && (
                     <button
                       className="ant-btn ant-btn-default"
