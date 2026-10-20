@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-const C = "#0891B2";
 
 const messages = [
   { from:"mentor",   name:"王老师",   time:"昨天 14:30", content:"同学你好，模拟面试前请复习一下STAR法则，准备2-3个核心案例，重点突出你在产品方向的项目经历。", avatar:"王" },
@@ -10,7 +9,11 @@ const messages = [
   { from:"me",       name:"张同学",   time:"今天 09:30", content:"好的李老师，我记住了！", avatar:"张" },
 ];
 
-const avatarColors: Record<string,string> = { mentor:"#1677FF", super:"#7C3AED", me:C };
+const avatarColors: Record<string, string> = {
+  mentor: "var(--c-blue-600)",
+  super: "var(--c-blue-800)",
+  me: "var(--c-blue-400)",
+};
 
 export default function StudentMessages() {
   const [input, setInput] = useState("");
@@ -22,8 +25,8 @@ export default function StudentMessages() {
         <div style={{ fontWeight:700, fontSize:15, marginBottom:10 }}>消息</div>
         <div style={{ display:"flex", gap:10 }}>
           {[
-            { name:"王老师", role:"导师", color:"#1677FF", unread:0 },
-            { name:"李班主任", role:"班主任", color:"#7C3AED", unread:1 },
+            { name:"王老师", role:"导师", color:"var(--c-blue-600)", unread:0 },
+            { name:"李班主任", role:"班主任", color:"var(--c-blue-800)", unread:1 },
           ].map(c => (
             <button key={c.name} style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 12px", background:"var(--c-surface-2)", borderRadius:10, border:"1px solid var(--c-border)", flex:1, cursor:"pointer" }}>
               <div style={{ position:"relative", flexShrink:0 }}>
@@ -43,14 +46,14 @@ export default function StudentMessages() {
       <div style={{ flex:1, overflowY:"auto", padding:"14px 16px", display:"flex", flexDirection:"column", gap:14 }}>
         {messages.map((msg, i) => (
           <div key={i} style={{ display:"flex", alignItems:"flex-end", gap:8, flexDirection: msg.from === "me" ? "row-reverse" : "row" }}>
-            <div style={{ width:26, height:26, borderRadius:"50%", background:avatarColors[msg.from] ?? C, color:"#fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700, flexShrink:0 }}>
+            <div style={{ width:26, height:26, borderRadius:"50%", background:avatarColors[msg.from] ?? "var(--c-primary)", color:"#fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, fontWeight:700, flexShrink:0 }}>
               {msg.avatar}
             </div>
             <div style={{ maxWidth:"72%", display:"flex", flexDirection:"column", gap:3, alignItems: msg.from === "me" ? "flex-end" : "flex-start" }}>
               <div style={{ fontSize:10, color:"var(--c-text-3)" }}>
                 {msg.from === "me" ? `${msg.time} · ${msg.name}` : `${msg.name} · ${msg.time}`}
               </div>
-              <div style={{ padding:"9px 13px", borderRadius:12, fontSize:13, lineHeight:1.65, background: msg.from === "me" ? C : "#fff", color: msg.from === "me" ? "#fff" : "var(--c-text-1)", border: msg.from !== "me" ? "1px solid var(--c-border)" : "none", borderBottomRightRadius: msg.from === "me" ? 3 : 12, borderBottomLeftRadius: msg.from !== "me" ? 3 : 12 }}>
+              <div style={{ padding:"9px 13px", borderRadius:12, fontSize:13, lineHeight:1.65, background: msg.from === "me" ? "var(--c-primary)" : "#fff", color: msg.from === "me" ? "#fff" : "var(--c-text-1)", border: msg.from !== "me" ? "1px solid var(--c-border)" : "none", borderBottomRightRadius: msg.from === "me" ? 3 : 12, borderBottomLeftRadius: msg.from !== "me" ? 3 : 12 }}>
                 {msg.content}
               </div>
             </div>
@@ -60,8 +63,8 @@ export default function StudentMessages() {
 
       {/* Input */}
       <div style={{ background:"#fff", borderTop:"1px solid var(--c-border)", padding:"10px 14px", display:"flex", gap:10 }}>
-        <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder="发送消息给导师或班主任…" style={{ flex:1, border:"1px solid var(--c-border-2)", borderRadius:10, padding:"9px 14px", fontSize:13, outline:"none", fontFamily:"inherit" }} onFocus={e => e.currentTarget.style.borderColor = C} onBlur={e => e.currentTarget.style.borderColor = "var(--c-border-2)"} />
-        <button style={{ padding:"9px 18px", background:C, color:"#fff", border:"none", borderRadius:10, fontSize:13, fontWeight:600, cursor:"pointer", flexShrink:0 }}>发送</button>
+        <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder="发送消息给导师或班主任…" style={{ flex:1, border:"1px solid var(--c-border-2)", borderRadius:10, padding:"9px 14px", fontSize:13, outline:"none", fontFamily:"inherit" }} onFocus={e => { e.currentTarget.style.borderColor = "var(--c-primary)"; }} onBlur={e => e.currentTarget.style.borderColor = "var(--c-border-2)"} />
+        <button type="button" className="ant-btn ant-btn-primary" style={{ flexShrink: 0 }}>发送</button>
       </div>
     </div>
   );

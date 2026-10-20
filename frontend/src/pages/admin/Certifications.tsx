@@ -118,7 +118,7 @@ export default function Certifications() {
                     padding: "8px 16px",
                     borderRadius: 8,
                     border: "none",
-                    background: "#059669",
+                    background: "var(--c-primary)",
                     color: "#fff",
                     fontSize: 13,
                     cursor: "pointer",

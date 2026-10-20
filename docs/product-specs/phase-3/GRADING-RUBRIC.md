@@ -58,6 +58,17 @@
 
 ---
 
+## E. UI / 蓝系设计 + Figma MCP
+
+| # | 检查项 | 证据 | 结果 |
+|---|--------|------|------|
+| E1 | UI 验收标准文档 | `docs/product-specs/UI-ACCEPTANCE-FIGMA.md` | ✅ |
+| E2 | 全站 `--c-*` 蓝系令牌 | `frontend/src/index.css` | ✅ |
+| E3 | 四角色页面清单审查 | `test/frontend/UI-VERIFICATION-20261020.md` | ✅ |
+| E4 | `npm run build -w frontend` | 生产构建 | ✅ |
+| E5 | E2E `ui-blue-theme` | 需 dev 服务 + 截图 `test/frontend/screenshots/ui-blue/` | ☐ 本地复跑 |
+| E6 | 重大改版时 Figma MCP | 见 UI-ACCEPTANCE §2（本次为令牌统一，未强制回写 Figma） | N/A |
+
 ## 一键验证（PowerShell，仓库根目录）
 
 ```powershell
@@ -67,6 +78,7 @@ npm run test:coverage
 Set-Location ..\frontend
 npm run build
 npm run test:e2e -- phase3-po-features
+npm run test:e2e -- ui-blue-theme
 ```
 
 ## 完成定义（DoD）

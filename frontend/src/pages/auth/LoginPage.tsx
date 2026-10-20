@@ -56,13 +56,13 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F5F7FA] px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl border border-[#E2E8F0] p-8 shadow-sm">
-        <button type="button" onClick={onBack} className="text-sm text-[#64748B] mb-6 hover:text-[#0F172A]">
+    <div className="auth-page-bg min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-md surface-card p-8" style={{ boxShadow: "var(--shadow-drop)" }}>
+        <button type="button" onClick={onBack} className="text-sm mb-6 ant-btn-text" style={{ padding: 0 }}>
           ← 返回角色选择
         </button>
-        <h1 className="text-2xl font-bold text-[#0F172A] mb-1">{ROLE_LABEL[role]}登录</h1>
-        <p className="text-sm text-[#64748B] mb-6">
+        <h1 className="text-2xl font-bold mb-1" style={{ color: "var(--c-blue-deep)" }}>{ROLE_LABEL[role]}登录</h1>
+        <p className="text-sm mb-6" style={{ color: "var(--c-text-3)" }}>
           {role === "expert" ? "专家开放注册，提交资料后需管理员审核" : "使用已分配账号登录"}
         </p>
 
@@ -74,10 +74,9 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
                 type="button"
                 onClick={() => setMode(m)}
                 className={`flex-1 py-2 text-sm rounded-lg border ${
-                  mode === m
-                    ? "bg-[#2563EB] text-white border-[#2563EB]"
-                    : "bg-white text-[#64748B] border-[#E2E8F0]"
+                  mode === m ? "ant-btn-primary" : "ant-btn-default"
                 }`}
+                style={{ justifyContent: "center" }}
               >
                 {m === "login" ? "登录" : "注册"}
               </button>
@@ -87,9 +86,9 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-[#334155]">账号</span>
+            <span className="text-sm font-medium" style={{ color: "var(--c-text-2)" }}>账号</span>
             <input
-              className="border border-[#E2E8F0] rounded-lg px-3 py-2.5 text-sm"
+              className="ant-input"
               value={account}
               onChange={(e) => setAccount(e.target.value)}
               placeholder={role === "admin" ? "admin" : "账号或手机号"}
@@ -100,17 +99,17 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
           {mode === "register" && role === "expert" && (
             <>
               <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-medium text-[#334155]">姓名</span>
+                <span className="text-sm font-medium" style={{ color: "var(--c-text-2)" }}>姓名</span>
                 <input
-                  className="border border-[#E2E8F0] rounded-lg px-3 py-2.5 text-sm"
+                  className="ant-input"
                   value={realName}
                   onChange={(e) => setRealName(e.target.value)}
                 />
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-medium text-[#334155]">手机号（可选）</span>
+                <span className="text-sm font-medium" style={{ color: "var(--c-text-2)" }}>手机号（可选）</span>
                 <input
-                  className="border border-[#E2E8F0] rounded-lg px-3 py-2.5 text-sm"
+                  className="ant-input"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                 />
@@ -119,10 +118,10 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
           )}
 
           <label className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-[#334155]">密码</span>
+            <span className="text-sm font-medium" style={{ color: "var(--c-text-2)" }}>密码</span>
             <input
               type="password"
-              className="border border-[#E2E8F0] rounded-lg px-3 py-2.5 text-sm"
+              className="ant-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -135,17 +134,17 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 py-2.5 rounded-lg bg-[#2563EB] text-white font-medium text-sm disabled:opacity-60"
+            className="mt-2 ant-btn ant-btn-primary w-full justify-center disabled:opacity-60"
           >
             {loading ? "处理中…" : mode === "register" ? "注册并进入" : "登录"}
           </button>
         </form>
 
         {role === "student" && (
-          <div className="mt-6 pt-6 border-t border-[#E2E8F0]">
-            <p className="text-sm font-medium text-[#334155] mb-2">Magic Link 登录</p>
+          <div className="mt-6 pt-6" style={{ borderTop: "1px solid var(--c-border)" }}>
+            <p className="text-sm font-medium mb-2" style={{ color: "var(--c-text-2)" }}>Magic Link 登录</p>
             <input
-              className="w-full border border-[#E2E8F0] rounded-lg px-3 py-2 text-sm mb-2"
+              className="ant-input mb-2"
               placeholder="粘贴运营生成的 token"
               value={magicToken}
               onChange={(e) => setMagicToken(e.target.value)}
@@ -153,7 +152,8 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
             <button
               type="button"
               disabled={loading || !magicToken}
-              className="w-full py-2 rounded-lg border border-[#0891B2] text-[#0891B2] text-sm"
+              className="w-full ant-btn ant-btn-default justify-center"
+              style={{ color: "var(--c-primary)", borderColor: "var(--c-blue-400)" }}
               onClick={async () => {
                 setLoading(true);
                 setError("");
@@ -170,7 +170,7 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
         )}
 
         {role !== "expert" && role !== "student" && (
-          <p className="mt-4 text-xs text-[#94A3B8]">
+          <p className="mt-4 text-xs" style={{ color: "var(--c-text-4)" }}>
             开发账号：admin/admin123 · ops1/ops123456
           </p>
         )}

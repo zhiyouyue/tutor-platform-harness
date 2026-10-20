@@ -25,9 +25,10 @@ export function SimpleCard({ children }: { children: React.ReactNode }) {
   return (
     <div
       style={{
-        background: "#fff",
-        borderRadius: 12,
+        background: "var(--c-surface)",
+        borderRadius: "var(--radius-lg)",
         border: "1px solid var(--c-border)",
+        boxShadow: "var(--shadow-card)",
         padding: 18,
       }}
     >

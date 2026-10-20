@@ -10,6 +10,7 @@
 | 文档 | 用途 |
 |------|------|
 | **[PRD-phase3.md](./PRD-phase3.md)** | **Phase 3 产品需求（FR/范围/DoD）** |
+| [UI-ACCEPTANCE-FIGMA.md](../UI-ACCEPTANCE-FIGMA.md) | **UI 蓝系 + Figma MCP 验收标准** |
 | [GRADING-RUBRIC.md](./GRADING-RUBRIC.md) | 验收打分与一键验证命令 |
 | [20251019-feature-matrix.md](./20251019-feature-matrix.md) | 全矩阵 + 工程状态 |
 | [TASKS-phase3.md](./TASKS-phase3.md) | 开发任务与进度 |

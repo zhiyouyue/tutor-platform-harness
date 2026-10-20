@@ -42,16 +42,13 @@ interface Props {
   children: React.ReactNode;
 }
 
-const C = "#0891B2";
-const CB = "#ECFEFF";
-
 export default function StudentLayout({ page, onNavigate, onBack, children }: Props) {
   return (
-    <div style={{ display:"flex", flexDirection:"column", height:"100vh", overflow:"hidden", background:"#F5F7FA" }}>
+    <div style={{ display:"flex", flexDirection:"column", height:"100vh", overflow:"hidden", background:"var(--c-bg-page)" }}>
       {/* Top header */}
       <header style={{ background:"#fff", borderBottom:"1px solid var(--c-border)", padding:"0 20px", height:52, display:"flex", alignItems:"center", justifyContent:"space-between", flexShrink:0 }}>
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-          <div style={{ width:30, height:30, borderRadius:8, background:C, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+          <div style={{ width:30, height:30, borderRadius:8, background:"var(--c-primary)", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M7 1L1 4v2.5c0 3.5 2.4 6.8 6 7.8 3.6-1 6-4.3 6-7.8V4L7 1z" fill="white" fillOpacity="0.9"/>
             </svg>
@@ -61,7 +58,7 @@ export default function StudentLayout({ page, onNavigate, onBack, children }: Pr
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
           <NotificationBell />
-          <div style={{ width:30, height:30, borderRadius:"50%", background:CB, color:C, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:700 }}>张</div>
+          <div style={{ width:30, height:30, borderRadius:"50%", background:"var(--c-primary-bg)", color:"var(--c-primary)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:700 }}>张</div>
           <button onClick={onBack} style={{ fontSize:12, color:"var(--c-text-3)", background:"transparent", border:"none", cursor:"pointer" }}>切换角色</button>
         </div>
       </header>
@@ -77,11 +74,11 @@ export default function StudentLayout({ page, onNavigate, onBack, children }: Pr
             <button key={item.id} onClick={() => onNavigate(item.id)} style={{
               flex:1, display:"flex", flexDirection:"column", alignItems:"center", padding:"8px 0 6px", gap:3,
               background:"transparent", border:"none", cursor:"pointer",
-              color: active ? C : "var(--c-text-3)", transition:"color 0.15s",
+              color: active ? "var(--c-primary)" : "var(--c-text-3)", transition:"color 0.15s",
             }}>
               {item.icon(active)}
               <span style={{ fontSize:10, fontWeight: active ? 700 : 400 }}>{item.label}</span>
-              {active && <div style={{ width:16, height:2, borderRadius:1, background:C }} />}
+              {active && <div style={{ width:16, height:2, borderRadius:1, background:"var(--c-primary)" }} />}
             </button>
           );
         })}

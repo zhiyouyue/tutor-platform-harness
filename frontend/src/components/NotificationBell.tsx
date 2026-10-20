@@ -27,9 +27,17 @@ export default function NotificationBell() {
         className="ant-btn ant-btn-text"
         aria-label="站内通知"
         onClick={() => setOpen((v) => !v)}
-        style={{ fontSize: 18, lineHeight: 1, padding: "4px 8px" }}
+        style={{ lineHeight: 1, padding: "6px 8px", color: "var(--c-blue-700, var(--c-blue-800))" }}
       >
-        🔔
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path
+            d="M12 3a5 5 0 00-5 5v2.5l-1.2 2.4A1 1 0 006.8 14h10.4a1 1 0 00.9-1.5L17 10.5V8a5 5 0 00-5-5z"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinejoin="round"
+          />
+          <path d="M10 17a2 2 0 004 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
         {unread > 0 && (
           <span
             style={{

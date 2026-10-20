@@ -33,7 +33,7 @@ export default function AdminLayout({ page, onNavigate, onBack, children }: Prop
         }}>
           <div style={{
             width: 28, height: 28,
-            background: "#059669",
+            background: "var(--c-blue-600)",
             borderRadius: 6,
             display: "flex", alignItems: "center", justifyContent: "center",
             flexShrink: 0,
