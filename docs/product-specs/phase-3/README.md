@@ -1,5 +1,8 @@
 # Phase 3 — 产品交付与使用手册
 
+> **状态：Phase 3 已关闭（2026-10-20）** — 见 [GRADING-RUBRIC.md](./GRADING-RUBRIC.md) DoD。  
+> **上一阶段**：[Phase 2 关闭清单](../phase-2/TASKS-phase2-remaining.md)（任务已与 Phase 3 对齐）。
+
 > **目标**：完成 PO 功能矩阵中「进行中 / 下一阶段做」项；产出**分角色使用手册**与**接口权限文档**；剩余业务规则通过 [OPEN-QUESTIONS.md](./OPEN-QUESTIONS.md) 逐项确认。
 
 ## 文档索引

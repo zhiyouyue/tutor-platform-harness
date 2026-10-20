@@ -1,6 +1,9 @@
-# Phase 2 功能矩阵 — 现状对照（2025-10-19）
+# Phase 2 功能矩阵 — 现状对照（2025-10-19 快照）
 
-> 来源：PO 功能清单。状态含义：**已完成** = Phase 1 E2E 或核心 API/UI 已落地；**进行中** = Phase 2 必须收口；**下一阶段做** = 见 [BACKLOG-phase3-deferred.md](./BACKLOG-phase3-deferred.md)。
+> ⚠️ **历史快照**：下文反映 Phase 2 规划中期状态。  
+> **2026-10-20 现况**请参阅 [Phase 3 功能矩阵](../phase-3/20251019-feature-matrix.md) 与 [GRADING-RUBRIC](../phase-3/GRADING-RUBRIC.md)。
+
+> 来源：PO 功能清单。状态含义：**已完成** = Phase 1 E2E 或核心 API/UI 已落地；**进行中** = Phase 2 必须收口；**下一阶段做** = 见 [BACKLOG-phase3-deferred.md](./BACKLOG-phase3-deferred.md)（已归档）。
 
 ## 图例
 
