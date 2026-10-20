@@ -7,7 +7,7 @@ type SessionRow = {
   topic: string;
   expertName?: string;
   startAt: string;
-  done: boolean;
+  statusLabel: string;
   upcoming: boolean;
 };
 
@@ -22,16 +22,18 @@ export default function StudentSchedule({ onEnterClassroom }: Props) {
   useEffect(() => {
     fetchStudentAppointments().then((res) => {
       if (res.success) {
+        const now = Date.now();
         setSessions(
           res.data.items.map((a) => {
-            const done = Boolean(a.opsConfirmedAt) || a.status === "completed";
-            const upcoming = !done && new Date(a.startAt as string) >= new Date();
+            const statusLabel = (a.statusLabel as string) || "待确认";
+            const done = statusLabel === "已完成";
+            const upcoming = !done && new Date(a.startAt as string).getTime() >= now;
             return {
               id: a.id as number,
               topic: (a.topic as string) || "辅导课",
               expertName: a.expertName as string | undefined,
               startAt: a.startAt as string,
-              done,
+              statusLabel,
               upcoming,
             };
           }),
@@ -45,8 +47,9 @@ export default function StudentSchedule({ onEnterClassroom }: Props) {
     return <SimpleScreen title="我的课程"><p style={{ color: "var(--c-text-3)" }}>加载中…</p></SimpleScreen>;
   }
 
-  const upcoming = sessions.filter((s) => s.upcoming);
-  const past = sessions.filter((s) => !s.upcoming);
+  const upcomingLabels = new Set(["即将上课", "进行中", "待上课"]);
+  const upcoming = sessions.filter((s) => upcomingLabels.has(s.statusLabel));
+  const past = sessions.filter((s) => !upcomingLabels.has(s.statusLabel));
 
   return (
     <SimpleScreen title="我的课程" subtitle="上课时间与状态">
@@ -60,7 +63,8 @@ export default function StudentSchedule({ onEnterClassroom }: Props) {
             {new Date(s.startAt).toLocaleString("zh-CN")}
             {s.expertName ? ` · ${s.expertName}` : ""}
           </div>
-          {onEnterClassroom && (
+          <div style={{ fontSize: 13, color: "var(--c-primary)", marginTop: 6 }}>{s.statusLabel}</div>
+          {onEnterClassroom && ["即将上课", "进行中", "待上课"].includes(s.statusLabel) && (
             <div style={{ marginTop: 14 }}>
               <PrimaryButton onClick={() => onEnterClassroom(s.id)}>进入课堂</PrimaryButton>
             </div>
@@ -69,12 +73,12 @@ export default function StudentSchedule({ onEnterClassroom }: Props) {
       ))}
       {past.length > 0 && (
         <>
-          <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 8 }}>已结束</div>
+          <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 8 }}>历史课次</div>
           {past.map((s) => (
             <SimpleCard key={s.id}>
               <div style={{ fontWeight: 500 }}>{s.topic}</div>
               <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 4 }}>
-                {new Date(s.startAt).toLocaleDateString("zh-CN")} · {s.done ? "已完成" : "待确认"}
+                {new Date(s.startAt).toLocaleDateString("zh-CN")} · {s.statusLabel}
               </div>
             </SimpleCard>
           ))}

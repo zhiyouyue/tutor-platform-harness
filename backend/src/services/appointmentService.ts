@@ -5,6 +5,7 @@ import { prepareRtcSessionForAppointment } from "./appointmentClassroomService.j
 import { accrueIncomeForConfirmedAppointment } from "./sessionIncomeService.js";
 import { assertAppointmentInExpertSchedule } from "./slotScheduleService.js";
 import { notifyInApp } from "./notificationService.js";
+import { buildCompletionRecord, studentSessionStatusLabel } from "../domain/sessionPresentation.js";
 
 export function formatAppointment(row: scheduleRepo.AppointmentRow | scheduleRepo.AppointmentDetailRow) {
   const detail = row as scheduleRepo.AppointmentDetailRow;
@@ -26,31 +27,18 @@ export function formatAppointment(row: scheduleRepo.AppointmentRow | scheduleRep
     completionNotes: row.completion_notes ?? null,
     feeDeductAmount: row.fee_deduct_amount != null ? Number(row.fee_deduct_amount) : null,
     deferReason: row.defer_reason ?? null,
+    statusLabel: studentSessionStatusLabel({
+      status: row.status,
+      startAt: row.start_at,
+      endAt: row.end_at,
+      expertCompletedAt: row.expert_completed_at,
+      opsConfirmedAt: row.ops_confirmed_at,
+    }),
   };
 }
 
 export function formatCompletionRecord(row: scheduleRepo.AppointmentDetailRow) {
-  const statusLabel =
-    row.status === "completed"
-      ? "已完成"
-      : row.status === "deferred"
-        ? "已延期"
-        : row.status === "incomplete"
-          ? "未完成"
-          : row.status === "cancelled"
-            ? "已取消"
-            : row.expert_completed_at
-              ? "待班主任确认"
-              : "待上课";
-  return {
-    studentName: row.student_name ?? "",
-    studentPhone: row.student_phone ?? "",
-    course: row.topic ?? row.project_title ?? "",
-    sessionTime: row.start_at,
-    expertName: row.expert_name ?? "",
-    status: statusLabel,
-    notes: row.completion_notes ?? row.defer_reason ?? "",
-  };
+  return buildCompletionRecord(row);
 }
 
 async function notifyAppointmentStakeholders(

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import NotificationBell from "../../components/NotificationBell";
 
 export type ExpertPage = "dashboard"|"projects"|"delivery"|"capabilities"|"schedule"|"income"|"profile";
 
@@ -114,10 +115,25 @@ export default function ExpertLayout({ page, onNavigate, onBack, children }: Pro
         </div>
       </aside>
 
-      {/* Content */}
-      <main style={{ flex: 1, minWidth: 0, background: "var(--c-mentor-bg)", overflowY: "auto" }}>
-        {children}
-      </main>
+      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        <header
+          style={{
+            height: 48,
+            flexShrink: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            padding: "0 20px",
+            background: "var(--c-surface)",
+            borderBottom: "1px solid var(--c-border)",
+          }}
+        >
+          <NotificationBell />
+        </header>
+        <main style={{ flex: 1, minWidth: 0, background: "var(--c-mentor-bg)", overflowY: "auto" }}>
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

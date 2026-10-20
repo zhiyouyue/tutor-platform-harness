@@ -1,19 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import {
-  confirmProjectCompletion,
   createProject,
   fetchAllDictionaries,
   fetchOpsExperts,
   fetchOpsProjects,
   fetchStudents,
-  patchOpsProject,
-  publishProject,
   type DictItem,
   type Project,
   type Student,
 } from "../../services/api";
+import OpsProjectDetail from "./OpsProjectDetail";
 
 export default function SupervisorProjects() {
+  const [detailId, setDetailId] = useState<number | null>(null);
   const [items, setItems] = useState<Project[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [experts, setExperts] = useState<Array<{ id: number; realName: string | null }>>([]);
@@ -41,6 +40,10 @@ export default function SupervisorProjects() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  if (detailId != null) {
+    return <OpsProjectDetail projectId={detailId} onBack={() => setDetailId(null)} />;
+  }
 
   async function handleCreate() {
     const res = await createProject({
@@ -98,27 +101,10 @@ export default function SupervisorProjects() {
           <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 4 }}>
             {p.studentName} · {p.expertName || "待指定"} · ¥{p.totalAmount} · {p.status}
           </div>
-          <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
-            {p.status === "draft" && (
-              <button className="ant-btn ant-btn-primary" onClick={async () => { await publishProject(p.id); await load(); }}>发布给专家</button>
-            )}
-            {p.status === "pending_completion_review" && (
-              <button className="ant-btn ant-btn-primary" onClick={async () => { await confirmProjectCompletion(p.id); await load(); }}>确认完成并入账</button>
-            )}
-            {["in_progress", "pending_confirm", "published"].includes(p.status) && (
-              <button
-                className="ant-btn ant-btn-default"
-                onClick={async () => {
-                  const expertId = prompt("输入新专家档案 ID（留空取消）", p.expertId ? String(p.expertId) : "");
-                  if (expertId === null || !expertId.trim()) return;
-                  const res = await patchOpsProject(p.id, { expertId: Number(expertId) });
-                  if (!res.success) alert(res.message);
-                  await load();
-                }}
-              >
-                改派专家
-              </button>
-            )}
+          <div style={{ marginTop: 8 }}>
+            <button type="button" className="ant-btn ant-btn-link" onClick={() => setDetailId(p.id)}>
+              查看详情
+            </button>
           </div>
         </div>
       ))}

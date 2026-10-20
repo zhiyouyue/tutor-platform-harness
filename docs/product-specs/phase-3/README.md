@@ -6,6 +6,8 @@
 
 | 文档 | 用途 |
 |------|------|
+| **[PRD-phase3.md](./PRD-phase3.md)** | **Phase 3 产品需求（FR/范围/DoD）** |
+| [GRADING-RUBRIC.md](./GRADING-RUBRIC.md) | 验收打分与一键验证命令 |
 | [20251019-feature-matrix.md](./20251019-feature-matrix.md) | 全矩阵 + 工程状态 |
 | [TASKS-phase3.md](./TASKS-phase3.md) | 开发任务与进度 |
 | [API-PERMISSIONS.md](./API-PERMISSIONS.md) | 接口 × 角色权限（安全验收依据） |

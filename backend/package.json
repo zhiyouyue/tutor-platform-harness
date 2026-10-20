@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "db:setup": "node scripts/setup-db.mjs",
     "db:schema": "tsx scripts/run-sql.ts sql/01_phase1_schema.sql",
@@ -32,6 +33,7 @@
     "@types/ali-oss": "^6.23.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.10.0",
+    "@vitest/coverage-v8": "^2.1.9",
     "tsx": "^4.23.13",
     "typescript": "^5.7.0",
     "vitest": "^2.1.9"

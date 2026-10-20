@@ -1,4 +1,5 @@
 import { useState } from "react";
+import NotificationBell from "../../components/NotificationBell";
 
 export type OpsPage = "dashboard" | "students" | "projects" | "schedule" | "finance";
 
@@ -161,6 +162,7 @@ export default function OpsLayout({ page, onNavigate, onBack, children }: Props)
           <div style={{ color: "var(--c-text-1)", fontSize: 13, fontWeight: 500 }}>{pageTitle[page]}</div>
           <div style={{ flex: 1 }} />
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <NotificationBell />
             <div style={{ color: "var(--c-text-3)", fontSize: 13 }}>2025-09-14</div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 12px", background: "var(--c-surface-2)", borderRadius: 20, border: "1px solid var(--c-border)" }}>
               <div style={{ width: 22, height: 22, borderRadius: "50%", background: "var(--c-primary)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>李</div>

@@ -167,6 +167,8 @@ export const sendStudentLoginLink = (studentId: number) =>
 export const fetchOpsExperts = () =>
   apiFetch<{ items: Array<{ id: number; realName: string | null }> }>("/api/v1/ops/experts");
 export const fetchOpsProjects = () => apiFetch<{ items: Project[] }>("/api/v1/ops/projects");
+export const fetchOpsProject = (projectId: number) =>
+  apiFetch<Project>(`/api/v1/ops/projects/${projectId}`);
 export const createProject = (body: Record<string, unknown>) =>
   apiFetch<Project>("/api/v1/ops/projects", { method: "POST", body: JSON.stringify(body) });
 export const publishProject = (projectId: number) =>

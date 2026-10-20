@@ -1,3 +1,5 @@
+import NotificationBell from "../../components/NotificationBell";
+
 export type StudentPage = "dashboard"|"project"|"schedule"|"messages"|"profile";
 
 const NAV: { id: StudentPage; label: string; icon: (active: boolean) => React.ReactNode }[] = [
@@ -58,6 +60,7 @@ export default function StudentLayout({ page, onNavigate, onBack, children }: Pr
           <span style={{ color:"var(--c-text-3)", fontSize:13 }}>· 学员中心</span>
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+          <NotificationBell />
           <div style={{ width:30, height:30, borderRadius:"50%", background:CB, color:C, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:700 }}>张</div>
           <button onClick={onBack} style={{ fontSize:12, color:"var(--c-text-3)", background:"transparent", border:"none", cursor:"pointer" }}>切换角色</button>
         </div>
