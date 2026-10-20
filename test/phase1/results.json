@@ -80,7 +80,7 @@
       "specs": [
         {
           "title": "FEAT-P3-ADM 管理员按专家项目看板",
-          "ok": true,
+          "ok": false,
           "tags": [],
           "tests": [
             {
@@ -93,24 +93,58 @@
                 {
                   "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 877,
-                  "errors": [],
+                  "status": "failed",
+                  "duration": 268,
+                  "error": {
+                    "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n",
+                    "stack": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n    at gotoHome (C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\frontend\\e2e\\helpers.ts:15:14)\n    at pickRole (C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\frontend\\e2e\\helpers.ts:27:9)\n    at adminLogin (C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\frontend\\e2e\\phase3-helpers.ts:25:9)\n    at C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\frontend\\e2e\\phase3-po-features.spec.ts:19:9",
+                    "location": {
+                      "file": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\frontend\\e2e\\helpers.ts",
+                      "column": 14,
+                      "line": 15
+                    },
+                    "snippet": "   at helpers.ts:15\n\n  13 |\n  14 | export async function gotoHome(page: Page) {\n> 15 |   await page.goto(\"/\");\n     |              ^\n  16 |   await expect(page.getByText(\"欢迎登录\")).toBeVisible();\n  17 | }\n  18 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\frontend\\e2e\\helpers.ts",
+                        "column": 14,
+                        "line": 15
+                      },
+                      "message": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n\n   at helpers.ts:15\n\n  13 |\n  14 | export async function gotoHome(page: Page) {\n> 15 |   await page.goto(\"/\");\n     |              ^\n  16 |   await expect(page.getByText(\"欢迎登录\")).toBeVisible();\n  17 | }\n  18 |\n    at gotoHome (C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\frontend\\e2e\\helpers.ts:15:14)\n    at pickRole (C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\frontend\\e2e\\helpers.ts:27:9)\n    at adminLogin (C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\frontend\\e2e\\phase3-helpers.ts:25:9)\n    at C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\frontend\\e2e\\phase3-po-features.spec.ts:19:9"
+                    }
+                  ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-19T03:37:16.024Z",
+                  "startTime": "2026-10-20T02:41:08.609Z",
                   "annotations": [],
                   "attachments": [
                     {
                       "name": "screenshot",
                       "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase3-po-features-FEAT-P3-ADM-管理员按专家项目看板-chrome\\test-finished-1.png"
+                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase3-po-features-FEAT-P3-ADM-管理员按专家项目看板-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase3-po-features-FEAT-P3-ADM-管理员按专家项目看板-chrome\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase3-po-features-FEAT-P3-ADM-管理员按专家项目看板-chrome\\trace.zip"
                     }
-                  ]
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\frontend\\e2e\\helpers.ts",
+                    "column": 14,
+                    "line": 15
+                  }
                 }
               ],
-              "status": "expected"
+              "status": "unexpected"
             }
           ],
           "id": "6414c9735cd9f6f13c09-d94c200e916ebab3d9bf",
@@ -131,26 +165,20 @@
               "projectName": "chrome",
               "results": [
                 {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1212,
+                  "workerIndex": -1,
+                  "parallelIndex": -1,
+                  "status": "skipped",
+                  "duration": 0,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-19T03:37:17.022Z",
+                  "startTime": "2026-10-20T02:41:09.086Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase3-po-features-FEAT-P3-OPS-项目管理改派入口-chrome\\test-finished-1.png"
-                    }
-                  ]
+                  "attachments": []
                 }
               ],
-              "status": "expected"
+              "status": "skipped"
             }
           ],
           "id": "6414c9735cd9f6f13c09-9e0b355c6c582fdece46",
@@ -171,31 +199,25 @@
               "projectName": "chrome",
               "results": [
                 {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 1455,
+                  "workerIndex": -1,
+                  "parallelIndex": -1,
+                  "status": "skipped",
+                  "duration": 0,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-19T03:37:18.240Z",
+                  "startTime": "2026-10-20T02:41:09.086Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "C:\\Users\\Administrator\\Desktop\\职优越导师平台\\tutor-platform-harness\\test\\phase1\\playwright-output\\phase3-po-features-FEAT-P3-OPS-课次延期-改期操作-chrome\\test-finished-1.png"
-                    }
-                  ]
+                  "attachments": []
                 }
               ],
-              "status": "expected"
+              "status": "skipped"
             }
           ],
           "id": "6414c9735cd9f6f13c09-0a047a5a2341691ed265",
           "file": "phase3-po-features.spec.ts",
-          "line": 37,
+          "line": 34,
           "column": 1
         }
       ]
@@ -203,11 +225,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-19T03:37:15.705Z",
-    "duration": 4093.282,
-    "expected": 3,
-    "skipped": 0,
-    "unexpected": 0,
+    "startTime": "2026-10-20T02:41:08.285Z",
+    "duration": 814.8529999999998,
+    "expected": 0,
+    "skipped": 2,
+    "unexpected": 1,
     "flaky": 0
   }
 }
