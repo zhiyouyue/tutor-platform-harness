@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "playwright:install:cn": "powershell -NoProfile -ExecutionPolicy Bypass -File ../scripts/playwright-install-cn.ps1"
   },
   "dependencies": {
     "dingrtc": "^3.9.37",

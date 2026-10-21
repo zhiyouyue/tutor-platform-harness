@@ -6,6 +6,7 @@ import {
   submitProjectCompletion,
   type Project,
 } from "../../services/api";
+import { labelCoachingNodeType, labelNodeStatus, labelProjectStatus } from "../../utils/statusLabels";
 
 interface Props {
   projectId: string;
@@ -30,14 +31,16 @@ export default function ProjectDetail({ projectId, onBack, onOpenDelivery }: Pro
       <div>
         <div style={{ fontSize: 20, fontWeight: 700 }}>{project.title}</div>
         <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 4 }}>
-          {project.studentName} · ¥{project.totalAmount} · {project.status}
+          {project.studentName} · ¥{project.totalAmount} · {labelProjectStatus(project.status)}
         </div>
       </div>
       <button className="ant-btn ant-btn-primary" onClick={onOpenDelivery}>进入交付空间</button>
       <div style={{ background: "#fff", borderRadius: 12, border: "1px solid var(--c-border)", padding: 16 }}>
         <div style={{ fontWeight: 600, marginBottom: 8 }}>辅导节点</div>
         {(project.nodes || []).map((n) => (
-          <div key={n.id} style={{ fontSize: 13, padding: "4px 0" }}>{n.label || n.nodeType} — {n.status}</div>
+          <div key={n.id} style={{ fontSize: 13, padding: "4px 0" }}>
+            {labelCoachingNodeType(n.nodeType, n.label)} — {labelNodeStatus(n.status)}
+          </div>
         ))}
       </div>
       <div style={{ background: "#fff", borderRadius: 12, border: "1px solid var(--c-border)", padding: 16, display: "grid", gap: 8 }}>

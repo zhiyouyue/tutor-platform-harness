@@ -6,6 +6,7 @@ import {
   sendMessage,
   uploadProjectFile,
 } from "../../services/api";
+import { labelAppointmentStatus } from "../../utils/statusLabels";
 
 export default function DeliverySpace({ projectId }: { projectId?: string | null }) {
   const [channel, setChannel] = useState<"expert_ops" | "expert_student">("expert_student");
@@ -93,7 +94,7 @@ export default function DeliverySpace({ projectId }: { projectId?: string | null
         <div style={{ fontWeight: 600, marginBottom: 8 }}>预约</div>
         {appointments.length === 0 ? <div style={{ fontSize: 13, color: "var(--c-text-3)" }}>暂无预约</div> : appointments.map((a) => (
           <div key={a.id as number} style={{ fontSize: 13, padding: "4px 0" }}>
-            {a.topic as string || "辅导"} · {new Date(a.start_at as string).toLocaleString()} · {a.status as string}
+            {a.topic as string || "辅导"} · {new Date(a.start_at as string).toLocaleString("zh-CN")} · {labelAppointmentStatus(a.status as string)}
           </div>
         ))}
       </div>

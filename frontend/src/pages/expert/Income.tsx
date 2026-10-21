@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchIncomeSummary, fetchIncomeTransactions } from "../../services/api";
+import { labelIncomeStatus } from "../../utils/statusLabels";
 
 export default function Income() {
   const [summary, setSummary] = useState({ total: 0, pending: 0, settled: 0 });
@@ -30,7 +31,7 @@ export default function Income() {
         ) : items.map((row) => (
           <div key={row.id as number} style={{ padding: "12px 16px", borderBottom: "1px solid var(--c-border)", display: "flex", justifyContent: "space-between" }}>
             <span>{row.description as string || row.projectTitle as string}</span>
-            <span>¥{row.amount as number} · {row.status as string}</span>
+            <span>¥{row.amount as number} · {labelIncomeStatus(row.status as string)}</span>
           </div>
         ))}
       </div>

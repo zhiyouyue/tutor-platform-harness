@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { acceptProject, fetchProjects, rejectProject, type Project } from "../../services/api";
+import { labelProjectStatus } from "../../utils/statusLabels";
 
 type Tab = "pending" | "active" | "completed";
 
@@ -41,7 +42,7 @@ export default function Projects({ onSelectProject }: { onSelectProject: (id: st
     <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
       <div>
         <div style={{ fontSize: 20, fontWeight: 700 }}>我的项目</div>
-        <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 2 }}>API 联调 · {rows.length} 项</div>
+        <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 2 }}>共 {rows.length} 个项目</div>
       </div>
       <div style={{ display: "flex", gap: 8 }}>
         {(["pending", "active", "completed"] as Tab[]).map((t) => (
@@ -59,7 +60,7 @@ export default function Projects({ onSelectProject }: { onSelectProject: (id: st
           <div key={p.id} style={{ background: "#fff", borderRadius: 12, border: "1px solid var(--c-border)", padding: 16 }}>
             <div style={{ fontWeight: 600 }}>{p.title}</div>
             <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 4 }}>
-              {p.studentName} · ¥{p.totalAmount} · {p.status}
+              {p.studentName} · ¥{p.totalAmount} · {labelProjectStatus(p.status)}
             </div>
             <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
               <button className="ant-btn ant-btn-primary" onClick={() => onSelectProject(String(p.id))}>详情</button>

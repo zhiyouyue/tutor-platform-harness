@@ -4,17 +4,10 @@ import {
   submitExpertCertification,
   type ExpertProfile,
 } from "../../services/api";
+import { labelExpertProfileStatus } from "../../utils/statusLabels";
 import WorkExperienceSection from "./WorkExperienceSection";
 
 type ProfileTab = "info" | "certification";
-
-const STATUS_LABEL: Record<string, string> = {
-  draft: "草稿",
-  pending_review: "待审核",
-  active: "已认证",
-  rejected: "已拒绝",
-  suspended: "已暂停",
-};
 
 export default function Profile() {
   const [tab, setTab] = useState<ProfileTab>("info");
@@ -62,7 +55,7 @@ export default function Profile() {
           </div>
           <div style={{ display: "flex", gap: 8, paddingBottom: 4 }}>
             <span style={{ background: status === "active" ? "#0D7A0D" : "#374151", color: status === "active" ? "#73D13D" : "#D1D5DB", fontSize: 11, padding: "3px 10px", borderRadius: 20, fontWeight: 600, border: "1px solid #237804" }}>
-              {STATUS_LABEL[status] ?? status}
+              {labelExpertProfileStatus(status)}
             </span>
             {profile?.acceptingProjects && (
               <span style={{ background: "rgba(22,119,255,0.2)", color: "#69B1FF", fontSize: 11, padding: "3px 10px", borderRadius: 20, border: "1px solid rgba(22,119,255,0.3)" }}>可接受项目</span>
@@ -108,7 +101,7 @@ export default function Profile() {
       {tab === "certification" && (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{ background: "#fff", borderRadius: 12, border: "1px solid var(--c-border)", padding: 20 }}>
-            <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 8 }}>认证状态：{STATUS_LABEL[status] ?? status}</div>
+            <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 8 }}>认证状态：{labelExpertProfileStatus(status)}</div>
             {profile?.rejectReason && (
               <div style={{ fontSize: 13, color: "#B91C1C", marginBottom: 8 }}>拒绝原因：{profile.rejectReason}</div>
             )}

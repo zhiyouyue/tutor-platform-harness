@@ -8,6 +8,7 @@ import {
   saveMySchedule,
   updateMyExpertProfile,
 } from "../../services/api";
+import { labelAppointmentStatus } from "../../utils/statusLabels";
 
 const DAY_LABELS = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
 const WEEKDAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
@@ -17,12 +18,6 @@ type SlotMap = Record<number, Array<{ startTime: string; endTime: string }>>;
 function emptySlots(): SlotMap {
   return { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
 }
-
-const STATUS_LABEL: Record<string, string> = {
-  scheduled: "已确认",
-  completed: "已完成",
-  cancelled: "已取消",
-};
 
 interface Props {
   onEnterClassroom?: (appointmentId: number) => void;
@@ -194,7 +189,7 @@ export default function Schedule({ onEnterClassroom }: Props) {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div style={{ fontSize: 13, fontWeight: 500 }}>{(s.studentName as string) || "学员"} · {(s.topic as string) || (s.projectTitle as string)}</div>
                     <span style={{ fontSize: 11, padding: "1px 6px", borderRadius: 4, background: "#F6FFED", color: "var(--c-success)" }}>
-                      {STATUS_LABEL[s.status as string] || s.status as string}
+                      {labelAppointmentStatus(s.status as string)}
                     </span>
                   </div>
                   <div style={{ fontSize: 12, color: "var(--c-text-3)", marginTop: 3 }}>

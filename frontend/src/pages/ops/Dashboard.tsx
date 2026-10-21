@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchOpsDashboard, type Project } from "../../services/api";
 import type { OpsPage } from "./OpsLayout";
+import { labelProjectStatus, projectStatusTagClass } from "../../utils/statusLabels";
 
 interface StatCardProps {
   label: string;
@@ -21,25 +22,6 @@ function StatCard({ label, value, daily, dailyLabel }: StatCardProps) {
     </div>
   );
 }
-
-const STATUS_LABEL: Record<string, string> = {
-  draft: "草稿",
-  published: "待接单",
-  pending_confirm: "待确认",
-  in_progress: "进行中",
-  pending_completion_review: "待验收",
-  completed: "已完成",
-  rejected: "已拒绝",
-  cancelled: "已取消",
-};
-
-const statusTag: Record<string, string> = {
-  in_progress: "ant-tag ant-tag-blue",
-  completed: "ant-tag ant-tag-green",
-  pending_confirm: "ant-tag ant-tag-orange",
-  published: "ant-tag ant-tag-orange",
-  pending_completion_review: "ant-tag ant-tag-orange",
-};
 
 export default function OpsDashboard({ onNavigate }: { onNavigate: (p: OpsPage) => void }) {
   const [dash, setDash] = useState<Awaited<ReturnType<typeof fetchOpsDashboard>>["data"] | null>(null);
@@ -136,7 +118,7 @@ export default function OpsDashboard({ onNavigate }: { onNavigate: (p: OpsPage) 
                   <td style={{ color: !p.expertName ? "var(--c-danger)" : "var(--c-text-2)" }}>{p.expertName || "未分配"}</td>
                   <td>{p.title}</td>
                   <td style={{ fontWeight: 600, fontFamily: "'DM Mono', monospace" }}>¥{p.totalAmount}</td>
-                  <td><span className={statusTag[p.status] ?? "ant-tag ant-tag-gray"}>{STATUS_LABEL[p.status] || p.status}</span></td>
+                  <td><span className={projectStatusTagClass[p.status] ?? "ant-tag ant-tag-gray"}>{labelProjectStatus(p.status)}</span></td>
                 </tr>
               ))}
             </tbody>

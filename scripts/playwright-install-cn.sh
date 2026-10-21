@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Playwright 浏览器国内加速（Linux/macOS，含阿里云 ECS）
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT/frontend"
+
+unset PLAYWRIGHT_CHROMIUM_DOWNLOAD_HOST
+export PLAYWRIGHT_BROWSERS_PATH="${PLAYWRIGHT_BROWSERS_PATH:-$HOME/.cache/ms-playwright}"
+export PLAYWRIGHT_DOWNLOAD_HOST="${PLAYWRIGHT_DOWNLOAD_HOST:-https://npmmirror.com/mirrors/playwright}"
+export PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT="${PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT:-600000}"
+mkdir -p "$PLAYWRIGHT_BROWSERS_PATH"
+
+echo "PLAYWRIGHT_DOWNLOAD_HOST=$PLAYWRIGHT_DOWNLOAD_HOST"
+echo "PLAYWRIGHT_CHROMIUM_DOWNLOAD_HOST=$PLAYWRIGHT_CHROMIUM_DOWNLOAD_HOST"
+npx playwright install chromium

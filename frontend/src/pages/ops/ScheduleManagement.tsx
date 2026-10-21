@@ -11,23 +11,9 @@ import {
   fetchOpsProjects,
   type Project,
 } from "../../services/api";
+import { appointmentStatusTagClass, labelAppointmentStatus } from "../../utils/statusLabels";
 
 const weekDays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-
-const STATUS_LABEL: Record<string, string> = {
-  scheduled: "已确认",
-  confirmed: "已确认",
-  completed: "已完成",
-  cancelled: "已取消",
-  deferred: "已延期",
-  incomplete: "未完成",
-};
-
-const AST: Record<string, string> = {
-  scheduled: "ant-tag ant-tag-blue",
-  completed: "ant-tag ant-tag-green",
-  cancelled: "ant-tag ant-tag-gray",
-};
 
 export default function ScheduleManagement() {
   const [tab, setTab] = useState<"cal" | "avail" | "list">("list");
@@ -174,7 +160,7 @@ export default function ScheduleManagement() {
                     {new Date(a.startAt as string).toLocaleString("zh-CN")}
                   </td>
                   <td>{(a.topic as string) || "辅导"}</td>
-                  <td><span className={AST[a.status as string] || "ant-tag ant-tag-gray"}>{STATUS_LABEL[a.status as string] || a.status as string}</span></td>
+                  <td><span className={appointmentStatusTagClass[a.status as string] || "ant-tag ant-tag-gray"}>{labelAppointmentStatus(a.status as string)}</span></td>
                   <td>
                     {Boolean(a.expertCompletedAt) && !Boolean(a.opsConfirmedAt) && (
                       <button

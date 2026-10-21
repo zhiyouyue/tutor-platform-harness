@@ -9,6 +9,7 @@ import {
   type Project,
   type Student,
 } from "../../services/api";
+import { labelProjectStatus } from "../../utils/statusLabels";
 import OpsProjectDetail from "./OpsProjectDetail";
 
 export default function SupervisorProjects() {
@@ -99,7 +100,7 @@ export default function SupervisorProjects() {
         <div key={p.id} style={{ background: "#fff", border: "1px solid var(--c-border)", borderRadius: 12, padding: 16 }}>
           <div style={{ fontWeight: 600 }}>{p.title}</div>
           <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 4 }}>
-            {p.studentName} · {p.expertName || "待指定"} · ¥{p.totalAmount} · {p.status}
+            {p.studentName} · {p.expertName || "待指定"} · ¥{p.totalAmount} · {labelProjectStatus(p.status)}
           </div>
           <div style={{ marginTop: 8 }}>
             <button type="button" className="ant-btn ant-btn-link" onClick={() => setDetailId(p.id)}>

@@ -5,6 +5,7 @@ import {
   rejectProject,
   type Project,
 } from "../../services/api";
+import { labelAppointmentStatus } from "../../utils/statusLabels";
 
 interface Props { onNavigate: (p: string) => void; }
 
@@ -15,12 +16,6 @@ function Card({ children, style }: { children: React.ReactNode; style?: React.CS
     </div>
   );
 }
-
-const STATUS_LABEL: Record<string, string> = {
-  scheduled: "已确认",
-  completed: "已完成",
-  cancelled: "已取消",
-};
 
 export default function Dashboard({ onNavigate }: Props) {
   const [loading, setLoading] = useState(true);
@@ -111,7 +106,7 @@ export default function Dashboard({ onNavigate }: Props) {
                       <span style={{ fontWeight: 500, fontSize: 14 }}>{student}</span>
                       <span style={{ color: "var(--c-text-3)", fontSize: 13 }}> · {(s.topic as string) || (s.projectTitle as string)}</span>
                     </div>
-                    <div style={{ fontSize: 12, color: "var(--c-success)" }}>{STATUS_LABEL[s.status as string] || s.status as string}</div>
+                    <div style={{ fontSize: 12, color: "var(--c-success)" }}>{labelAppointmentStatus(s.status as string)}</div>
                   </div>
                 );
               })}

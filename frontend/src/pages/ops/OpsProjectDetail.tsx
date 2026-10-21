@@ -8,25 +8,7 @@ import {
   publishProject,
   type Project,
 } from "../../services/api";
-
-const STATUS_LABEL: Record<string, string> = {
-  draft: "草稿",
-  published: "已发布",
-  pending_confirm: "待专家确认",
-  in_progress: "进行中",
-  pending_completion_review: "待完成审核",
-  completed: "已完成",
-  rejected: "已拒绝",
-};
-
-const APPT_STATUS: Record<string, string> = {
-  scheduled: "已排期",
-  confirmed: "已确认",
-  completed: "已完成",
-  cancelled: "已取消",
-  deferred: "已延期",
-  incomplete: "未完成",
-};
+import { labelAppointmentStatus, labelProjectStatus } from "../../utils/statusLabels";
 
 interface Props {
   projectId: number;
@@ -66,7 +48,7 @@ export default function OpsProjectDetail({ projectId, onBack }: Props) {
         <div style={{ fontSize: 20, fontWeight: 600 }}>{project.title}</div>
         <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 4 }}>
           学员 {project.studentName} · 专家 {project.expertName || "待指定"} · ¥{project.totalAmount} ·{" "}
-          {STATUS_LABEL[project.status] || project.status}
+          {labelProjectStatus(project.status)}
         </div>
         <div style={{ fontSize: 12, color: "var(--c-text-4)", marginTop: 4 }}>项目编号 {project.projectNo}</div>
       </div>
@@ -122,7 +104,7 @@ export default function OpsProjectDetail({ projectId, onBack }: Props) {
                   {new Date(a.startAt as string).toLocaleString("zh-CN")}
                 </div>
               </div>
-              <span className="ant-tag ant-tag-blue">{APPT_STATUS[a.status as string] || (a.status as string)}</span>
+              <span className="ant-tag ant-tag-blue">{labelAppointmentStatus(a.status as string)}</span>
             </div>
           ))
         )}

@@ -59,7 +59,7 @@ export default function Certifications() {
       <div>
         <div style={{ fontSize: 20, fontWeight: 700 }}>专家认证</div>
         <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 2 }}>
-          审核专家认证申请（联调 API）
+          审核导师提交的认证申请，通过或拒绝并填写原因
         </div>
       </div>
 

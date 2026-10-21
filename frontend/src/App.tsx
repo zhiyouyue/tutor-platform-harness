@@ -77,35 +77,35 @@ function AppInner() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full max-w-5xl">
         <RoleCard
           title="专家"
-          subtitle="Expert"
+          subtitle="导师 · 注册与接单"
           desc="注册登录、完善资料、提交认证、接受项目"
           theme={ROLE_THEMES.expert}
           onClick={() => setSelectedRole("expert")}
         />
         <RoleCard
           title="运营"
-          subtitle="Ops"
+          subtitle="班主任 · 排课与项目"
           desc="管理学员、分配项目、协调时间、跟进进度"
           theme={ROLE_THEMES.ops}
           onClick={() => setSelectedRole("ops")}
         />
         <RoleCard
           title="学员"
-          subtitle="Student"
+          subtitle="上课与沟通"
           desc="查看课程、进入课堂、和导师沟通"
           theme={ROLE_THEMES.student}
           onClick={() => setSelectedRole("student")}
         />
         <RoleCard
           title="管理员"
-          subtitle="Admin"
+          subtitle="认证与看板"
           desc="审核专家认证、查看项目数量"
           theme={ROLE_THEMES.admin}
           onClick={() => setSelectedRole("admin")}
         />
       </div>
 
-      <p className="mt-12 text-sm" style={{ color: "var(--c-text-4)" }}>© {new Date().getFullYear()} 求职辅导平台 · V1.0</p>
+      <p className="mt-12 text-sm" style={{ color: "var(--c-text-4)" }}>© {new Date().getFullYear()} 职优越导师平台 · 版本 1.0</p>
     </div>
   );
 }
