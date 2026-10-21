@@ -1,6 +1,7 @@
 import NotificationBell from "../../components/NotificationBell";
+import { useAuth } from "../../contexts/AuthContext";
 
-export type StudentPage = "dashboard"|"project"|"schedule"|"messages"|"profile";
+export type StudentPage = "dashboard"|"project"|"schedule"|"profile";
 
 const NAV: { id: StudentPage; label: string; icon: (active: boolean) => React.ReactNode }[] = [
   { id:"dashboard", label:"主页", icon: (a) => (
@@ -22,11 +23,6 @@ const NAV: { id: StudentPage; label: string; icon: (active: boolean) => React.Re
       <path d="M10 6v4.5l3 1.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
     </svg>
   )},
-  { id:"messages", label:"消息", icon: (a) => (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M3 14V5a2 2 0 012-2h10a2 2 0 012 2v7a2 2 0 01-2 2H7l-4 3V14z" stroke="currentColor" strokeWidth="1.5" fill={a ? "currentColor" : "none"} fillOpacity={a ? 0.12 : 0}/>
-    </svg>
-  )},
   { id:"profile", label:"我的", icon: (a) => (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
       <circle cx="10" cy="7" r="3.5" stroke="currentColor" strokeWidth="1.5" fill={a ? "currentColor" : "none"} fillOpacity={a ? 0.12 : 0}/>
@@ -43,6 +39,8 @@ interface Props {
 }
 
 export default function StudentLayout({ page, onNavigate, onBack, children }: Props) {
+  const { user } = useAuth();
+  const displayName = user?.account || user?.phone || "学员";
   return (
     <div style={{ display:"flex", flexDirection:"column", height:"100vh", overflow:"hidden", background:"var(--c-bg-page)" }}>
       {/* Top header */}
@@ -58,8 +56,8 @@ export default function StudentLayout({ page, onNavigate, onBack, children }: Pr
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
           <NotificationBell />
-          <div style={{ width:30, height:30, borderRadius:"50%", background:"var(--c-primary-bg)", color:"var(--c-primary)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:700 }}>张</div>
-          <button onClick={onBack} style={{ fontSize:12, color:"var(--c-text-3)", background:"transparent", border:"none", cursor:"pointer" }}>切换角色</button>
+          <div style={{ width:30, height:30, borderRadius:"50%", background:"var(--c-primary-bg)", color:"var(--c-primary)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:700 }}>{displayName.slice(0, 1)}</div>
+          <button type="button" onClick={onBack} style={{ fontSize:12, color:"var(--c-danger)", background:"transparent", border:"none", cursor:"pointer" }}>退出登录</button>
         </div>
       </header>
 

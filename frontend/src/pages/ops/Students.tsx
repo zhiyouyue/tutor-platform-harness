@@ -7,6 +7,7 @@ export default function Students() {
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ realName: "", phone: "" });
   const [msg, setMsg] = useState("");
+  const [loginToken, setLoginToken] = useState("");
 
   const load = useCallback(async () => {
     const res = await fetchStudents();
@@ -27,7 +28,13 @@ export default function Students() {
 
   async function handleLoginLink(id: number) {
     const res = await sendStudentLoginLink(id);
-    setMsg(res.success ? "登录链接已发送到系统，请告知学生查收。" : res.message);
+    if (res.success && res.data.token) {
+      setLoginToken(res.data.token);
+      setMsg("登录口令已生成。请复制后发给学员，在学员登录页选择「口令登录」粘贴。不会发送短信或邮件。");
+    } else {
+      setLoginToken("");
+      setMsg(res.message || "生成失败");
+    }
   }
 
   async function handleImport() {
@@ -47,6 +54,26 @@ export default function Students() {
   return (
     <SimpleScreen title="学生" subtitle={`共 ${items.length} 人`}>
       {msg && <p style={{ margin: 0, fontSize: 14, color: "var(--c-primary)" }}>{msg}</p>}
+      {loginToken && (
+        <SimpleCard>
+          <div style={{ fontSize: 13, color: "var(--c-text-3)", marginBottom: 8 }}>学员登录口令</div>
+          <div style={{ fontFamily: "DM Mono, monospace", fontSize: 13, wordBreak: "break-all", marginBottom: 12 }}>{loginToken}</div>
+          <button
+            type="button"
+            className="ant-btn ant-btn-default"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(loginToken);
+                setMsg("口令已复制。请发给学员，在登录页粘贴到「口令登录」。");
+              } catch {
+                setMsg("复制失败，请手动选中下面的口令。");
+              }
+            }}
+          >
+            复制口令
+          </button>
+        </SimpleCard>
+      )}
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         <button type="button" className="ant-btn ant-btn-default" onClick={() => setShowAdd(!showAdd)}>添加</button>
         <button type="button" className="ant-btn ant-btn-default" onClick={handleImport}>批量添加</button>

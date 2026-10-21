@@ -92,20 +92,20 @@ function AppInner() {
         <RoleCard
           title="学员"
           subtitle="Student"
-          desc="查看辅导进度、预约课程、沟通专家"
+          desc="查看课程、进入课堂、和导师沟通"
           theme={ROLE_THEMES.student}
           onClick={() => setSelectedRole("student")}
         />
         <RoleCard
           title="管理员"
           subtitle="Admin"
-          desc="专家认证审核、平台配置、权限管理"
+          desc="审核专家认证、查看项目数量"
           theme={ROLE_THEMES.admin}
           onClick={() => setSelectedRole("admin")}
         />
       </div>
 
-      <p className="mt-12 text-sm" style={{ color: "var(--c-text-4)" }}>© 2025 求职辅导平台 · V1.0</p>
+      <p className="mt-12 text-sm" style={{ color: "var(--c-text-4)" }}>© {new Date().getFullYear()} 求职辅导平台 · V1.0</p>
     </div>
   );
 }

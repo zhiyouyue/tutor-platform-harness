@@ -19,6 +19,13 @@ export interface DictItem {
   label: string;
 }
 
+export interface WorkExperienceItem {
+  company: string;
+  title: string;
+  startDate: string;
+  endDate: string | null;
+}
+
 export interface ExpertProfile {
   id: number;
   userId: number;
@@ -29,6 +36,7 @@ export interface ExpertProfile {
   currentCompany: string | null;
   currentTitle: string | null;
   bio: string | null;
+  workExperience: WorkExperienceItem[];
   profileStatus: string;
   acceptingProjects: boolean;
   verifiedAt: string | null;

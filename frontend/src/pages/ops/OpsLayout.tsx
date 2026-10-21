@@ -1,5 +1,6 @@
 import { useState } from "react";
 import NotificationBell from "../../components/NotificationBell";
+import { useAuth } from "../../contexts/AuthContext";
 
 export type OpsPage = "dashboard" | "students" | "projects" | "schedule" | "finance";
 
@@ -36,6 +37,9 @@ interface Props {
 
 export default function OpsLayout({ page, onNavigate, onBack, children }: Props) {
   const [collapsed, setCollapsed] = useState(false);
+  const { user } = useAuth();
+  const displayName = user?.account || user?.phone || "运营";
+  const todayLabel = new Date().toLocaleDateString("zh-CN");
 
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
@@ -110,10 +114,10 @@ export default function OpsLayout({ page, onNavigate, onBack, children }: Props)
         <div style={{ padding: "12px 0", borderTop: "1px solid rgba(255,255,255,0.08)", flexShrink: 0 }}>
           {!collapsed && (
             <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 16px 10px", overflow: "hidden" }}>
-              <div style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--c-primary)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0 }}>李</div>
+              <div style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--c-primary)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{displayName.slice(0, 1)}</div>
               <div style={{ overflow: "hidden" }}>
-                <div style={{ color: "var(--c-sidebar-text)", fontSize: 13, fontWeight: 500, whiteSpace: "nowrap" }}>李班主任</div>
-                <div style={{ color: "var(--c-sidebar-muted)", fontSize: 11, whiteSpace: "nowrap" }}>运营 · 班主任</div>
+                <div style={{ color: "var(--c-sidebar-text)", fontSize: 13, fontWeight: 500, whiteSpace: "nowrap" }}>{displayName}</div>
+                <div style={{ color: "var(--c-sidebar-muted)", fontSize: 11, whiteSpace: "nowrap" }}>运营</div>
               </div>
             </div>
           )}
@@ -130,7 +134,9 @@ export default function OpsLayout({ page, onNavigate, onBack, children }: Props)
             {!collapsed && <span style={{ fontSize: 13 }}>收起</span>}
           </button>
           <button
+            type="button"
             onClick={onBack}
+            title="退出登录"
             className="sidebar-item"
             style={{ color: "var(--c-sidebar-muted)", paddingLeft: collapsed ? 15 : 24, width: "100%", justifyContent: collapsed ? "center" : "flex-start" }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--c-sidebar-hover)"; (e.currentTarget as HTMLElement).style.color = "var(--c-sidebar-text)"; }}
@@ -139,7 +145,7 @@ export default function OpsLayout({ page, onNavigate, onBack, children }: Props)
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
               <path d="M6 2L1 7l5 5M1 7h12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
             </svg>
-            {!collapsed && <span style={{ fontSize: 13 }}>切换角色</span>}
+            {!collapsed && <span style={{ fontSize: 13 }}>退出登录</span>}
           </button>
         </div>
       </aside>
@@ -163,10 +169,10 @@ export default function OpsLayout({ page, onNavigate, onBack, children }: Props)
           <div style={{ flex: 1 }} />
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <NotificationBell />
-            <div style={{ color: "var(--c-text-3)", fontSize: 13 }}>2025-09-14</div>
+            <div style={{ color: "var(--c-text-3)", fontSize: 13 }}>{todayLabel}</div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 12px", background: "var(--c-surface-2)", borderRadius: 20, border: "1px solid var(--c-border)" }}>
-              <div style={{ width: 22, height: 22, borderRadius: "50%", background: "var(--c-primary)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>李</div>
-              <span style={{ fontSize: 13, color: "var(--c-text-1)", fontWeight: 500 }}>李班主任</span>
+              <div style={{ width: 22, height: 22, borderRadius: "50%", background: "var(--c-primary)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700 }}>{displayName.slice(0, 1)}</div>
+              <span style={{ fontSize: 13, color: "var(--c-text-1)", fontWeight: 500 }}>{displayName}</span>
             </div>
           </div>
         </header>

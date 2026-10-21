@@ -3,7 +3,6 @@ import StudentLayout, { type StudentPage } from "./StudentLayout";
 import StudentDashboard from "./Dashboard";
 import MyProject from "./MyProject";
 import StudentSchedule from "./Schedule";
-import StudentMessages from "./Messages";
 import StudentProfile from "./Profile";
 import StudentClassroom from "./Classroom";
 import DeliverySpace from "../expert/DeliverySpace";
@@ -32,7 +31,6 @@ export default function StudentApp({ onBack }: Props) {
       {page === "schedule" && classroomId && (
         <StudentClassroom appointmentId={classroomId} onBack={() => setClassroomId(null)} />
       )}
-      {page === "messages" && <StudentMessages />}
       {page === "profile" && <StudentProfile />}
     </StudentLayout>
   );

@@ -72,13 +72,14 @@ export default function AdminLayout({ page, onNavigate, onBack, children }: Prop
 
         <div style={{ padding: "12px 0", borderTop: "1px solid rgba(255,255,255,0.08)", flexShrink: 0 }}>
           <button
+            type="button"
             onClick={onBack}
             className="sidebar-item"
             style={{ color: "var(--c-sidebar-muted)", paddingLeft: 24, width: "100%", background: "transparent", border: "none", cursor: "pointer" }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--c-sidebar-hover)"; (e.currentTarget as HTMLElement).style.color = "var(--c-sidebar-text)"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "var(--c-sidebar-muted)"; }}
           >
-            切换角色
+            退出登录
           </button>
         </div>
       </aside>

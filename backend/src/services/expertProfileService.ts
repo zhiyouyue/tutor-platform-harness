@@ -1,3 +1,4 @@
+import { readWorkExperience, parseWorkExperience } from "../domain/workExperience.js";
 import { AppError } from "../errors/AppError.js";
 import * as expertRepo from "../repositories/expertRepository.js";
 import * as userRepo from "../repositories/userRepository.js";
@@ -14,7 +15,7 @@ function formatProfile(profile: expertRepo.ExpertProfileRow, user: userRepo.User
     currentTitle: profile.current_title,
     bio: profile.bio,
     education: profile.education_json,
-    workExperience: profile.work_experience_json,
+    workExperience: readWorkExperience(profile.work_experience_json),
     profileStatus: profile.profile_status,
     acceptingProjects: profile.accepting_projects === 1,
     verifiedAt: profile.verified_at,
@@ -53,6 +54,12 @@ export async function updateMyProfile(
   },
 ) {
   await requireExpertProfile(userId);
+  let workExperienceJson: unknown = undefined;
+  if (body.workExperience !== undefined) {
+    const parsed = parseWorkExperience(body.workExperience);
+    if (!parsed.ok) throw new AppError(parsed.message, 400);
+    workExperienceJson = parsed.items;
+  }
   const updated = await expertRepo.updateProfile(userId, {
     realName: body.realName,
     city: body.city,
@@ -60,7 +67,7 @@ export async function updateMyProfile(
     currentTitle: body.currentTitle,
     bio: body.bio,
     educationJson: body.education,
-    workExperienceJson: body.workExperience,
+    workExperienceJson,
     acceptingProjects: body.acceptingProjects,
   });
   if (!updated) throw new AppError("更新失败", 500);

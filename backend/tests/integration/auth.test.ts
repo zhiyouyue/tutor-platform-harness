@@ -72,10 +72,19 @@ describe("Auth & Expert Profile", () => {
       method: "PATCH",
       url: "/api/v1/experts/me/profile",
       headers: { authorization: `Bearer ${token}` },
-      payload: { city: "上海", currentTitle: "产品经理" },
+      payload: {
+        city: "上海",
+        currentTitle: "产品经理",
+        workExperience: [
+          { company: "示例科技", title: "产品经理", startDate: "2022-03", endDate: null },
+        ],
+      },
     });
     expect(res.statusCode).toBe(200);
     expect(res.json().data.city).toBe("上海");
+    expect(res.json().data.workExperience).toEqual([
+      { company: "示例科技", title: "产品经理", startDate: "2022-03", endDate: null },
+    ]);
   });
 
   it("certification submit and admin approve flow", async () => {

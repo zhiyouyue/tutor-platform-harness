@@ -12,7 +12,7 @@ export default function MyProject({ onOpenDelivery }: { onOpenDelivery?: (id: nu
     <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
       <div style={{ fontSize: 20, fontWeight: 700 }}>我的项目</div>
       {items.length === 0 ? (
-        <div style={{ color: "var(--c-text-3)" }}>暂无项目（请使用运营生成的 magic link 登录）</div>
+        <div style={{ color: "var(--c-text-3)" }}>暂无项目</div>
       ) : items.map((p) => (
         <div key={p.id} style={{ background: "#fff", borderRadius: 12, border: "1px solid var(--c-border)", padding: 16 }}>
           <div style={{ fontWeight: 600 }}>{p.title}</div>

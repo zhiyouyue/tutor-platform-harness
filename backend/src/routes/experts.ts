@@ -39,7 +39,11 @@ export default async function expertRoutes(fastify: FastifyInstance) {
           currentTitle: { type: "string" },
           bio: { type: "string" },
           education: {},
-          workExperience: {},
+          workExperience: {
+            type: "array",
+            maxItems: 20,
+            items: { type: "object" },
+          },
           acceptingProjects: { type: "boolean" },
         },
       },

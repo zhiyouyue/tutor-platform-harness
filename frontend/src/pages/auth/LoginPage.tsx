@@ -48,8 +48,9 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
       }
       saveAuth(data.token, data.user);
       onSuccess();
-    } catch {
-      setError("网络错误，请确认后端已启动");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      setError(msg && !/fetch|network/i.test(msg) ? msg : "网络异常，请稍后重试");
     } finally {
       setLoading(false);
     }
@@ -89,9 +90,11 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
             <span className="text-sm font-medium" style={{ color: "var(--c-text-2)" }}>账号</span>
             <input
               className="ant-input"
+              name="username"
+              autoComplete="username"
               value={account}
               onChange={(e) => setAccount(e.target.value)}
-              placeholder={role === "admin" ? "admin" : "账号或手机号"}
+              placeholder="请输入账号"
               required
             />
           </label>
@@ -122,6 +125,8 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
             <input
               type="password"
               className="ant-input"
+              name="password"
+              autoComplete={mode === "register" ? "new-password" : "current-password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -142,10 +147,12 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
 
         {role === "student" && (
           <div className="mt-6 pt-6" style={{ borderTop: "1px solid var(--c-border)" }}>
-            <p className="text-sm font-medium mb-2" style={{ color: "var(--c-text-2)" }}>Magic Link 登录</p>
+            <p className="text-sm font-medium mb-2" style={{ color: "var(--c-text-2)" }}>口令登录</p>
             <input
               className="ant-input mb-2"
-              placeholder="粘贴运营生成的 token"
+              type="password"
+              autoComplete="off"
+              placeholder="粘贴登录口令"
               value={magicToken}
               onChange={(e) => setMagicToken(e.target.value)}
             />
@@ -169,11 +176,6 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
           </div>
         )}
 
-        {role !== "expert" && role !== "student" && (
-          <p className="mt-4 text-xs" style={{ color: "var(--c-text-4)" }}>
-            开发账号：admin/admin123 · ops1/ops123456
-          </p>
-        )}
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import NotificationBell from "../../components/NotificationBell";
+import { useAuth } from "../../contexts/AuthContext";
 
 export type ExpertPage = "dashboard"|"projects"|"delivery"|"capabilities"|"schedule"|"income"|"profile";
 
@@ -22,6 +23,8 @@ interface Props {
 
 export default function ExpertLayout({ page, onNavigate, onBack, children }: Props) {
   const [collapsed, setCollapsed] = useState(false);
+  const { user } = useAuth();
+  const displayName = user?.account || user?.phone || "专家";
 
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
@@ -86,25 +89,23 @@ export default function ExpertLayout({ page, onNavigate, onBack, children }: Pro
         <div style={{ borderTop: "1px solid var(--c-border)", padding: "12px 0", flexShrink: 0 }}>
           {!collapsed && (
             <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 16px 10px 20px", overflow: "hidden" }}>
-              <div style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--c-mentor-accent)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0 }}>王</div>
+              <div style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--c-mentor-accent)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{displayName.slice(0, 1)}</div>
               <div style={{ overflow: "hidden" }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "var(--c-text-1)", whiteSpace: "nowrap" }}>王老师</div>
-                <div style={{ fontSize: 11, color: "var(--c-success)", display: "flex", alignItems: "center", gap: 3 }}>
-                  <div style={{ width: 6, height: 6, borderRadius: "50%", background: "currentColor" }} />
-                  已认证
-                </div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "var(--c-text-1)", whiteSpace: "nowrap" }}>{displayName}</div>
+                <div style={{ fontSize: 11, color: "var(--c-text-3)" }}>专家</div>
               </div>
             </div>
           )}
           {[
             { label: "收起", icon: "M9 2L4 7l5 5", action: () => setCollapsed(c => !c), rotate: collapsed },
-            { label: "切换角色", icon: "M6 2L1 7l5 5M1 7h12", action: onBack },
+            { label: "退出登录", icon: "M6 2L1 7l5 5M1 7h12", action: onBack },
           ].map(b => (
             <div key={b.label}
               onClick={b.action}
-              style={{ display: "flex", alignItems: "center", gap: 10, padding: collapsed ? "8px 18px" : "8px 16px 8px 20px", cursor: "pointer", color: "var(--c-text-3)", fontSize: 13, whiteSpace: "nowrap" }}
+              title={b.label}
+              style={{ display: "flex", alignItems: "center", gap: 10, padding: collapsed ? "8px 18px" : "8px 16px 8px 20px", cursor: "pointer", color: b.label === "退出登录" ? "var(--c-danger)" : "var(--c-text-3)", fontSize: 13, whiteSpace: "nowrap" }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--c-text-1)"; (e.currentTarget as HTMLElement).style.background = "var(--c-surface-2)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--c-text-3)"; (e.currentTarget as HTMLElement).style.background = "transparent"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = b.label === "退出登录" ? "var(--c-danger)" : "var(--c-text-3)"; (e.currentTarget as HTMLElement).style.background = "transparent"; }}
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, transform: b.rotate ? "rotate(180deg)" : undefined, transition: "transform 0.2s" }}>
                 <path d={b.icon} stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
