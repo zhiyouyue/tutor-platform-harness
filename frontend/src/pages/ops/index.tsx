@@ -12,13 +12,21 @@ interface Props {
 
 export default function OpsApp({ onBack }: Props) {
   const [page, setPage] = useState<OpsPage>("dashboard");
+  const [pendingProject, setPendingProject] = useState<{ projectId: number; focusIso?: string; token: number } | null>(null);
 
   return (
     <OpsLayout page={page} onNavigate={setPage} onBack={onBack}>
       {page === "dashboard" && <OpsDashboard onNavigate={setPage} />}
       {page === "students" && <Students />}
-      {page === "projects" && <OpsProjects />}
-      {page === "schedule" && <ScheduleManagement />}
+      {page === "projects" && <OpsProjects pending={pendingProject} />}
+      {page === "schedule" && (
+        <ScheduleManagement
+          onReschedule={(projectId, focusIso) => {
+            setPendingProject({ projectId, focusIso, token: Date.now() });
+            setPage("projects");
+          }}
+        />
+      )}
       {page === "finance" && <OpsFinance />}
     </OpsLayout>
   );

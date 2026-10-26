@@ -1,41 +1,33 @@
 import { useEffect, useState } from "react";
 import {
   confirmOpsAppointmentCompletion,
-  deferOpsAppointment,
   markOpsAppointmentIncomplete,
-  rescheduleOpsAppointment,
-  createOpsAppointmentFromSlot,
-  fetchExpertScheduleSlots,
   fetchOpsAppointments,
   fetchOpsDashboard,
-  fetchOpsProjects,
-  type Project,
 } from "../../services/api";
+import { isoDate } from "./bookingMath";
 import { appointmentStatusTagClass, labelAppointmentStatus } from "../../utils/statusLabels";
 
 const weekDays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
 
-export default function ScheduleManagement() {
+interface Props {
+  onReschedule?: (projectId: number, focusIso: string) => void;
+}
+
+export default function ScheduleManagement({ onReschedule }: Props) {
   const [tab, setTab] = useState<"cal" | "avail" | "list">("list");
   const [appointments, setAppointments] = useState<Array<Record<string, unknown>>>([]);
   const [experts, setExperts] = useState<Array<{ expertId: number; realName: string | null; slotCount: number; acceptingProjects: boolean }>>([]);
   const [loading, setLoading] = useState(true);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState({ projectId: "", slotDate: "", slotKey: "", topic: "" });
-  const [expertSlots, setExpertSlots] = useState<Array<{ weekday: number; startTime: string; endTime: string }>>([]);
-  const [slotMsg, setSlotMsg] = useState("");
 
   async function load() {
     setLoading(true);
-    const [apptRes, dashRes, projRes] = await Promise.all([
+    const [apptRes, dashRes] = await Promise.all([
       fetchOpsAppointments(),
       fetchOpsDashboard(),
-      fetchOpsProjects(),
     ]);
     if (apptRes.success) setAppointments(apptRes.data.items);
     if (dashRes.success) setExperts(dashRes.data.expertAvailability);
-    if (projRes.success) setProjects(projRes.data.items.filter((p) => p.status === "in_progress" || p.status === "pending_confirm"));
     setLoading(false);
   }
 
@@ -54,79 +46,9 @@ export default function ScheduleManagement() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
           <div style={{ fontSize: 20, fontWeight: 600 }}>课程管理</div>
-          <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 2 }}>共 {appointments.length} 条课次</div>
+          <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 2 }}>共 {appointments.length} 条课次 · 改期会打开项目课表，拖动已约色块即可</div>
         </div>
-        <button className="ant-btn ant-btn-primary" onClick={() => setShowCreate(!showCreate)}>新建课次</button>
       </div>
-
-      {showCreate && (
-        <div style={{ background: "#fff", border: "1px solid var(--c-border)", borderRadius: 12, padding: 16, display: "grid", gap: 10 }}>
-          <select
-            className="ant-input"
-            value={form.projectId}
-            onChange={async (e) => {
-              const projectId = e.target.value;
-              setForm({ ...form, projectId, slotKey: "" });
-              setSlotMsg("");
-              const proj = projects.find((p) => String(p.id) === projectId);
-              if (proj?.expertId) {
-                const res = await fetchExpertScheduleSlots(proj.expertId);
-                if (res.success) {
-                  setExpertSlots(res.data.items);
-                  if (!res.data.items.length) setSlotMsg("该专家尚未设置可预约时段");
-                }
-              } else {
-                setExpertSlots([]);
-                setSlotMsg("请先为项目指定专家");
-              }
-            }}
-          >
-            <option value="">选择项目</option>
-            {projects.map((p) => (
-              <option key={p.id} value={p.id}>{p.title} · {p.studentName}</option>
-            ))}
-          </select>
-          <input className="ant-input" type="date" value={form.slotDate} onChange={(e) => setForm({ ...form, slotDate: e.target.value })} />
-          <select className="ant-input" value={form.slotKey} onChange={(e) => setForm({ ...form, slotKey: e.target.value })}>
-            <option value="">选择专家开放时段</option>
-            {expertSlots.map((s) => {
-              const key = `${s.weekday}-${s.startTime}-${s.endTime}`;
-              return (
-                <option key={key} value={key}>
-                  {weekDays[s.weekday]} {String(s.startTime).slice(0, 5)}–{String(s.endTime).slice(0, 5)}
-                </option>
-              );
-            })}
-          </select>
-          {slotMsg && <p style={{ margin: 0, fontSize: 13, color: "var(--c-warning)" }}>{slotMsg}</p>}
-          <input className="ant-input" placeholder="课程主题（可选）" value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })} />
-          <button
-            className="ant-btn ant-btn-primary"
-            onClick={async () => {
-              if (!form.projectId || !form.slotDate || !form.slotKey) return alert("请选择项目、日期和时段");
-              const slot = expertSlots.find((s) => `${s.weekday}-${s.startTime}-${s.endTime}` === form.slotKey);
-              if (!slot) return alert("时段无效");
-              const day = new Date(`${form.slotDate}T12:00:00`);
-              if (day.getDay() !== slot.weekday) return alert("所选日期与专家开放星期不一致");
-              const startAt = `${form.slotDate} ${String(slot.startTime).slice(0, 8)}`;
-              const endAt = `${form.slotDate} ${String(slot.endTime).slice(0, 8)}`;
-              const res = await createOpsAppointmentFromSlot(Number(form.projectId), {
-                startAt,
-                endAt,
-                topic: form.topic || undefined,
-              });
-              if (res.success) {
-                setShowCreate(false);
-                setForm({ projectId: "", slotDate: "", slotKey: "", topic: "" });
-                setExpertSlots([]);
-                await load();
-              } else alert(res.message);
-            }}
-          >
-            创建课次
-          </button>
-        </div>
-      )}
 
       <div style={{ display: "flex", gap: 8 }}>
         {(["list", "avail"] as const).map((t) => (
@@ -179,24 +101,10 @@ export default function ScheduleManagement() {
                         <button
                           className="ant-btn ant-btn-link"
                           style={{ fontSize: 12 }}
-                          onClick={async () => {
-                            const reason = prompt("延期原因");
-                            if (!reason?.trim()) return;
-                            await deferOpsAppointment(a.id as number, reason.trim());
-                            await load();
-                          }}
-                        >
-                          延期
-                        </button>
-                        <button
-                          className="ant-btn ant-btn-link"
-                          style={{ fontSize: 12 }}
-                          onClick={async () => {
-                            const start = prompt("新开始时间 YYYY-MM-DD HH:mm:ss");
-                            const end = prompt("新结束时间 YYYY-MM-DD HH:mm:ss");
-                            if (!start || !end) return;
-                            await rescheduleOpsAppointment(a.id as number, start, end);
-                            await load();
+                          onClick={() => {
+                            const raw = String(a.startAt);
+                            const date = new Date(raw.includes("T") ? raw : raw.replace(" ", "T"));
+                            onReschedule?.(Number(a.projectId), isoDate(date));
                           }}
                         >
                           改期
@@ -227,7 +135,6 @@ export default function ScheduleManagement() {
           </table>
         </div>
       )}
-
       {tab === "avail" && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
           {experts.length === 0 ? (

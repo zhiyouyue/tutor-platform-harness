@@ -9,13 +9,15 @@ import {
   type Project,
 } from "../../services/api";
 import { labelAppointmentStatus, labelProjectStatus } from "../../utils/statusLabels";
+import OpsBookingBoard from "./OpsBookingBoard";
 
 interface Props {
   projectId: number;
+  focusIso?: string;
   onBack: () => void;
 }
 
-export default function OpsProjectDetail({ projectId, onBack }: Props) {
+export default function OpsProjectDetail({ projectId, focusIso, onBack }: Props) {
   const [project, setProject] = useState<Project | null>(null);
   const [appointments, setAppointments] = useState<Array<Record<string, unknown>>>([]);
   const [experts, setExperts] = useState<Array<{ id: number; realName: string | null }>>([]);
@@ -38,6 +40,8 @@ export default function OpsProjectDetail({ projectId, onBack }: Props) {
   if (!project) {
     return <div style={{ padding: 24, color: "var(--c-text-3)" }}>加载中…</div>;
   }
+
+  const bookable = Boolean(project.expertId) && ["in_progress", "pending_confirm", "published"].includes(project.status);
 
   return (
     <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16 }}>
@@ -82,10 +86,31 @@ export default function OpsProjectDetail({ projectId, onBack }: Props) {
         )}
       </div>
 
+      {bookable && project.expertId && (
+        <OpsBookingBoard
+          projectId={project.id}
+          expertId={project.expertId}
+          appointments={appointments.flatMap((item) => {
+            const id = Number(item.id);
+            if (!Number.isFinite(id)) return [];
+            return [{
+              id,
+              startAt: String(item.startAt),
+              endAt: String(item.endAt),
+              status: typeof item.status === "string" ? item.status : undefined,
+            }];
+          })}
+          focusIso={focusIso}
+          onBooked={reload}
+        />
+      )}
+
       <div style={{ background: "#fff", border: "1px solid var(--c-border)", borderRadius: 12, padding: 16 }}>
         <div style={{ fontWeight: 600, marginBottom: 12 }}>课次（{appointments.length}）</div>
         {appointments.length === 0 ? (
-          <div style={{ color: "var(--c-text-3)", fontSize: 13 }}>暂无课次，请在「课程」中排课。</div>
+          <div style={{ color: "var(--c-text-3)", fontSize: 13 }}>
+            {bookable ? "还没有课次。在上方可约时间里拖动即可排课。" : "暂无课次"}
+          </div>
         ) : (
           appointments.map((a) => (
             <div

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   addScheduleBlackout,
   expertCompleteAppointment,
@@ -9,9 +9,7 @@ import {
   updateMyExpertProfile,
 } from "../../services/api";
 import { labelAppointmentStatus } from "../../utils/statusLabels";
-
-const DAY_LABELS = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-const WEEKDAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
+import WeeklyAvailabilityGrid from "./WeeklyAvailabilityGrid";
 
 type SlotMap = Record<number, Array<{ startTime: string; endTime: string }>>;
 
@@ -34,6 +32,9 @@ export default function Schedule({ onEnterClassroom }: Props) {
   const [blockReason, setBlockReason] = useState("");
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const slotsRef = useRef(slots);
+  const saveChain = useRef(Promise.resolve());
+  slotsRef.current = slots;
 
   async function load() {
     setLoading(true);
@@ -73,19 +74,11 @@ export default function Schedule({ onEnterClassroom }: Props) {
     await updateMyExpertProfile({ acceptingProjects: next });
   }
 
-  async function addSlot(weekday: number) {
-    const startTime = prompt("开始时间 (HH:mm)", "19:00");
-    const endTime = prompt("结束时间 (HH:mm)", "22:00");
-    if (!startTime || !endTime) return;
-    const next = { ...slots, [weekday]: [...(slots[weekday] || []), { startTime, endTime }] };
+  function updateDay(weekday: number, daySlots: Array<{ startTime: string; endTime: string }>) {
+    const next = { ...slotsRef.current, [weekday]: daySlots };
+    slotsRef.current = next;
     setSlots(next);
-    await persistSlots(next);
-  }
-
-  async function removeSlot(weekday: number, index: number) {
-    const next = { ...slots, [weekday]: slots[weekday].filter((_, i) => i !== index) };
-    setSlots(next);
-    await persistSlots(next);
+    saveChain.current = saveChain.current.then(() => persistSlots(next)).catch(() => undefined);
   }
 
   async function submitBlackout() {
@@ -111,7 +104,7 @@ export default function Schedule({ onEnterClassroom }: Props) {
       <div>
         <div style={{ fontSize: 20, fontWeight: 700 }}>我的时间</div>
         <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 2 }}>
-          设置可辅导时间，运营将据此安排预约 {saving ? "· 保存中…" : ""}
+          在周课表里按住并上下拖动，设置每天可上课的时间。运营将据此安排预约 {saving ? "· 保存中…" : ""}
         </div>
       </div>
 
@@ -128,30 +121,12 @@ export default function Schedule({ onEnterClassroom }: Props) {
         </button>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1.5fr) minmax(0,1fr)", gap: 20 }}>
-        <div style={{ background: "#fff", borderRadius: 12, border: "1px solid var(--c-border)" }}>
-          <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--c-border)", fontWeight: 600, fontSize: 15 }}>每周可辅导时间</div>
-          <div style={{ padding: "8px 0" }}>
-            {WEEKDAY_ORDER.map((weekday) => (
-              <div key={weekday} style={{ display: "flex", alignItems: "center", gap: 16, padding: "10px 20px", borderBottom: "1px solid var(--c-border)" }}>
-                <div style={{ width: 36, fontSize: 13, fontWeight: 500, color: "var(--c-text-2)", flexShrink: 0 }}>{DAY_LABELS[weekday]}</div>
-                <div style={{ flex: 1, display: "flex", flexWrap: "wrap", gap: 6 }}>
-                  {(slots[weekday] || []).length === 0 ? (
-                    <span style={{ fontSize: 12, color: "var(--c-text-4)", fontStyle: "italic" }}>暂不可用</span>
-                  ) : (slots[weekday] || []).map((s, idx) => (
-                    <div key={`${s.startTime}-${idx}`} style={{ display: "flex", alignItems: "center", gap: 6, padding: "3px 10px", background: "var(--c-primary-bg)", border: "1px solid #91CAFF", borderRadius: 4, fontSize: 12, color: "var(--c-primary)" }}>
-                      {s.startTime}–{s.endTime}
-                      <button onClick={() => removeSlot(weekday, idx)} style={{ background: "none", border: "none", cursor: "pointer", color: "#91CAFF", padding: 0, lineHeight: 1, fontSize: 14 }}>×</button>
-                    </div>
-                  ))}
-                </div>
-                <button className="ant-btn ant-btn-default" style={{ padding: "3px 10px", fontSize: 12 }} onClick={() => addSlot(weekday)}>添加</button>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="surface-card">
+        <div style={{ padding: "16px 20px 0", fontWeight: 600, fontSize: 15 }}>每周可辅导时间</div>
+        <WeeklyAvailabilityGrid slots={slots} onChange={updateDay} />
+      </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)", gap: 20 }}>
           <div style={{ background: "#fff", borderRadius: 12, border: "1px solid var(--c-border)" }}>
             <div style={{ padding: "14px 20px", borderBottom: "1px solid var(--c-border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontWeight: 600, fontSize: 14 }}>临时不可用</span>
@@ -224,7 +199,6 @@ export default function Schedule({ onEnterClassroom }: Props) {
               ))}
             </div>
           </div>
-        </div>
       </div>
     </div>
   );

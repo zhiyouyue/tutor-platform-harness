@@ -1,5 +1,6 @@
 import { readWorkExperience, parseWorkExperience } from "../domain/workExperience.js";
 import { AppError } from "../errors/AppError.js";
+import * as capabilityRepo from "../repositories/capabilityRepository.js";
 import * as expertRepo from "../repositories/expertRepository.js";
 import * as userRepo from "../repositories/userRepository.js";
 
@@ -100,18 +101,23 @@ export async function submitCertification(userId: number) {
 
 export async function listPendingCertifications() {
   const rows = await expertRepo.listPendingCertifications();
-  return rows.map((r) => ({
-    id: r.id,
-    userId: r.user_id,
-    account: r.account,
-    phone: r.phone,
-    realName: r.real_name,
-    city: r.city,
-    currentCompany: r.current_company,
-    currentTitle: r.current_title,
-    profileStatus: r.profile_status,
-    submittedAt: r.updated_at,
-  }));
+  return Promise.all(
+    rows.map(async (r) => ({
+      id: r.id,
+      userId: r.user_id,
+      account: r.account,
+      phone: r.phone,
+      realName: r.real_name,
+      city: r.city,
+      currentCompany: r.current_company,
+      currentTitle: r.current_title,
+      bio: r.bio,
+      workExperience: readWorkExperience(r.work_experience_json),
+      capabilities: await capabilityRepo.getCapabilities(r.id),
+      profileStatus: r.profile_status,
+      submittedAt: r.updated_at,
+    })),
+  );
 }
 
 export async function approveCertification(expertId: number, adminUserId: number) {

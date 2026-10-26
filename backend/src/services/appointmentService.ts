@@ -4,6 +4,7 @@ import * as scheduleRepo from "../repositories/scheduleRepository.js";
 import { prepareRtcSessionForAppointment } from "./appointmentClassroomService.js";
 import { accrueIncomeForConfirmedAppointment } from "./sessionIncomeService.js";
 import { assertAppointmentInExpertSchedule } from "./slotScheduleService.js";
+import { normalizeSqlDateTime } from "./slotTime.js";
 import { notifyInApp } from "./notificationService.js";
 import { buildCompletionRecord, studentSessionStatusLabel } from "../domain/sessionPresentation.js";
 
@@ -88,13 +89,15 @@ export async function createOpsAppointmentFromSlot(params: {
   const project = await projectRepo.findProjectById(params.projectId);
   if (!project) throw new AppError("项目不存在", 404);
   if (!project.expert_id) throw new AppError("项目尚未分配导师", 400);
-  await assertAppointmentInExpertSchedule(project.expert_id, params.startAt, params.endAt);
+  const startAt = normalizeSqlDateTime(params.startAt);
+  const endAt = normalizeSqlDateTime(params.endAt);
+  await assertAppointmentInExpertSchedule(project.expert_id, startAt, endAt);
 
   const row = await scheduleRepo.createAppointment({
     projectId: params.projectId,
     createdBy: params.createdBy,
-    startAt: params.startAt,
-    endAt: params.endAt,
+    startAt,
+    endAt,
     topic: params.topic,
     status: "confirmed",
   });

@@ -12,8 +12,13 @@ import {
 import { labelProjectStatus } from "../../utils/statusLabels";
 import OpsProjectDetail from "./OpsProjectDetail";
 
-export default function SupervisorProjects() {
-  const [detailId, setDetailId] = useState<number | null>(null);
+interface Props {
+  pending?: { projectId: number; focusIso?: string; token: number } | null;
+}
+
+export default function SupervisorProjects({ pending }: Props) {
+  const [detailId, setDetailId] = useState<number | null>(pending?.projectId ?? null);
+  const [focusIso, setFocusIso] = useState<string | undefined>(pending?.focusIso);
   const [items, setItems] = useState<Project[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [experts, setExperts] = useState<Array<{ id: number; realName: string | null }>>([]);
@@ -42,8 +47,14 @@ export default function SupervisorProjects() {
 
   useEffect(() => { load(); }, [load]);
 
+  useEffect(() => {
+    if (!pending) return;
+    setDetailId(pending.projectId);
+    setFocusIso(pending.focusIso);
+  }, [pending]);
+
   if (detailId != null) {
-    return <OpsProjectDetail projectId={detailId} onBack={() => setDetailId(null)} />;
+    return <OpsProjectDetail projectId={detailId} focusIso={focusIso} onBack={() => setDetailId(null)} />;
   }
 
   async function handleCreate() {
@@ -103,7 +114,7 @@ export default function SupervisorProjects() {
             {p.studentName} · {p.expertName || "待指定"} · ¥{p.totalAmount} · {labelProjectStatus(p.status)}
           </div>
           <div style={{ marginTop: 8 }}>
-            <button type="button" className="ant-btn ant-btn-link" onClick={() => setDetailId(p.id)}>
+            <button type="button" className="ant-btn ant-btn-link" onClick={() => { setFocusIso(undefined); setDetailId(p.id); }}>
               查看详情
             </button>
           </div>

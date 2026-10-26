@@ -31,9 +31,11 @@ npm run dev
 | 账号 | 密码 | 角色 |
 |------|------|------|
 | admin | admin123 | 管理员 |
-| ops1 | ops123456 | 运营 |
+| ops1 | ops123456 | 运营（班主任） |
+| expert1 | expert123456 | 专家（已审核通过） |
+| student1 | student123456 | 学员 |
 
-专家请在前端「专家 → 注册」。
+点击路径与四角色手册见 `docs/product-specs/phase-3/user-manual/00-本地测试账号.md`。
 
 ## 环境变量
 

@@ -1,10 +1,6 @@
 import { AppError } from "../errors/AppError.js";
 import * as scheduleRepo from "../repositories/scheduleRepository.js";
-
-function timeToMinutes(t: string): number {
-  const [h, m] = t.split(":");
-  return parseInt(h ?? "0", 10) * 60 + parseInt(m ?? "0", 10);
-}
+import { clockMinutes, minutesFromStartDay, normalizeSqlDateTime } from "./slotTime.js";
 
 function parseLocalDateTime(value: string): Date {
   const normalized = value.includes("T") ? value : value.replace(" ", "T");
@@ -18,22 +14,22 @@ export async function assertAppointmentInExpertSchedule(
   startAt: string,
   endAt: string,
 ): Promise<void> {
-  const start = parseLocalDateTime(startAt);
-  const end = parseLocalDateTime(endAt);
+  const start = parseLocalDateTime(normalizeSqlDateTime(startAt));
+  const end = parseLocalDateTime(normalizeSqlDateTime(endAt));
   if (end <= start) throw new AppError("结束时间须晚于开始时间", 400);
 
   const weekday = start.getDay();
   const slots = await scheduleRepo.listSlots(expertId);
-  const daySlots = slots.filter((s) => s.weekday === weekday);
+  const daySlots = slots.filter((s) => Number(s.weekday) === weekday);
   if (daySlots.length === 0) {
     throw new AppError("该日期不在专家开放日程内", 400);
   }
 
   const startMin = start.getHours() * 60 + start.getMinutes();
-  const endMin = end.getHours() * 60 + end.getMinutes();
+  const endMin = minutesFromStartDay(start, end);
   const inSlot = daySlots.some((s) => {
-    const sm = timeToMinutes(String(s.start_time).slice(0, 5));
-    const em = timeToMinutes(String(s.end_time).slice(0, 5));
+    const sm = clockMinutes(String(s.start_time));
+    const em = clockMinutes(String(s.end_time));
     return startMin >= sm && endMin <= em;
   });
   if (!inSlot) throw new AppError("课次时间须落在专家开放时段内", 400);

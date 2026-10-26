@@ -26,6 +26,29 @@ export interface WorkExperienceItem {
   endDate: string | null;
 }
 
+export interface ExpertCapabilities {
+  audiences: string[];
+  coachingTypes: string[];
+  industries: string[];
+  jobRoles: string[];
+}
+
+export interface PendingCertification {
+  id: number;
+  userId: number;
+  account: string | null;
+  phone: string | null;
+  realName: string | null;
+  city: string | null;
+  currentCompany: string | null;
+  currentTitle: string | null;
+  bio: string | null;
+  workExperience: WorkExperienceItem[];
+  capabilities: ExpertCapabilities;
+  profileStatus: string;
+  submittedAt: string;
+}
+
 export interface ExpertProfile {
   id: number;
   userId: number;
@@ -155,7 +178,7 @@ export const fetchExpertDashboard = () =>
 
 // Admin
 export const fetchPendingCertifications = () =>
-  apiFetch<{ items: Array<Record<string, unknown>> }>("/api/v1/admin/experts/certifications");
+  apiFetch<{ items: PendingCertification[] }>("/api/v1/admin/experts/certifications");
 export const approveCertification = (expertId: number) =>
   apiFetch<unknown>(`/api/v1/admin/experts/${expertId}/certification/approve`, { method: "POST" });
 export const rejectCertification = (expertId: number, reason: string) =>
