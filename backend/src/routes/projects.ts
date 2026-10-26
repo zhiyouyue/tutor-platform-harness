@@ -4,6 +4,7 @@ import * as deliveryRepo from "../repositories/deliveryRepository.js";
 import * as projectRepo from "../repositories/projectRepository.js";
 import * as scheduleRepo from "../repositories/scheduleRepository.js";
 import * as appointmentService from "../services/appointmentService.js";
+import { attachClassPath } from "../services/classLink.js";
 import {
   requireExpertProfile,
   requireProjectAccess,
@@ -314,7 +315,10 @@ export default async function projectRoutes(fastify: FastifyInstance) {
       const { id } = request.params as { id: string };
       await requireProjectAccess(parseInt(id, 10), request.user.userId, request.user.role);
       const items = await scheduleRepo.listAppointments(parseInt(id, 10));
-      return success(reply, { items: items.map((a) => appointmentService.formatAppointment(a)) });
+      const formatted = items.map((a) => appointmentService.formatAppointment(a));
+      return success(reply, {
+        items: request.user.role === "ops" ? formatted.map((a) => attachClassPath(a)) : formatted,
+      });
     } catch (e) {
       return handleRouteError(reply, e);
     }

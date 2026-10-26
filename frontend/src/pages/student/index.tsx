@@ -9,12 +9,13 @@ import DeliverySpace from "../expert/DeliverySpace";
 
 interface Props {
   onBack: () => void;
+  initialClassroomId?: number | null;
 }
 
-export default function StudentApp({ onBack }: Props) {
-  const [page, setPage] = useState<StudentPage>("dashboard");
+export default function StudentApp({ onBack, initialClassroomId = null }: Props) {
+  const [page, setPage] = useState<StudentPage>(initialClassroomId ? "schedule" : "dashboard");
   const [deliveryProjectId, setDeliveryProjectId] = useState<number | null>(null);
-  const [classroomId, setClassroomId] = useState<number | null>(null);
+  const [classroomId, setClassroomId] = useState<number | null>(initialClassroomId);
 
   return (
     <StudentLayout page={page} onNavigate={setPage} onBack={onBack}>

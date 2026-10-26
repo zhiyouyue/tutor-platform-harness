@@ -1,6 +1,6 @@
 import OSS from "ali-oss";
 import { createWriteStream } from "node:fs";
-import { mkdir } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
 import { config } from "../config/env.js";
@@ -40,6 +40,18 @@ export async function createUploadUrl(params: { key: string; mimeType: string })
     bucket: config.oss.bucket,
     mode: "oss" as const,
   };
+}
+
+export async function putBytes(params: { key: string; body: Buffer; mimeType: string }) {
+  if (!isOssConfigured()) {
+    const dest = path.join(LOCAL_UPLOAD_DIR, params.key);
+    await mkdir(path.dirname(dest), { recursive: true });
+    await writeFile(dest, params.body);
+    return { bucket: "local-dev", key: params.key };
+  }
+  const client = createOssClient();
+  await client.put(params.key, params.body, { mime: params.mimeType });
+  return { bucket: config.oss.bucket, key: params.key };
 }
 
 export async function createDownloadUrl(key: string) {

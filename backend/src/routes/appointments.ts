@@ -40,6 +40,28 @@ export default async function appointmentRoutes(fastify: FastifyInstance) {
     }
   });
 
+  fastify.post("/appointments/:id/recordings/segments", async (request, reply) => {
+    try {
+      const { id } = request.params as { id: string };
+      const appointmentId = parseInt(id, 10);
+      const appt = await scheduleRepo.findAppointmentById(appointmentId);
+      if (!appt) throw new AppError("课次不存在", 404);
+      await requireProjectAccess(appt.project_id, request.user.userId, request.user.role);
+      const data = await request.file();
+      if (!data) throw new AppError("未收到录像", 400);
+      const body = await data.toBuffer();
+      const saved = await rtcRecordingService.saveRecordingSegment({
+        appointmentId,
+        userId: request.user.userId,
+        mimeType: data.mimetype || "video/webm",
+        body,
+      });
+      return success(reply, saved, "录像片段已保存", 201);
+    } catch (e) {
+      return handleRouteError(reply, e);
+    }
+  });
+
   fastify.get("/appointments/:id/recordings", async (request, reply) => {
     try {
       const { id } = request.params as { id: string };

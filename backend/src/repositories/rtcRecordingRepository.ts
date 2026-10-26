@@ -103,6 +103,25 @@ export async function upsertFromCallback(params: {
   return rows[0]!;
 }
 
+export async function insertReady(params: {
+  rtcSessionId: number;
+  appointmentId: number;
+  ossBucket: string;
+  ossKey: string;
+}): Promise<RtcRecordingRow> {
+  const [result] = await pool.query<ResultSetHeader>(
+    `INSERT INTO rtc_recordings
+     (rtc_session_id, appointment_id, oss_bucket, oss_key, status, completed_at)
+     VALUES (?, ?, ?, ?, 'ready', NOW())`,
+    [params.rtcSessionId, params.appointmentId, params.ossBucket, params.ossKey],
+  );
+  const [rows] = await pool.query<RtcRecordingRow[]>(
+    `SELECT * FROM rtc_recordings WHERE id = ?`,
+    [result.insertId],
+  );
+  return rows[0]!;
+}
+
 export async function listByAppointmentId(appointmentId: number): Promise<RtcRecordingRow[]> {
   const [rows] = await pool.query<RtcRecordingRow[]>(
     `SELECT * FROM rtc_recordings WHERE appointment_id = ? AND status = 'ready' ORDER BY id DESC`,

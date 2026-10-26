@@ -1,5 +1,6 @@
 import { AppError } from "../errors/AppError.js";
 import { config } from "../config/env.js";
+import * as ossService from "./ossService.js";
 import * as deliveryRepo from "../repositories/deliveryRepository.js";
 import * as projectRepo from "../repositories/projectRepository.js";
 import * as rtcRepo from "../repositories/rtcRepository.js";
@@ -90,6 +91,47 @@ export async function handleRecordingCallback(body: {
     }
   }
 
+  return formatRecording(row);
+}
+
+export async function saveRecordingSegment(params: {
+  appointmentId: number;
+  userId: number;
+  mimeType: string;
+  body: Buffer;
+}) {
+  if (params.body.length === 0) throw new AppError("录像片段是空的", 400);
+  const appt = await scheduleRepo.findAppointmentById(params.appointmentId);
+  if (!appt) throw new AppError("课次不存在", 404);
+  const session = await rtcRepo.findByAppointmentId(params.appointmentId);
+  if (!session) throw new AppError("课堂尚未建立", 400);
+
+  const key = `recordings/appointments/${params.appointmentId}/${Date.now()}-u${params.userId}.webm`;
+  const saved = await ossService.putBytes({
+    key,
+    body: params.body,
+    mimeType: params.mimeType || "video/webm",
+  });
+  const row = await rtcRecordingRepo.insertReady({
+    rtcSessionId: session.id,
+    appointmentId: params.appointmentId,
+    ossBucket: saved.bucket,
+    ossKey: saved.key,
+  });
+  try {
+    await deliveryRepo.createFile({
+      projectId: appt.project_id,
+      uploaderUserId: params.userId,
+      fileName: `课次录像-${params.appointmentId}-${params.userId}.webm`,
+      mimeType: params.mimeType || "video/webm",
+      sizeBytes: params.body.length,
+      category: "recording",
+      ossBucket: saved.bucket,
+      ossKey: saved.key,
+    });
+  } catch {
+    // 文件登记失败时，OSS 对象和 rtc_recordings 仍然保留
+  }
   return formatRecording(row);
 }
 

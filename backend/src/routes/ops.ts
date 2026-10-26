@@ -4,6 +4,7 @@ import * as projectRepo from "../repositories/projectRepository.js";
 import * as scheduleRepo from "../repositories/scheduleRepository.js";
 import * as studentService from "../services/studentService.js";
 import * as appointmentService from "../services/appointmentService.js";
+import { attachClassPath } from "../services/classLink.js";
 import * as projectOpsService from "../services/projectOpsService.js";
 import { requireProjectAccess } from "../services/projectAccessService.js";
 import { success } from "../utils/response.js";
@@ -179,7 +180,7 @@ export default async function opsRoutes(fastify: FastifyInstance) {
     try {
       const items = await scheduleRepo.listAppointmentsForOpsUser(request.user.userId, 100);
       return success(reply, {
-        items: items.map((a) => appointmentService.formatAppointment(a)),
+        items: items.map((a) => attachClassPath(appointmentService.formatAppointment(a))),
       });
     } catch (e) {
       return handleRouteError(reply, e);

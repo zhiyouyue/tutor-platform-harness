@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { AppError } from "../errors/AppError.js";
 import * as authService from "../services/authService.js";
+import * as classLinkService from "../services/classLinkService.js";
 import * as studentAuthService from "../services/studentAuthService.js";
 import { fail, success } from "../utils/response.js";
 
@@ -69,6 +70,26 @@ export default async function authRoutes(fastify: FastifyInstance) {
       const { token } = request.query as { token?: string };
       if (!token) return handleError(reply, new AppError("缺少 token", 400));
       const result = await studentAuthService.verifyMagicLink(fastify, token);
+      return success(reply, result, "登录成功");
+    } catch (err) {
+      return handleError(reply, err);
+    }
+  });
+
+  fastify.get("/auth/student/class", {
+    schema: {
+      querystring: {
+        type: "object",
+        required: ["token"],
+        properties: {
+          token: { type: "string", minLength: 1 },
+        },
+      },
+    },
+  }, async (request, reply) => {
+    try {
+      const { token } = request.query as { token: string };
+      const result = await classLinkService.redeemClassLink(fastify, token);
       return success(reply, result, "登录成功");
     } catch (err) {
       return handleError(reply, err);

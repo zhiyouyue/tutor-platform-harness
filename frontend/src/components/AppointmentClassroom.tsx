@@ -39,7 +39,7 @@ export default function AppointmentClassroom({ appointmentId, onBack }: Props) {
   if (status === "ready" && joinInfo) {
     return (
       <SimpleScreen title="在线课堂" subtitle="请允许使用摄像头和麦克风">
-        <MeetingRoom joinInfo={joinInfo} onLeave={onBack} />
+        <MeetingRoom joinInfo={joinInfo} appointmentId={appointmentId} onLeave={onBack} />
       </SimpleScreen>
     );
   }

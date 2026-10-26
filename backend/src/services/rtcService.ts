@@ -1,19 +1,11 @@
 import { createHash } from "node:crypto";
-import tokenGenerator from "@dingrtc/token-generator";
 import { config } from "../config/env.js";
+import { buildDingRtcToken } from "./dingrtcToken.js";
 
 import * as rtcRepo from "../repositories/rtcRepository.js";
 import type { RtcSessionRow } from "../repositories/rtcRepository.js";
 import { notifyUser } from "./realtimeHub.js";
 import type { CacheAdapter } from "../types/fastify.js";
-
-// 运行时 API 为四参数 positional；@types 声明为对象参数，需 cast
-const produceAppToken = tokenGenerator.produce as unknown as (
-  appId: string,
-  appKey: string,
-  channelId: string,
-  userId: string,
-) => string;
 
 const MAX_TTL_SECONDS = 24 * 60 * 60;
 
@@ -40,8 +32,14 @@ export function generateRtcToken(params: { channelId: string; userId: number }) 
   const appId = config.rtc.appId;
   const appKey = config.rtc.appKey;
   const rtcUserId = toRtcUserId(params.userId);
-  const token = produceAppToken(appId, appKey, params.channelId, rtcUserId);
   const ttl = Math.min(Math.max(config.rtc.tokenTtlSeconds, 60), MAX_TTL_SECONDS);
+  const token = buildDingRtcToken({
+    appId,
+    appKey,
+    channelId: params.channelId,
+    userId: rtcUserId,
+    ttlSeconds: ttl,
+  });
 
   return {
     appId,

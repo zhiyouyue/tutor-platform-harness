@@ -7,6 +7,7 @@ import {
 } from "../../services/api";
 import { isoDate } from "./bookingMath";
 import { appointmentStatusTagClass, labelAppointmentStatus } from "../../utils/statusLabels";
+import ClassLinkField from "./ClassLinkField";
 
 const weekDays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
 
@@ -46,7 +47,7 @@ export default function ScheduleManagement({ onReschedule }: Props) {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
           <div style={{ fontSize: 20, fontWeight: 600 }}>课程管理</div>
-          <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 2 }}>共 {appointments.length} 条课次 · 改期会打开项目课表，拖动已约色块即可</div>
+          <div style={{ fontSize: 13, color: "var(--c-text-3)", marginTop: 2 }}>共 {appointments.length} 条课次 · 复制上课链接发给学员，本阶段不发短信 · 改期回到项目课表拖动色块</div>
         </div>
       </div>
 
@@ -67,12 +68,12 @@ export default function ScheduleManagement({ onReschedule }: Props) {
           <table className="ant-table" style={{ minWidth: 640 }}>
             <thead>
               <tr>
-                <th>学员</th><th>专家</th><th>项目</th><th>时间</th><th>主题</th><th>状态</th><th>操作</th>
+                <th>学员</th><th>专家</th><th>项目</th><th>时间</th><th>主题</th><th>状态</th><th>上课链接</th><th>操作</th>
               </tr>
             </thead>
             <tbody>
               {appointments.length === 0 ? (
-                <tr><td colSpan={7} style={{ textAlign: "center", color: "var(--c-text-3)", padding: 24 }}>暂无课次</td></tr>
+                <tr><td colSpan={8} style={{ textAlign: "center", color: "var(--c-text-3)", padding: 24 }}>暂无课次</td></tr>
               ) : appointments.map((a) => (
                 <tr key={a.id as number}>
                   <td>{(a.studentName as string) || "—"}</td>
@@ -83,6 +84,9 @@ export default function ScheduleManagement({ onReschedule }: Props) {
                   </td>
                   <td>{(a.topic as string) || "辅导"}</td>
                   <td><span className={appointmentStatusTagClass[a.status as string] || "ant-tag ant-tag-gray"}>{labelAppointmentStatus(a.status as string)}</span></td>
+                  <td>
+                    <ClassLinkField classPath={typeof a.classPath === "string" ? a.classPath : null} />
+                  </td>
                   <td>
                     {Boolean(a.expertCompletedAt) && !Boolean(a.opsConfirmedAt) && (
                       <button

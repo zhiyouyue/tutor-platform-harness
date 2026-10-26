@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import ExpertApp from "./pages/expert";
 import OpsApp from "./pages/ops";
 import StudentApp from "./pages/student";
 import AdminApp from "./pages/admin";
+import ClassLinkGate from "./pages/auth/ClassLinkGate";
 import LoginPage from "./pages/auth/LoginPage";
 import { AuthProvider, useAuth, type AppRole } from "./contexts/AuthContext";
 
@@ -26,6 +27,11 @@ function AppInner() {
   const { role: authRole, logout, token } = useAuth();
   const [selectedRole, setSelectedRole] = useState<UiRole>(null);
   const [entered, setEntered] = useState(false);
+  const [linkAppointmentId, setLinkAppointmentId] = useState<number | null>(null);
+  const enterFromClassLink = useCallback(() => {
+    setSelectedRole("student");
+    setEntered(true);
+  }, []);
 
   const authTarget = selectedRole ? UI_TO_AUTH[selectedRole] : null;
 
@@ -35,24 +41,30 @@ function AppInner() {
     setEntered(false);
   }
 
-  if (selectedRole && authTarget) {
-    const canEnter = entered || (token && authRole === authTarget);
-    if (!canEnter) {
-      return (
-        <LoginPage
-          role={authTarget}
-          onSuccess={() => setEntered(true)}
-          onBack={() => setSelectedRole(null)}
-        />
-      );
+  function renderShell(classAppointmentId: number | null) {
+    if (selectedRole && authTarget) {
+      const canEnter = entered || (token && authRole === authTarget);
+      if (!canEnter) {
+        return (
+          <LoginPage
+            role={authTarget}
+            onSuccess={(appointmentId) => {
+              if (appointmentId) setLinkAppointmentId(appointmentId);
+              setEntered(true);
+            }}
+            onBack={() => setSelectedRole(null)}
+          />
+        );
+      }
+      if (selectedRole === "expert") return <ExpertApp onBack={handleBack} />;
+      if (selectedRole === "ops") return <OpsApp onBack={handleBack} />;
+      if (selectedRole === "student") {
+        return <StudentApp onBack={handleBack} initialClassroomId={classAppointmentId ?? linkAppointmentId} />;
+      }
+      if (selectedRole === "admin") return <AdminApp onBack={handleBack} />;
     }
-    if (selectedRole === "expert") return <ExpertApp onBack={handleBack} />;
-    if (selectedRole === "ops") return <OpsApp onBack={handleBack} />;
-    if (selectedRole === "student") return <StudentApp onBack={handleBack} />;
-    if (selectedRole === "admin") return <AdminApp onBack={handleBack} />;
-  }
 
-  return (
+    return (
     <div className="auth-page-bg min-h-screen flex flex-col items-center justify-center px-6">
       <div className="mb-12 text-center">
         <div className="inline-flex items-center gap-3 mb-6">
@@ -107,6 +119,13 @@ function AppInner() {
 
       <p className="mt-12 text-sm" style={{ color: "var(--c-text-4)" }}>© {new Date().getFullYear()} 职优越导师平台 · 版本 1.0</p>
     </div>
+    );
+  }
+
+  return (
+    <ClassLinkGate onEnter={enterFromClassLink}>
+      {(classAppointmentId) => renderShell(classAppointmentId)}
+    </ClassLinkGate>
   );
 }
 

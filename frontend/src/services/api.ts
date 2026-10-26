@@ -126,6 +126,11 @@ export const registerExpert = (body: { account: string; password: string; phone?
 export const verifyMagicLink = (token: string) =>
   apiFetch<{ token: string; user: AuthUser }>(`/api/v1/auth/student/magic?token=${encodeURIComponent(token)}`);
 
+export const redeemClassLink = (token: string) =>
+  apiFetch<{ token: string; user: AuthUser; appointmentId: number }>(
+    `/api/v1/auth/student/class?token=${encodeURIComponent(token)}`,
+  );
+
 // Dictionaries
 export const fetchAllDictionaries = () =>
   apiFetch<{

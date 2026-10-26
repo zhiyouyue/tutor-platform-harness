@@ -10,6 +10,7 @@ import {
 } from "../../services/api";
 import { labelAppointmentStatus, labelProjectStatus } from "../../utils/statusLabels";
 import OpsBookingBoard from "./OpsBookingBoard";
+import ClassLinkField from "./ClassLinkField";
 
 interface Props {
   projectId: number;
@@ -127,6 +128,9 @@ export default function OpsProjectDetail({ projectId, focusIso, onBack }: Props)
                 <div>{(a.topic as string) || "辅导课"}</div>
                 <div style={{ color: "var(--c-text-3)", marginTop: 2 }}>
                   {new Date(a.startAt as string).toLocaleString("zh-CN")}
+                </div>
+                <div style={{ marginTop: 6 }}>
+                  <ClassLinkField classPath={typeof a.classPath === "string" ? a.classPath : null} />
                 </div>
               </div>
               <span className="ant-tag ant-tag-blue">{labelAppointmentStatus(a.status as string)}</span>

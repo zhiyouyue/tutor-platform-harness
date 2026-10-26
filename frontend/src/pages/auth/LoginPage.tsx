@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { login, registerExpert, verifyMagicLink, type AuthUser } from "../../services/api";
+import { login, registerExpert, type AuthUser } from "../../services/api";
 import { useAuth, type AppRole } from "../../contexts/AuthContext";
+import StudentLinkLogin from "./StudentLinkLogin";
 
 const ROLE_LABEL: Record<AppRole, string> = {
   expert: "专家",
@@ -11,7 +12,7 @@ const ROLE_LABEL: Record<AppRole, string> = {
 
 interface LoginPageProps {
   role: AppRole;
-  onSuccess: () => void;
+  onSuccess: (appointmentId?: number) => void;
   onBack: () => void;
 }
 
@@ -22,7 +23,6 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
   const [password, setPassword] = useState("");
   const [realName, setRealName] = useState("");
   const [phone, setPhone] = useState("");
-  const [magicToken, setMagicToken] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -145,36 +145,7 @@ export default function LoginPage({ role, onSuccess, onBack }: LoginPageProps) {
           </button>
         </form>
 
-        {role === "student" && (
-          <div className="mt-6 pt-6" style={{ borderTop: "1px solid var(--c-border)" }}>
-            <p className="text-sm font-medium mb-2" style={{ color: "var(--c-text-2)" }}>口令登录</p>
-            <input
-              className="ant-input mb-2"
-              type="password"
-              autoComplete="off"
-              placeholder="粘贴登录口令"
-              value={magicToken}
-              onChange={(e) => setMagicToken(e.target.value)}
-            />
-            <button
-              type="button"
-              disabled={loading || !magicToken}
-              className="w-full ant-btn ant-btn-default justify-center"
-              style={{ color: "var(--c-primary)", borderColor: "var(--c-blue-400)" }}
-              onClick={async () => {
-                setLoading(true);
-                setError("");
-                const res = await verifyMagicLink(magicToken.trim());
-                if (!res.success) { setError(res.message); setLoading(false); return; }
-                saveAuth(res.data.token, res.data.user);
-                onSuccess();
-                setLoading(false);
-              }}
-            >
-              使用链接登录
-            </button>
-          </div>
-        )}
+        {role === "student" && <StudentLinkLogin onSuccess={onSuccess} />}
 
       </div>
     </div>
