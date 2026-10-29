@@ -8,14 +8,14 @@ INSERT INTO dict_service_audiences (code, label, sort_order) VALUES
   ('career_switch', '转行/跨行业', 50)
 ON DUPLICATE KEY UPDATE label = VALUES(label), sort_order = VALUES(sort_order);
 
-INSERT INTO dict_coaching_types (code, label, sort_order) VALUES
-  ('resume_optimization', '简历优化', 10),
-  ('mock_interview', '模拟面试', 20),
-  ('career_planning', '职业规划', 30),
-  ('offer_negotiation', 'Offer 谈判', 40),
-  ('industry_insight', '行业洞察', 50),
-  ('project_review', '项目复盘', 60)
-ON DUPLICATE KEY UPDATE label = VALUES(label), sort_order = VALUES(sort_order);
+INSERT INTO dict_coaching_types (code, label, sort_order, is_active) VALUES
+  ('career_planning', '职业规划', 10, 1),
+  ('resume_optimization', '简历优化', 20, 1),
+  ('mock_interview', '模拟面试', 30, 1),
+  ('interview_review', '面试复盘', 40, 1),
+  ('salary_negotiation', '谈薪', 50, 1),
+  ('offer_selection', 'OFFER选择', 60, 1)
+ON DUPLICATE KEY UPDATE label = VALUES(label), sort_order = VALUES(sort_order), is_active = VALUES(is_active);
 
 INSERT INTO dict_industries (code, label, sort_order) VALUES
   ('internet', '互联网/科技', 10),

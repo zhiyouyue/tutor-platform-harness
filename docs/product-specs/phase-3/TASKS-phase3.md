@@ -24,3 +24,5 @@
 | T-P3-DOC-05 | PRD + Grading Rubric | ✅ | `PRD-phase3.md` / `GRADING-RUBRIC.md` |
 | T-P3-TEST-02 | 单元测试 + 覆盖率门禁 | ✅ | `tests/unit/*` + `test:coverage` |
 | T-P3-TEST-03 | Phase3 收尾集成 | ✅ | `phase3-completion.test.ts` |
+| T-P3-DICT-01 | 辅导内容固定 6 项（四端） | ✅ | `sql/08` + `dict_coaching_types` + 四端 UI |
+| T-P3-OPS-04 | 运营可约导师未开放时间 | ✅ | `allowOutsideOpenSlots` + 运营周历空白可拖 |

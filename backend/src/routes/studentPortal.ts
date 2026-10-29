@@ -16,7 +16,19 @@ export default async function studentPortalRoutes(fastify: FastifyInstance) {
       const sp = await studentRepo.findStudentByUserId(request.user.userId);
       if (!sp) throw new AppError("学员档案不存在", 404);
       const rows = await projectRepo.listProjects({ studentId: sp.id });
-      return success(reply, { items: rows.map(formatProject) });
+      const items = await Promise.all(rows.map(async (row) => {
+        const nodes = await projectRepo.listNodes(row.id);
+        return {
+          ...formatProject(row),
+          nodes: nodes.map((node) => ({
+            id: node.id,
+            nodeType: node.node_type,
+            label: node.node_label,
+            status: node.status,
+          })),
+        };
+      }));
+      return success(reply, { items });
     } catch (e) {
       return handleRouteError(reply, e);
     }

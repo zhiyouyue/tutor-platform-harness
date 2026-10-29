@@ -115,7 +115,7 @@ describe("Phase 2.1 RTC slot + recording", () => {
     appointmentId = appt.json().data.id;
   });
 
-  it("rejects appointment outside expert slot", async () => {
+  it("accepts appointment outside the expert open slot", async () => {
     const nextMon = new Date();
     const day = nextMon.getDay();
     const diff = (1 - day + 7) % 7 || 7;
@@ -130,7 +130,7 @@ describe("Phase 2.1 RTC slot + recording", () => {
         endAt: `${dateStr} 10:00:00`,
       },
     });
-    expect(bad.statusCode).toBe(400);
+    expect(bad.statusCode).toBe(201);
   });
 
   it("join-classroom prepares session", async () => {

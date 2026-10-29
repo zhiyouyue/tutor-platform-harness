@@ -32,7 +32,7 @@ export default function OpsBookingGrid({ days, onBook, onMove }: Props) {
 
   return (
     <div className="avail" style={{ "--hour": `${HOUR_PX}px` } as React.CSSProperties}>
-      <p className="avail-hint">在浅色区域按住拖动可约新课。拖动已约色块，可以改到别的可约时间。</p>
+      <p className="avail-hint">浅色是导师自己开放的时间。空白处也可以按住拖动排课。拖动已约色块可以改期。</p>
       <div className="avail-scroll" ref={scrollRef} data-testid="booking-grid">
         <div className="avail-head">
           <div />
@@ -60,14 +60,14 @@ export default function OpsBookingGrid({ days, onBook, onMove }: Props) {
                 onPointerDown={(e) => {
                   if (day.closed || e.button !== 0 || (e.target as HTMLElement).closest("[data-booked]")) return;
                   const cell = cellFromOffset(e.clientY - e.currentTarget.getBoundingClientRect().top);
-                  const window = day.open.find((item) => cell >= item.start && cell < item.end);
+                  const window = day.bookable.find((item) => cell >= item.start && cell < item.end);
                   if (!window) return;
                   beginCreate(day.iso, cell, window, day.booked);
                 }}
                 onPointerMove={(e) => {
                   if (drag || day.closed) return;
                   const cell = cellFromOffset(e.clientY - e.currentTarget.getBoundingClientRect().top);
-                  const inside = day.open.some((item) => cell >= item.start && cell < item.end);
+                  const inside = day.bookable.some((item) => cell >= item.start && cell < item.end);
                   setHover(inside ? { iso: day.iso, cell } : null);
                 }}
                 onPointerLeave={() => setHover((item) => (item?.iso === day.iso ? null : item))}

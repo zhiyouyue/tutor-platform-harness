@@ -13,26 +13,29 @@ export async function assertAppointmentInExpertSchedule(
   expertId: number,
   startAt: string,
   endAt: string,
+  options: { allowOutsideOpenSlots?: boolean } = {},
 ): Promise<void> {
   const start = parseLocalDateTime(normalizeSqlDateTime(startAt));
   const end = parseLocalDateTime(normalizeSqlDateTime(endAt));
   if (end <= start) throw new AppError("结束时间须晚于开始时间", 400);
 
-  const weekday = start.getDay();
-  const slots = await scheduleRepo.listSlots(expertId);
-  const daySlots = slots.filter((s) => Number(s.weekday) === weekday);
-  if (daySlots.length === 0) {
-    throw new AppError("该日期不在专家开放日程内", 400);
-  }
+  if (!options.allowOutsideOpenSlots) {
+    const weekday = start.getDay();
+    const slots = await scheduleRepo.listSlots(expertId);
+    const daySlots = slots.filter((s) => Number(s.weekday) === weekday);
+    if (daySlots.length === 0) {
+      throw new AppError("该日期不在专家开放日程内", 400);
+    }
 
-  const startMin = start.getHours() * 60 + start.getMinutes();
-  const endMin = minutesFromStartDay(start, end);
-  const inSlot = daySlots.some((s) => {
-    const sm = clockMinutes(String(s.start_time));
-    const em = clockMinutes(String(s.end_time));
-    return startMin >= sm && endMin <= em;
-  });
-  if (!inSlot) throw new AppError("课次时间须落在专家开放时段内", 400);
+    const startMin = start.getHours() * 60 + start.getMinutes();
+    const endMin = minutesFromStartDay(start, end);
+    const inSlot = daySlots.some((s) => {
+      const sm = clockMinutes(String(s.start_time));
+      const em = clockMinutes(String(s.end_time));
+      return startMin >= sm && endMin <= em;
+    });
+    if (!inSlot) throw new AppError("课次时间须落在专家开放时段内", 400);
+  }
 
   const blackouts = await scheduleRepo.listBlackouts(expertId);
   for (const b of blackouts) {

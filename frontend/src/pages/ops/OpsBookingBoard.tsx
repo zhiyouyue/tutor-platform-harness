@@ -40,7 +40,7 @@ export default function OpsBookingBoard({ projectId, expertId, appointments, foc
       }
       setSlots(res.data.items);
       setBlackouts(res.data.blackouts);
-      if (!res.data.items.length) setNotice("专家还没有开放可约时间，请让专家先在「我的时间」里设置");
+      if (!res.data.items.length) setNotice("导师还没有开放时间。浅色为空时，仍可在空白处排课。");
     });
     return () => { alive = false; };
   }, [expertId]);
@@ -82,7 +82,7 @@ export default function OpsBookingBoard({ projectId, expertId, appointments, foc
   return (
     <div style={{ background: "#fff", border: "1px solid var(--c-border)", borderRadius: 12 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 16px 0" }}>
-        <div style={{ fontWeight: 600 }}>专家可约时间</div>
+        <div style={{ fontWeight: 600 }}>排课</div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <button type="button" className="ant-btn ant-btn-default" onClick={() => setCursor(shiftWeek(cursor, -1))}>上一周</button>
           <span style={{ fontSize: 13, minWidth: 140, textAlign: "center" }}>{weekLabel(cursor)}</span>
@@ -92,7 +92,7 @@ export default function OpsBookingBoard({ projectId, expertId, appointments, foc
       </div>
       {notice && <p style={{ margin: "8px 16px 0", fontSize: 13, color: "var(--c-warning)" }}>{notice}</p>}
       {saving && <p style={{ margin: "8px 16px 0", fontSize: 13, color: "var(--c-text-3)" }}>正在保存…</p>}
-      {slots.length > 0 && <OpsBookingGrid days={days} onBook={book} onMove={move} />}
+      <OpsBookingGrid days={days} onBook={book} onMove={move} />
     </div>
   );
 }

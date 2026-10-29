@@ -28,7 +28,7 @@ function previewOf(drag: BookingDrag, days: WeekDay[]): DragPreview | null {
   const day = days.find((item) => item.iso === drag.targetIso);
   if (!day) return null;
   const blocked = day.booked.filter((item) => item.id !== drag.id);
-  const range = placeMove(drag.origin, drag.anchor, drag.current, day.open, blocked);
+  const range = placeMove(drag.origin, drag.anchor, drag.current, day.bookable, blocked);
   return range ? { iso: drag.targetIso, range } : null;
 }
 

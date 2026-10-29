@@ -32,6 +32,7 @@ export interface WeekDay {
   date: Date;
   iso: string;
   open: Range[];
+  bookable: Range[];
   booked: PlacedBooking[];
   closed: boolean;
 }
@@ -123,6 +124,7 @@ export function buildWeekDays(
   return weekDates(anchor).map((date) => {
     const iso = isoDate(date);
     const closed = iso < today || coversDate(iso, blackouts);
+    const bookable = closed ? [] : clipFromNow([{ start: 0, end: 24 * 60 }], iso, now);
     const open = closed
       ? []
       : clipFromNow(
@@ -140,11 +142,11 @@ export function buildWeekDays(
       if (!range) return [];
       return [{ ...range, id: item.id, locked: item.status === "completed" || item.status === "incomplete" }];
     });
-    return { weekday: date.getDay(), date, iso, open, booked, closed };
+    return { weekday: date.getDay(), date, iso, open, bookable, booked, closed };
   });
 }
 
-/** 拖动必须从可约窗口内开始，结果夹在窗口内，并且不能压到已有课次。 */
+/** 拖动从可排窗口内开始，结果夹在窗口内，并且不能压到已有课次。 */
 export function clampCreate(
   window: Range,
   anchor: number,
@@ -160,7 +162,7 @@ export function clampCreate(
   return { start, end };
 }
 
-/** 保持课次时长，把整块挪到指针所在格，且必须完全落在可约窗口内。 */
+/** 保持课次时长，把整块挪到指针所在格，且必须完全落在可排窗口内。 */
 export function placeMove(
   origin: Range,
   anchor: number,

@@ -49,12 +49,14 @@ export const NODE_STATUS: Record<string, string> = {
   skipped: "已跳过",
 };
 
-/** 辅导节点类型（与字典 code 一致时的兜底文案） */
+/** 辅导内容（与字典 code 一致时的兜底文案） */
 export const COACHING_NODE_TYPE: Record<string, string> = {
-  resume: "简历辅导",
-  interview: "面试辅导",
-  career: "职业规划",
-  onboarding: "入职辅导",
+  career_planning: "职业规划",
+  resume_optimization: "简历优化",
+  mock_interview: "模拟面试",
+  interview_review: "面试复盘",
+  salary_negotiation: "谈薪",
+  offer_selection: "OFFER选择",
 };
 
 export function labelProjectStatus(status: string | undefined | null): string {

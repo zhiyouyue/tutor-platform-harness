@@ -34,6 +34,8 @@
 | B8 | FR-P3-08 学员 statusLabel | `phase3-completion.test.ts` + Schedule UI | ✅ |
 | B9 | 成本/结算 | — | **N/A** |
 | B10 | company_staff | — | **N/A** |
+| B11 | FR-P3-09 辅导内容 6 项 | `sql/08` + `GET /dictionaries/coaching-types` 仅 6 项 | ✅ |
+| B12 | FR-P3-10 运营可约未开放时间 | `slotScheduleService.test.ts` + 运营周历空白可拖 | ✅ |
 
 ## C. 自动化测试
 

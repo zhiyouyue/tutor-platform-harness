@@ -37,6 +37,7 @@ describe("bookingMath", () => {
     const sunday = days.find((day) => day.iso === "2026-11-01");
     expect(monday?.open).toEqual([{ start: 17 * 60 + 30, end: 22 * 60 }]);
     expect(tuesday?.open).toEqual([]);
+    expect(tuesday?.bookable).toEqual([{ start: 0, end: 24 * 60 }]);
     expect(sunday?.open).toEqual([{ start: 17 * 60, end: 24 * 60 }]);
   });
 
@@ -59,6 +60,10 @@ describe("bookingMath", () => {
     const origin = { start: 20 * 60, end: 21 * 60 };
     expect(placeMove(origin, 20 * 60, 19 * 60, [window], [])).toEqual({ start: 19 * 60, end: 20 * 60 });
     expect(placeMove(origin, 20 * 60, 21 * 60 + 30, [window], [])).toBeNull();
+    expect(placeMove(origin, 20 * 60, 10 * 60, [{ start: 0, end: 24 * 60 }], [])).toEqual({
+      start: 10 * 60,
+      end: 11 * 60,
+    });
     expect(placeMove(origin, 20 * 60, 19 * 60, [window], [{ start: 19 * 60, end: 19 * 60 + 30 }])).toBeNull();
   });
 

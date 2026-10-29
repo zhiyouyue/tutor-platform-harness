@@ -91,7 +91,9 @@ export async function createOpsAppointmentFromSlot(params: {
   if (!project.expert_id) throw new AppError("项目尚未分配导师", 400);
   const startAt = normalizeSqlDateTime(params.startAt);
   const endAt = normalizeSqlDateTime(params.endAt);
-  await assertAppointmentInExpertSchedule(project.expert_id, startAt, endAt);
+  await assertAppointmentInExpertSchedule(project.expert_id, startAt, endAt, {
+    allowOutsideOpenSlots: true,
+  });
 
   const row = await scheduleRepo.createAppointment({
     projectId: params.projectId,

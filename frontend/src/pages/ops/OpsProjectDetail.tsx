@@ -110,7 +110,7 @@ export default function OpsProjectDetail({ projectId, focusIso, onBack }: Props)
         <div style={{ fontWeight: 600, marginBottom: 12 }}>课次（{appointments.length}）</div>
         {appointments.length === 0 ? (
           <div style={{ color: "var(--c-text-3)", fontSize: 13 }}>
-            {bookable ? "还没有课次。在上方可约时间里拖动即可排课。" : "暂无课次"}
+            {bookable ? "还没有课次。在上方日历空白处拖动即可排课。" : "暂无课次"}
           </div>
         ) : (
           appointments.map((a) => (

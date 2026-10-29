@@ -11,6 +11,9 @@ export default function Certifications() {
       <div>
         <div className="cert-title">专家认证审核</div>
         <div className="cert-sub">先看资料完整度、经历和辅导能力，再决定通过或拒绝。</div>
+        {review.dicts.coachingTypes.length > 0 && (
+          <div className="cert-sub">辅导内容：{review.dicts.coachingTypes.map((item) => item.label).join("、")}</div>
+        )}
       </div>
 
       {review.error && <div className="cert-error">{review.error}</div>}
