@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { createStudent, fetchStudents, importStudents, sendStudentLoginLink, type Student } from "../../services/api";
 import { PrimaryButton, SimpleCard, SimpleScreen } from "../../components/SimpleScreen";
+import { askText, notify } from "../../components/uiDialog";
 
 export default function Students() {
   const [items, setItems] = useState<Student[]>([]);
@@ -38,12 +39,24 @@ export default function Students() {
   }
 
   async function handleImport() {
-    const raw = window.prompt("每行一名学生：姓名,手机号");
-    if (!raw) return;
+    const raw = await askText({
+      title: "批量添加学生",
+      message: "每行一名学生，格式：姓名,手机号",
+      label: "名单",
+      placeholder: "张三,13800138000",
+      multiline: true,
+      required: true,
+      confirmText: "导入",
+    });
+    if (raw === null || !raw.trim()) return;
     const items = raw.split("\n").map((line) => {
       const [realName, phone] = line.split(/[,，\s]+/);
       return { realName: realName?.trim() || "", phone: phone?.trim() || "" };
     }).filter((r) => r.realName && r.phone);
+    if (items.length === 0) {
+      await notify("没有识别到有效名单，请按「姓名,手机号」每行一条填写。");
+      return;
+    }
     const res = await importStudents(items);
     if (res.success) {
       setMsg(`成功 ${res.data.created.length} 人，未导入 ${res.data.failed.length} 人`);

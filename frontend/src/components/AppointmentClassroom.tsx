@@ -56,7 +56,7 @@ export default function AppointmentClassroom({ appointmentId, onBack }: Props) {
           <div style={{ fontWeight: 600, marginBottom: 8 }}>课程回放</div>
           {recordings.map((r) => (
             <div key={r.ossKey} style={{ fontSize: 13, color: "var(--c-text-2)" }}>
-              已保存录制{r.durationSec ? ` · ${Math.round(r.durationSec / 60)} 分钟` : ""}
+              回放{r.durationSec ? ` · ${Math.round(r.durationSec / 60)} 分钟` : ""}
             </div>
           ))}
         </SimpleCard>

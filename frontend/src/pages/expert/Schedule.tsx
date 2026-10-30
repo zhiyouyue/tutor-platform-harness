@@ -8,6 +8,7 @@ import {
   saveMySchedule,
   updateMyExpertProfile,
 } from "../../services/api";
+import { askText } from "../../components/uiDialog";
 import { labelAppointmentStatus } from "../../utils/statusLabels";
 import WeeklyAvailabilityGrid from "./WeeklyAvailabilityGrid";
 
@@ -187,8 +188,13 @@ export default function Schedule({ onEnterClassroom }: Props) {
                       className="ant-btn ant-btn-default"
                       style={{ marginTop: 8, fontSize: 12 }}
                       onClick={async () => {
-                        const notes = prompt("课次完成备注（可选）") ?? "";
-                        await expertCompleteAppointment(s.projectId as number, s.id as number, notes || undefined);
+                        const notes = await askText({
+                          title: "标记课次完成",
+                          label: "完成备注（可选）",
+                          placeholder: "可填写本节课要点",
+                        });
+                        if (notes === null) return;
+                        await expertCompleteAppointment(s.projectId as number, s.id as number, notes.trim() || undefined);
                         await load();
                       }}
                     >

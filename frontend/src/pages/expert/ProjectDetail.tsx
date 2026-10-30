@@ -6,6 +6,7 @@ import {
   submitProjectCompletion,
   type Project,
 } from "../../services/api";
+import { notify } from "../../components/uiDialog";
 import { labelCoachingNodeType, labelNodeStatus, labelProjectStatus } from "../../utils/statusLabels";
 
 interface Props {
@@ -48,7 +49,7 @@ export default function ProjectDetail({ projectId, onBack, onOpenDelivery }: Pro
         <textarea className="ant-input" placeholder="辅导摘要" value={recordForm.contentSummary} onChange={(e) => setRecordForm({ ...recordForm, contentSummary: e.target.value })} />
         <button className="ant-btn ant-btn-default" onClick={async () => {
           await createCoachingRecord(Number(projectId), recordForm);
-          alert("已保存");
+          await notify("已保存");
         }}>保存记录</button>
       </div>
       <div style={{ background: "#fff", borderRadius: 12, border: "1px solid var(--c-border)", padding: 16, display: "grid", gap: 8 }}>
@@ -57,7 +58,7 @@ export default function ProjectDetail({ projectId, onBack, onOpenDelivery }: Pro
         <button className="ant-btn ant-btn-default" onClick={async () => {
           await createDeliverable(Number(projectId), { title: deliverTitle });
           setDeliverTitle("");
-          alert("已提交");
+          await notify("已提交");
         }}>提交</button>
       </div>
       {project.status === "in_progress" && (
@@ -65,7 +66,7 @@ export default function ProjectDetail({ projectId, onBack, onOpenDelivery }: Pro
           await submitProjectCompletion(Number(projectId));
           const r = await fetchProject(Number(projectId));
           if (r.success) setProject(r.data);
-          alert("已提交完成申请，等待运营确认");
+          await notify("已提交完成申请，等待运营确认");
         }}>提交项目完成</button>
       )}
     </div>

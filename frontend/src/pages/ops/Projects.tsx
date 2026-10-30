@@ -9,6 +9,7 @@ import {
   type Project,
   type Student,
 } from "../../services/api";
+import { notify } from "../../components/uiDialog";
 import { labelProjectStatus } from "../../utils/statusLabels";
 import OpsProjectDetail from "./OpsProjectDetail";
 
@@ -68,7 +69,7 @@ export default function SupervisorProjects({ pending }: Props) {
     if (res.success) {
       setShowCreate(false);
       await load();
-    } else alert(res.message);
+    } else await notify(res.message || "创建失败");
   }
 
   return (

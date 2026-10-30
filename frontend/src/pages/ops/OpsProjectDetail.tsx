@@ -8,6 +8,7 @@ import {
   publishProject,
   type Project,
 } from "../../services/api";
+import { askForm, notify } from "../../components/uiDialog";
 import { labelAppointmentStatus, labelProjectStatus } from "../../utils/statusLabels";
 import OpsBookingBoard from "./OpsBookingBoard";
 import ClassLinkField from "./ClassLinkField";
@@ -74,11 +75,26 @@ export default function OpsProjectDetail({ projectId, focusIso, onBack }: Props)
             type="button"
             className="ant-btn ant-btn-default"
             onClick={async () => {
-              const names = experts.map((e) => `${e.id}:${e.realName || "专家"}`).join("\n");
-              const pick = prompt(`输入专家档案 ID\n${names}`, project.expertId ? String(project.expertId) : "");
-              if (pick === null || !pick.trim()) return;
-              const res = await patchOpsProject(project.id, { expertId: Number(pick.trim()) });
-              if (!res.success) alert(res.message);
+              const form = await askForm({
+                title: "改派专家",
+                fields: [
+                  {
+                    key: "expertId",
+                    label: "选择专家",
+                    required: true,
+                    placeholder: "请选择专家",
+                    defaultValue: project.expertId ? String(project.expertId) : "",
+                    options: experts.map((e) => ({
+                      value: String(e.id),
+                      label: e.realName || `专家#${e.id}`,
+                    })),
+                  },
+                ],
+                confirmText: "改派",
+              });
+              if (!form?.expertId) return;
+              const res = await patchOpsProject(project.id, { expertId: Number(form.expertId) });
+              if (!res.success) await notify(res.message || "改派失败");
               await reload();
             }}
           >

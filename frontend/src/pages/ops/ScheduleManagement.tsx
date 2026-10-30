@@ -5,6 +5,7 @@ import {
   fetchOpsAppointments,
   fetchOpsDashboard,
 } from "../../services/api";
+import { askForm } from "../../components/uiDialog";
 import { isoDate } from "./bookingMath";
 import { appointmentStatusTagClass, labelAppointmentStatus } from "../../utils/statusLabels";
 import ClassLinkField from "./ClassLinkField";
@@ -117,13 +118,20 @@ export default function ScheduleManagement({ onReschedule }: Props) {
                           className="ant-btn ant-btn-link"
                           style={{ fontSize: 12 }}
                           onClick={async () => {
-                            const reason = prompt("未完成原因");
-                            if (!reason?.trim()) return;
-                            const fee = prompt("扣费金额（可选，数字）");
+                            const form = await askForm({
+                              title: "标记未完成",
+                              message: "请填写原因；如需扣费可填写金额。",
+                              fields: [
+                                { key: "reason", label: "未完成原因", required: true, placeholder: "例如：学员未到课" },
+                                { key: "fee", label: "扣费金额（可选）", type: "number", placeholder: "留空表示不扣费" },
+                              ],
+                              confirmText: "确认",
+                            });
+                            if (!form?.reason.trim()) return;
                             await markOpsAppointmentIncomplete(
                               a.id as number,
-                              reason.trim(),
-                              fee ? Number(fee) : undefined,
+                              form.reason.trim(),
+                              form.fee ? Number(form.fee) : undefined,
                             );
                             await load();
                           }}

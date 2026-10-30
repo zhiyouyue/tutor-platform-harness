@@ -183,7 +183,7 @@ export default function MeetingRoom({ joinInfo, appointmentId, onLeave }: Props)
         await client.publish(localTracks);
         if (disposed) return;
         setPhase("live");
-        setHint("已进入课堂，录像会分段保存");
+        setHint("已进入课堂");
       } catch (err) {
         if (disposed) return;
         setPhase("error");

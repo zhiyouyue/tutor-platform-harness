@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { acceptProject, fetchProjects, rejectProject, type Project } from "../../services/api";
+import { askText } from "../../components/uiDialog";
 import { labelProjectStatus } from "../../utils/statusLabels";
 
 type Tab = "pending" | "active" | "completed";
@@ -32,8 +33,15 @@ export default function Projects({ onSelectProject }: { onSelectProject: (id: st
   }
 
   async function handleReject(id: number) {
-    const reason = window.prompt("拒绝原因") || "暂不接此项目";
-    await rejectProject(id, reason);
+    const reason = await askText({
+      title: "拒绝项目",
+      label: "拒绝原因",
+      placeholder: "请说明拒绝原因",
+      defaultValue: "暂不接此项目",
+      required: true,
+    });
+    if (reason === null) return;
+    await rejectProject(id, reason.trim() || "暂不接此项目");
     const res = await fetchProjects();
     if (res.success) setItems(res.data.items);
   }
